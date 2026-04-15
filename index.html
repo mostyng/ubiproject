@@ -228,25 +228,58 @@
   .sect-alt .home-panel-num { color: var(--g2); }
   .home-panel-meta p { font-size: 0.96rem; }
 
-  /* Mini stat grid in pillar 1 */
-  .mini-stats {
+  /* ═══════════════════════════
+     BIG STAT DISPLAY
+  ═══════════════════════════ */
+  .big-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin: 1.5rem 0;
+    gap: 1rem;
+    margin: 2rem 0 1.75rem;
   }
-  .mini-stat {
-    background: var(--blue-pale);
-    border: 1px solid var(--blue-light);
-    border-radius: var(--r);
-    padding: 1rem;
+  .big-stat {
+    background: var(--white);
+    border: 1px solid var(--g2);
+    border-top: 3px solid var(--blue);
+    border-radius: 0 0 var(--r) var(--r);
+    padding: 1.25rem 1rem 1rem;
+    text-align: center;
   }
-  .mini-stat-icon { font-size: 1.2rem; margin-bottom: 0.35rem; }
-  .mini-stat h3 {
-    font-size: 0.82rem; font-weight: 800;
-    color: var(--blue-dark); margin-bottom: 0.2rem;
+  .sect-alt .big-stat {
+    background: var(--white);
   }
-  .mini-stat p { font-size: 0.74rem; color: var(--g5); }
+  .big-stat-num {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 800;
+    color: var(--blue);
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+  }
+  .big-stat-num.red { color: var(--red); }
+  .big-stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--g5);
+    line-height: 1.45;
+    display: block;
+  }
+  .big-stat-source {
+    font-size: 0.68rem;
+    color: var(--g3);
+    display: block;
+    margin-top: 0.3rem;
+  }
+
+  /* Argument body text — larger than standard p */
+  .arg-body {
+    font-size: 1.05rem;
+    line-height: 1.78;
+    color: var(--g5);
+    margin-bottom: 0;
+  }
+  .arg-body + .arg-body { margin-top: 0.85rem; }
 
   /* Page link button */
   .page-link {
@@ -513,6 +546,7 @@
     .home-panel { grid-template-columns: 1fr; gap: 1.25rem; }
     .home-panel-num { font-size: 3rem; }
     .mini-stats { grid-template-columns: 1fr; }
+    .big-stats { grid-template-columns: 1fr; }
     .ex-cards { grid-template-columns: 1fr; }
     .fund-tiles { grid-template-columns: 1fr 1fr; }
   }
@@ -541,7 +575,7 @@
   <div class="hero-inner">
     <p class="hero-kicker">An American reckoning</p>
     <h1>End poverty and create a<br><em>steady floor for a changing economy</em></h1>
-    <p class="hero-sub">35.9 million Americans live in poverty in the world's wealthiest nation. Workers' wages have lagged behind productivity for 50 years. Automation is accelerating. Universal Basic Income is the most direct response to all three.</p>
+    <p class="hero-sub">35.9 million Americans live in poverty in the world's wealthiest nation. Workers' wages have lagged behind productivity for 50 years. Automation is accelerating. Universal Basic Income is the most direct answer to these challenges.</p>
     <a class="hero-cta" href="#the-case">See the case ↓</a>
   </div>
 </header>
@@ -558,27 +592,26 @@
       </div>
       <div class="home-panel-meta">
         <p class="kicker">The first argument</p>
-        <h2>America has the wealth to end poverty. Right now.</h2>
+        <h2>America has the wealth to end poverty right now.</h2>
         <div class="divider"></div>
-        <p>The US has a $28 trillion economy — the largest in human history. Filling the entire national poverty gap, lifting every person above the poverty line, would cost an estimated <strong>$288 billion a year.</strong> <a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">Federal Safety Net</a></p>
-        <p>That's roughly <strong>1% of GDP</strong> — less than the annual defense budget, less than what Americans spend on lottery tickets and tobacco combined. Yet in 2024, <strong>35.9 million Americans</strong> still lived below the poverty line. <a href="https://www.census.gov/library/publications/2025/demo/p60-287.html" target="_blank" rel="noopener" class="src">US Census 2024</a></p>
-        <p>Poverty in America is not a resource problem. It is a <em>policy choice.</em> UBI is the most direct way to undo it — cash in people's hands, not routed through a bureaucratic maze of programs that fail to reach millions who need them.</p>
+        <p class="arg-body">Ending poverty in America — lifting every person above the poverty line — would cost <strong>$288 billion a year.</strong> That is less than the Pentagon budget, less than half of what Americans donate to charity annually, and less than 1% of GDP. <a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">Federal Safety Net</a></p>
+        <p class="arg-body">We already spend $481 billion a year on welfare programs that haven't ended poverty in 50 years. The money exists. The system is broken. <a href="https://www.census.gov/library/publications/2025/demo/p60-287.html" target="_blank" rel="noopener" class="src">US Census 2024</a></p>
 
-        <div class="mini-stats">
-          <div class="mini-stat">
-            <div class="mini-stat-icon">💰</div>
-            <h3>$288B to end poverty</h3>
-            <p>The cost to fill the entire US poverty gap — less than 1% of GDP. <a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">source</a></p>
+        <div class="big-stats">
+          <div class="big-stat">
+            <span class="big-stat-num">$288B</span>
+            <span class="big-stat-label">annual cost to end poverty entirely</span>
+            <span class="big-stat-source"><a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">Federal Safety Net</a></span>
           </div>
-          <div class="mini-stat">
-            <div class="mini-stat-icon">👥</div>
-            <h3>35.9M in poverty</h3>
-            <p>Americans below the poverty line in 2024. <a href="https://www.census.gov/library/publications/2025/demo/p60-287.html" target="_blank" rel="noopener" class="src">US Census</a></p>
+          <div class="big-stat">
+            <span class="big-stat-num red">$858B</span>
+            <span class="big-stat-label">2024 US defense budget — 3× the poverty gap</span>
+            <span class="big-stat-source"><a href="https://comptroller.defense.gov/Budget-Materials/" target="_blank" rel="noopener" class="src">DoD</a></span>
           </div>
-          <div class="mini-stat">
-            <div class="mini-stat-icon">🏛️</div>
-            <h3>$481B on welfare</h3>
-            <p>Federal welfare spending that still hasn't ended poverty. <a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">source</a></p>
+          <div class="big-stat">
+            <span class="big-stat-num">$557B</span>
+            <span class="big-stat-label">Americans gave to charity in 2023 — nearly twice the poverty gap</span>
+            <span class="big-stat-source"><a href="https://givingusa.org/" target="_blank" rel="noopener" class="src">Giving USA 2024</a></span>
           </div>
         </div>
 
@@ -600,72 +633,62 @@
       </div>
       <div class="home-panel-meta">
         <p class="kicker">The second argument</p>
-        <h2>Workers are owed money. The math says so.</h2>
+        <h2>Productivity grew. Wages didn't.</h2>
         <div class="divider"></div>
-        <p>From 1948 to the early 1970s, when American workers became more productive, their wages rose to match. It was a deal: work harder, earn more, share in the country's growth.</p>
-        <p>Then the deal broke. Since 1979, productivity has grown <strong>nearly 3× faster</strong> than typical worker pay. The economy kept growing. Workers kept showing up. The gains went somewhere else — to shareholders, executives, and capital owners. <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">Economic Policy Institute</a></p>
-        <p>That gap represents <em>decades of labor value that workers created but never received.</em> A UBI isn't charity — it's a partial correction of a decades-long transfer of wealth from workers to capital.</p>
+        <p class="arg-body">Since 1979, worker productivity has risen 90% while typical compensation grew only 33%. The cost of housing, healthcare, and childcare have risen far faster than wages — yet the gains from that productivity went to shareholders and executives, not workers. <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">Economic Policy Institute</a></p>
+        <p class="arg-body">A UBI is a partial correction of that transfer. Workers helped build the economy that exists today. A guaranteed floor is the overdue return on that contribution.</p>
 
         <!-- PRODUCTIVITY / WAGES SVG CHART -->
-        <div style="background:var(--white);border:1px solid var(--g2);border-left:4px solid var(--blue);border-radius:0 var(--r) var(--r) 0;padding:1.4rem 1.5rem;margin:1.5rem 0;">
+        <div style="background:var(--white);border:1px solid var(--g2);border-left:4px solid var(--blue);border-radius:0 var(--r) var(--r) 0;padding:1.4rem 1.5rem;margin:1.75rem 0 1.25rem;">
           <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--g4);margin-bottom:1rem;">Productivity vs. hourly compensation since 1948</div>
           <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;" aria-label="Chart showing productivity growing far faster than wages since 1973">
-            <defs>
-              <!-- grid lines -->
-              <line id="gl" stroke="#dde2ea" stroke-width="1"/>
-            </defs>
-
-            <!-- Y-axis grid lines -->
             <line x1="48" y1="20" x2="48" y2="168" stroke="#dde2ea" stroke-width="1"/>
             <line x1="48" y1="168" x2="510" y2="168" stroke="#dde2ea" stroke-width="1"/>
             <line x1="48" y1="130" x2="510" y2="130" stroke="#dde2ea" stroke-width="1" stroke-dasharray="4,3"/>
             <line x1="48" y1="92" x2="510" y2="92" stroke="#dde2ea" stroke-width="1" stroke-dasharray="4,3"/>
             <line x1="48" y1="54" x2="510" y2="54" stroke="#dde2ea" stroke-width="1" stroke-dasharray="4,3"/>
-
-            <!-- Y-axis labels -->
             <text x="40" y="171" text-anchor="end" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">0%</text>
             <text x="40" y="133" text-anchor="end" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">50%</text>
             <text x="40" y="95" text-anchor="end" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">100%</text>
             <text x="40" y="57" text-anchor="end" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">150%</text>
-
-            <!-- X-axis labels -->
             <text x="48" y="181" text-anchor="middle" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">1948</text>
             <text x="152" y="181" text-anchor="middle" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">1960</text>
             <text x="256" y="181" text-anchor="middle" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">1973</text>
             <text x="360" y="181" text-anchor="middle" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">1990</text>
             <text x="464" y="181" text-anchor="middle" font-size="9" fill="#b0b8c4" font-family="Public Sans,sans-serif">2014</text>
-
-            <!-- 1973 divider line -->
             <line x1="256" y1="20" x2="256" y2="168" stroke="#b0b8c4" stroke-width="1" stroke-dasharray="3,3"/>
             <text x="260" y="32" font-size="8" fill="#b0b8c4" font-family="Public Sans,sans-serif">1973</text>
             <text x="260" y="41" font-size="8" fill="#b0b8c4" font-family="Public Sans,sans-serif">divergence</text>
-
-            <!-- PRODUCTIVITY line (blue) — rises steeply after 1973 -->
-            <!-- Points: 1948→0%, 1960→30%, 1973→97%, 1980→110%, 1990→140%, 2000→175%, 2014→238% -->
-            <!-- Y = 168 - (pct/250)*148 ; X mapped across [48..510] over ~66 years -->
-            <polyline
-              points="48,168 152,138 256,94 295,89 360,74 413,55 464,27"
-              fill="none" stroke="#1a4d8f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-
-            <!-- WAGES line (red) — rises in sync until 1973, then flattens -->
-            <!-- Points: 1948→0%, 1960→28%, 1973→91%, 1980→88%, 1990→92%, 2000→103%, 2014→109% -->
-            <polyline
-              points="48,168 152,141 256,97 295,100 360,95 413,90 464,89"
-              fill="none" stroke="#c0392b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>
-
-            <!-- End-point labels -->
+            <polyline points="48,168 152,138 256,94 295,89 360,74 413,55 464,27" fill="none" stroke="#1a4d8f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <polyline points="48,168 152,141 256,97 295,100 360,95 413,90 464,89" fill="none" stroke="#c0392b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>
             <text x="467" y="25" font-size="9" font-weight="700" fill="#1a4d8f" font-family="Public Sans,sans-serif">+238%</text>
             <text x="467" y="37" font-size="8" fill="#1a4d8f" font-family="Public Sans,sans-serif">Productivity</text>
             <text x="467" y="87" font-size="9" font-weight="700" fill="#c0392b" font-family="Public Sans,sans-serif">+109%</text>
             <text x="467" y="99" font-size="8" fill="#c0392b" font-family="Public Sans,sans-serif">Compensation</text>
-
-            <!-- Legend -->
             <line x1="48" y1="196" x2="66" y2="196" stroke="#1a4d8f" stroke-width="2.5"/>
             <text x="70" y="199" font-size="8" fill="#6b7685" font-family="Public Sans,sans-serif">Net productivity</text>
             <line x1="160" y1="196" x2="178" y2="196" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="4,2"/>
             <text x="182" y="199" font-size="8" fill="#6b7685" font-family="Public Sans,sans-serif">Hourly compensation (production/nonsupervisory workers)</text>
           </svg>
-          <p style="font-size:0.7rem;color:var(--g3);margin-top:0.5rem;">1948–2014. Source: <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">Economic Policy Institute</a> analysis of BEA and BLS data. Cumulative percent change since 1948.</p>
+          <p style="font-size:0.7rem;color:var(--g3);margin-top:0.5rem;">1948–2014 · <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">Economic Policy Institute</a></p>
+        </div>
+
+        <div class="big-stats">
+          <div class="big-stat">
+            <span class="big-stat-num">+90%</span>
+            <span class="big-stat-label">productivity growth since 1979</span>
+            <span class="big-stat-source"><a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">EPI</a></span>
+          </div>
+          <div class="big-stat">
+            <span class="big-stat-num red">+33%</span>
+            <span class="big-stat-label">typical worker pay in the same period</span>
+            <span class="big-stat-source"><a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">EPI</a></span>
+          </div>
+          <div class="big-stat">
+            <span class="big-stat-num red">+231%</span>
+            <span class="big-stat-label">median home price increase since 1980, adjusted for inflation</span>
+            <span class="big-stat-source"><a href="https://www.jchs.harvard.edu/state-nations-housing" target="_blank" rel="noopener" class="src">Harvard JCHS</a></span>
+          </div>
         </div>
 
         <a href="why-ubi.html#wages" class="page-link page-link-red">The full wages argument →</a>
@@ -686,12 +709,28 @@
       </div>
       <div class="home-panel-meta">
         <p class="kicker">The third argument</p>
-        <h2>Automation is coming. Retraining programs don't work.</h2>
+        <h2>Automation is eliminating jobs. Retraining programs don't work.</h2>
         <div class="divider"></div>
-        <p>AI and robotics aren't just changing work — they are eliminating entire job categories faster than new ones appear. McKinsey estimates <strong>up to 400 million jobs</strong> could be displaced globally by 2030. In the US, researchers at Oxford estimated <strong>47% of all jobs</strong> are at high risk. <a href="https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages" target="_blank" rel="noopener" class="src">McKinsey</a></p>
-        <p>The standard political response is "job retraining programs." But government retraining programs have a <a href="https://www.gao.gov/products/gao-11-92" target="_blank" rel="noopener" class="src">dismal track record</a> — most displaced workers do not successfully transition to new careers through them. And those who do still face the problem of who pays the bills during the transition.</p>
-        <p>A UBI doesn't just soften the blow of automation. It gives displaced workers the time, security, and dignity to figure out what comes next — whether that's retraining, starting a business, or caring for a family member while the economy catches up.</p>
-        <p>There's also an overlooked flip side: automation creates extraordinary wealth. A UBI can function as a <em>citizen's dividend on the automation economy</em> — a share of the gains distributed to the public who made it possible.</p>
+        <p class="arg-body">AI and robotics are eliminating entire job categories faster than new ones appear. Government retraining programs have a <a href="https://www.gao.gov/products/gao-11-92" target="_blank" rel="noopener" class="src">dismal track record</a> — most displaced workers do not successfully transition through them.</p>
+        <p class="arg-body">The same automation that displaces workers creates extraordinary wealth. A UBI distributes a share of those gains back to the workers and communities that made it possible.</p>
+
+        <div class="big-stats">
+          <div class="big-stat">
+            <span class="big-stat-num red">400M</span>
+            <span class="big-stat-label">jobs potentially displaced globally by 2030</span>
+            <span class="big-stat-source"><a href="https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages" target="_blank" rel="noopener" class="src">McKinsey</a></span>
+          </div>
+          <div class="big-stat">
+            <span class="big-stat-num red">47%</span>
+            <span class="big-stat-label">of US jobs at high risk of automation</span>
+            <span class="big-stat-source"><a href="https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf" target="_blank" rel="noopener" class="src">Oxford Martin</a></span>
+          </div>
+          <div class="big-stat">
+            <span class="big-stat-num">$15.7T</span>
+            <span class="big-stat-label">projected GDP boost from AI by 2030 — wealth that should be shared</span>
+            <span class="big-stat-source"><a href="https://www.pwc.com/gx/en/issues/data-and-analytics/publications/artificial-intelligence-study.html" target="_blank" rel="noopener" class="src">PwC</a></span>
+          </div>
+        </div>
 
         <a href="why-ubi.html#automation" class="page-link page-link-red">The full automation argument →</a>
       </div>
@@ -711,12 +750,28 @@
       </div>
       <div class="home-panel-meta">
         <p class="kicker">The fourth argument</p>
-        <h2>A floor gives workers the power to say no — and to build something of their own.</h2>
+        <h2>A guaranteed floor enables work worth doing.</h2>
         <div class="divider"></div>
-        <p>Right now, <strong>60% of Americans</strong> can't cover a $1,000 emergency from savings. <a href="https://www.federalreserve.gov/publications/report-economic-well-being-us-households.htm" target="_blank" rel="noopener" class="src">Federal Reserve</a> That is not just a personal hardship — it is a structural power imbalance. When you can't afford a month without a paycheck, you can't walk away from a bad boss, a toxic workplace, or a job that's going nowhere. Employers know this.</p>
-        <p>A guaranteed income floor changes that calculation entirely. It gives every American worker genuine leverage — the ability to say no, to take their time, to find work worth doing rather than accept whatever's available out of desperation.</p>
-        <p>And it doesn't stop at walking away. The countries with the strongest social floors — Denmark, Germany, the Netherlands — have <em>higher</em> rates of entrepreneurship than the US. <a href="https://www.oecd.org/en/topics/entrepreneurship.html" target="_blank" rel="noopener" class="src">OECD</a> A UBI is a startup fund for the bottom half of the country. It's the cushion that lets a warehouse worker in Ohio try the business idea they've had for ten years.</p>
-        <p>Today, <strong>1 in 4 American workers</strong> held some form of gig or contract work in 2024. <a href="https://www.adpresearch.com/the-gig-economy-a-tale-of-two-labor-markets/" target="_blank" rel="noopener" class="src">ADP Research</a> Most lack health insurance, retirement savings, or unemployment protection. A UBI provides the floor that makes precarious work survivable while we build a better system.</p>
+        <p class="arg-body">60% of Americans cannot cover a $1,000 emergency from savings. When you cannot afford a month without a paycheck, you cannot leave a bad job, take a risk on a business idea, go back to school, or care for a family member. Financial precarity removes choices. <a href="https://www.federalreserve.gov/publications/report-economic-well-being-us-households.htm" target="_blank" rel="noopener" class="src">Federal Reserve</a></p>
+        <p class="arg-body">1 in 4 American workers held gig or contract work in 2024 — most with no health insurance, no retirement savings, and no unemployment protection. A guaranteed floor transforms precarious work into a viable starting point rather than a trap. It creates space to pursue entrepreneurship, education, care work, and anything else the market undervalues. <a href="https://www.adpresearch.com/the-gig-economy-a-tale-of-two-labor-markets/" target="_blank" rel="noopener" class="src">ADP Research</a></p>
+
+        <div class="big-stats">
+          <div class="big-stat">
+            <span class="big-stat-num red">60%</span>
+            <span class="big-stat-label">of Americans cannot cover a $1,000 emergency from savings</span>
+            <span class="big-stat-source"><a href="https://www.federalreserve.gov/publications/report-economic-well-being-us-households.htm" target="_blank" rel="noopener" class="src">Federal Reserve</a></span>
+          </div>
+          <div class="big-stat">
+            <span class="big-stat-num red">1 in 4</span>
+            <span class="big-stat-label">US workers held gig or contract work in 2024 — mostly without benefits</span>
+            <span class="big-stat-source"><a href="https://www.adpresearch.com/the-gig-economy-a-tale-of-two-labor-markets/" target="_blank" rel="noopener" class="src">ADP Research</a></span>
+          </div>
+          <div class="big-stat">
+            <span class="big-stat-num">Higher</span>
+            <span class="big-stat-label">entrepreneurship rates in countries with stronger safety nets than the US</span>
+            <span class="big-stat-source"><a href="https://www.oecd.org/en/topics/entrepreneurship.html" target="_blank" rel="noopener" class="src">OECD</a></span>
+          </div>
+        </div>
 
         <a href="why-ubi.html#worker-power" class="page-link page-link-red">The full worker power argument →</a>
       </div>

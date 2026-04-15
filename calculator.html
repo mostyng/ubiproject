@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UBI Funding Calculator — UBI Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:#ffffff; --off-white:#f7f9fc; --blue-pale:#e8f0fb; --blue-light:#d0e3f8;
+  --blue:#1a4d8f; --blue-mid:#2563b0; --blue-dark:#0f2d5c; --navy:#0a1f3d;
+  --red:#c0392b; --red-hover:#a93226; --red-pale:#fdf1f0;
+  --g1:#f0f2f5; --g2:#dde2ea; --g3:#b0b8c4; --g4:#6b7685; --g5:#3d4755;
+  /* legacy aliases used by JS color refs in results panel */
+  --teal:#1a6b5a; --teal-p:#e8f4f1;
+  --rose:#b04a4a; --rose-p:#fdf1f0;
+  --fd:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --fb:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --r:8px; --rs:4px;
+  --sh:0 2px 10px rgba(10,31,61,0.07);
+  --shm:0 4px 24px rgba(10,31,61,0.12);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--fd); background:var(--white); color:var(--navy); font-size:15px; line-height:1.7; }
+
+/* ── NAV ── */
+nav { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.97); backdrop-filter:blur(8px); border-bottom:2px solid var(--blue); padding:0 2rem; display:flex; align-items:center; }
+.nav-brand { font-size:1.05rem; font-weight:800; color:var(--blue-dark); text-decoration:none; padding:1rem 0; margin-right:auto; }
+.nav-brand span { color:var(--red); }
+.nav-links { display:flex; list-style:none; }
+.nav-links a { display:block; padding:1rem 0.9rem; font-size:0.78rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--g4); text-decoration:none; transition:color 0.18s; position:relative; }
+.nav-links a::after { content:""; position:absolute; bottom:0; left:0.9rem; right:0.9rem; height:2px; background:var(--red); transform:scaleX(0); transition:transform 0.2s; }
+.nav-links a:hover { color:var(--blue-dark); }
+.nav-links a:hover::after, .nav-links a.active::after { transform:scaleX(1); }
+.nav-links a.active { color:var(--blue-dark); }
+.nav-hamburger { display:none; flex-direction:column; justify-content:center; align-items:center; gap:5px; width:40px; height:40px; background:none; border:none; cursor:pointer; border-radius:var(--rs); }
+.nav-hamburger span { display:block; width:22px; height:2px; background:var(--navy); border-radius:2px; transition:transform 0.3s ease, opacity 0.3s ease, width 0.3s ease; transform-origin:center; }
+nav.menu-open .nav-hamburger span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+nav.menu-open .nav-hamburger span:nth-child(2) { opacity:0; width:0; }
+nav.menu-open .nav-hamburger span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+.nav-overlay { display:none; position:fixed; inset:0; background:rgba(10,31,61,0.4); z-index:98; backdrop-filter:blur(2px); }
+nav.menu-open ~ .nav-overlay { display:block; }
+
+/* ── PAGE HERO ── */
+.page-hero { background:linear-gradient(160deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-mid) 100%); padding:3.5rem 2rem 2.5rem; }
+.page-hero-inner { max-width:1100px; margin:0 auto; }
+.back-link { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.75rem; font-weight:700; color:rgba(255,255,255,0.65); text-decoration:none; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:1.25rem; transition:color 0.18s; }
+.back-link:hover { color:#fff; }
+.page-hero h1 { font-size:clamp(1.9rem,4vw,2.7rem); font-weight:800; line-height:1.15; color:#fff; max-width:700px; margin-bottom:0.65rem; letter-spacing:-0.02em; }
+.page-hero h1 em { font-style:italic; color:var(--blue-light); border-bottom:3px solid var(--red); padding-bottom:1px; }
+.page-hero p { color:rgba(255,255,255,0.72); font-size:0.97rem; max-width:600px; line-height:1.75; }
+
+/* ── MAIN LAYOUT ── */
+.page-body { max-width:1100px; margin:0 auto; padding:2.5rem 2rem 5rem; display:grid; grid-template-columns:1fr 400px; gap:2.5rem; align-items:start; }
+
+/* ── TYPOGRAPHY UTILS ── */
+.kicker { font-size:0.7rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:var(--red); margin-bottom:0.3rem; display:block; }
+a.src { color:var(--blue-mid); text-decoration:none; font-size:0.74rem; font-weight:600; white-space:nowrap; transition:color 0.15s; }
+a.src:hover { color:var(--red); }
+a.src::before { content:'['; font-weight:400; color:var(--g3); }
+a.src::after  { content:']'; font-weight:400; color:var(--g3); }
+input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; display:block; }
+.range-row { display:flex; justify-content:space-between; font-size:0.68rem; color:var(--g3); margin-top:0.15rem; }
+
+/* ── UBI AMOUNT PANEL ── */
+.ubi-panel { background:var(--blue-pale); border:1px solid var(--blue-light); border-radius:var(--r); padding:1.25rem 1.4rem; margin-bottom:1rem; }
+.ubi-panel-title { font-size:0.95rem; font-weight:700; color:var(--navy); margin-bottom:0.7rem; }
+.slider-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.35rem; }
+.slider-label { font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--g4); }
+.slider-current { font-size:1rem; font-weight:800; color:var(--blue); }
+.ubi-meta { font-size:0.73rem; color:var(--g4); margin-top:0.55rem; }
+
+/* ── SECTION HEADERS ── */
+.ctrl-section-head { font-size:0.67rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--g4); padding:0.3rem 0 0.45rem; margin-top:0.9rem; border-bottom:2px solid var(--blue); margin-bottom:0.65rem; }
+
+/* ── FUNDING SOURCE CARDS ── */
+.fs-card { border:1.5px solid var(--g2); border-radius:var(--r); margin-bottom:0.55rem; background:var(--white); transition:border-color 0.18s, box-shadow 0.18s; overflow:hidden; }
+.fs-card.active { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,77,143,0.08); }
+.fs-header { display:flex; align-items:center; gap:0.75rem; padding:0.8rem 1rem; cursor:pointer; user-select:none; transition:background 0.15s; }
+.fs-header:hover { background:var(--blue-pale); }
+.fs-dot { width:17px; height:17px; border-radius:50%; border:2px solid var(--g3); background:var(--white); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
+.fs-card.active .fs-dot { background:var(--blue); border-color:var(--blue); }
+.fs-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#fff; opacity:0; transition:opacity 0.15s; }
+.fs-card.active .fs-dot::after { opacity:1; }
+.fs-icon { font-size:1rem; flex-shrink:0; line-height:1; }
+.fs-name { font-size:0.86rem; font-weight:600; color:var(--navy); flex:1; }
+.fs-rev-badge { font-size:0.8rem; font-weight:700; color:var(--blue-mid); min-width:60px; text-align:right; flex-shrink:0; }
+.fs-body { display:none; padding:0 1rem 0.9rem; border-top:1px solid var(--g2); }
+.fs-card.active .fs-body { display:block; }
+.fs-short-desc { font-size:0.78rem; color:var(--g4); margin-top:0.5rem; margin-bottom:0.45rem; line-height:1.55; }
+.learn-more-btn { font-size:0.72rem; font-weight:700; color:var(--blue-mid); background:none; border:none; cursor:pointer; padding:0; text-decoration:underline; text-underline-offset:2px; transition:color 0.15s; }
+.learn-more-btn:hover { color:var(--red); }
+.learn-more-content { display:none; font-size:0.75rem; color:var(--g5); background:var(--blue-pale); border-radius:var(--rs); border-left:3px solid var(--blue-light); padding:0.65rem 0.8rem; margin:0.45rem 0 0.6rem; line-height:1.6; }
+.learn-more-content.open { display:block; }
+.fs-slider-section { margin-top:0.5rem; }
+.fs-slider-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.3rem; }
+.fs-slider-label { font-size:0.68rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--g4); }
+.fs-slider-val { font-size:0.88rem; font-weight:800; color:var(--blue); }
+
+/* ── WELFARE TOGGLE ITEMS ── */
+.welfare-toggle { display:flex; align-items:center; gap:0.75rem; padding:0.7rem 0.95rem; border:1.5px solid var(--g2); border-radius:var(--r); margin-bottom:0.5rem; cursor:pointer; user-select:none; background:var(--white); transition:border-color 0.18s, background 0.18s; }
+.welfare-toggle:hover { background:var(--blue-pale); }
+.welfare-toggle.active { border-color:var(--blue); background:var(--blue-pale); }
+.welfare-toggle.active .fs-dot { background:var(--blue); border-color:var(--blue); }
+.welfare-toggle.active .fs-dot::after { opacity:1; }
+.welfare-info { flex:1; min-width:0; }
+.welfare-name { font-size:0.84rem; font-weight:600; color:var(--navy); display:block; }
+.welfare-sub  { font-size:0.71rem; color:var(--g4); display:block; margin-top:0.05rem; }
+.welfare-amt  { font-size:0.8rem; font-weight:700; color:var(--blue-mid); flex-shrink:0; min-width:56px; text-align:right; }
+
+/* ── MONEY PRINTING CARD ── */
+.print-card { border:1.5px solid rgba(192,57,43,0.3); border-radius:var(--r); margin-bottom:0.55rem; background:var(--white); overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
+.print-card.active { border-color:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,0.08); background:var(--red-pale); }
+.print-card .fs-header:hover { background:rgba(192,57,43,0.05); }
+.print-card .fs-dot { border-color:rgba(192,57,43,0.4); }
+.print-card.active .fs-dot { background:var(--red); border-color:var(--red); }
+.print-card .fs-name { color:var(--red); }
+.print-card .fs-rev-badge { color:var(--red); }
+.infl-block { display:none; margin:0 1rem 0.9rem; padding:0.75rem 0.85rem; background:rgba(192,57,43,0.06); border-left:3px solid var(--red); border-radius:0 var(--rs) var(--rs) 0; }
+.print-card.active .infl-block { display:block; }
+.infl-pct { font-size:1.5rem; font-weight:800; color:var(--red); display:block; line-height:1; margin-bottom:0.2rem; }
+.infl-note { font-size:0.72rem; color:var(--red); opacity:0.8; line-height:1.5; display:block; margin-bottom:0.7rem; }
+.print-slider-header { display:flex; justify-content:space-between; margin-bottom:0.3rem; }
+.print-slider-label { font-size:0.67rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:rgba(192,57,43,0.7); }
+.print-slider-val { font-size:0.86rem; font-weight:800; color:var(--red); }
+.print-warning { font-size:0.7rem; color:rgba(192,57,43,0.65); margin-top:0.5rem; line-height:1.5; }
+
+/* ── RESULTS STICKY PANEL ── */
+#results-col { position:sticky; top:5.5rem; align-self:start; }
+.results-panel {
+  background:var(--navy); color:#fff; border-radius:var(--r);
+  padding:1.5rem 1.5rem 1.6rem; box-shadow:var(--shm);
+  max-height:calc(100vh - 7rem);
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,0.12) transparent;
+}
+.results-panel::-webkit-scrollbar { width:4px; }
+.results-panel::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:2px; }
+.results-panel::-webkit-scrollbar-track { background:transparent; }
+
+/* ── VIEW TABS ── */
+.view-tabs { display:flex; gap:2px; background:rgba(255,255,255,0.07); border-radius:var(--rs); padding:3px; margin-bottom:1.4rem; }
+.view-tab { flex:1; text-align:center; padding:0.4rem; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; border-radius:4px; cursor:pointer; color:rgba(255,255,255,0.4); transition:all 0.2s; border:none; background:transparent; font-family:var(--fd); }
+.view-tab.active { background:rgba(255,255,255,0.12); color:#fff; }
+
+/* ── COST & FUNDING VIEW ── */
+.view-pane { display:none; }
+.view-pane.active { display:block; }
+
+/* PIE CHART */
+.pie-wrap { position:relative; width:170px; height:170px; margin:0 auto 0.5rem; }
+.pie-wrap svg { width:100%; height:100%; overflow:visible; }
+.pie-tooltip { position:absolute; background:rgba(255,255,255,0.97); color:var(--navy); border-radius:var(--rs); padding:0.4rem 0.65rem; font-size:0.73rem; font-weight:700; pointer-events:none; white-space:nowrap; opacity:0; transition:opacity 0.12s; z-index:20; transform:translate(-50%,-110%); box-shadow:var(--shm); }
+.pie-empty-hint { text-align:center; font-size:0.75rem; color:rgba(255,255,255,0.25); margin-top:0.5rem; margin-bottom:0.25rem; }
+
+/* RESULTS ROWS */
+.r-divider { height:1px; background:rgba(255,255,255,0.08); margin:0.75rem 0; }
+.r-row { display:flex; justify-content:space-between; align-items:baseline; padding:0.35rem 0; font-size:0.82rem; }
+.r-lbl { color:rgba(255,255,255,0.5); }
+.r-val { font-weight:700; font-size:0.92rem; }
+.c-pos { color:#7dd3c8; }
+.c-neg { color:#f4a7a7; }
+.c-neu { color:var(--blue-light); }
+
+.balance-box { margin-top:0.9rem; border-radius:var(--rs); padding:0.85rem 1rem; text-align:center; }
+.balance-lbl { font-size:0.67rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; opacity:0.6; margin-bottom:0.2rem; }
+.balance-val { font-size:1.8rem; font-weight:800; line-height:1; }
+.b-gap { background:rgba(244,167,167,0.12); border:1px solid rgba(244,167,167,0.25); }
+.b-gap .balance-val { color:#f4a7a7; }
+.b-ok  { background:rgba(125,211,200,0.12); border:1px solid rgba(125,211,200,0.25); }
+.b-ok  .balance-val { color:#7dd3c8; }
+
+.fund-bar-wrap { margin-top:0.9rem; }
+.fund-bar-header { display:flex; justify-content:space-between; font-size:0.68rem; color:rgba(255,255,255,0.38); margin-bottom:0.3rem; }
+.fund-bar-track { height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; }
+.fund-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg, var(--blue-mid), var(--blue-light)); transition:width 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+.sb-list { margin-top:0.8rem; }
+.sb-row { display:flex; align-items:center; gap:0.45rem; padding:0.22rem 0; font-size:0.74rem; }
+.sb-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.sb-name { flex:1; color:rgba(255,255,255,0.55); }
+.sb-val { font-weight:700; color:rgba(255,255,255,0.88); }
+.sb-pct { font-size:0.65rem; color:rgba(255,255,255,0.35); min-width:28px; text-align:right; }
+
+.r-note { margin-top:1rem; font-size:0.67rem; color:rgba(255,255,255,0.28); line-height:1.55; border-top:1px solid rgba(255,255,255,0.07); padding-top:0.85rem; }
+.r-note a { color:rgba(255,255,255,0.4); }
+
+/* ── HOUSEHOLD IMPACT VIEW ── */
+.hi-select-group { margin-bottom:0.75rem; }
+.hi-select-group label { font-size:0.67rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.45); display:block; margin-bottom:0.3rem; }
+.hi-select { width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:var(--rs); padding:0.45rem 0.65rem; color:#fff; font-family:var(--fd); font-size:0.84rem; cursor:pointer; appearance:none; }
+.hi-select option { background:var(--navy); }
+
+.hi-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin:0.8rem 0; }
+.hi-stat { background:rgba(255,255,255,0.05); border-radius:var(--rs); padding:0.7rem 0.8rem; text-align:center; }
+.hi-stat-val { font-size:1.35rem; font-weight:800; display:block; line-height:1; margin-bottom:0.2rem; }
+.hi-stat-lbl { font-size:0.67rem; color:rgba(255,255,255,0.4); letter-spacing:0.02em; }
+
+.hi-net-box { background:rgba(255,255,255,0.05); border-radius:var(--rs); padding:0.9rem; text-align:center; margin-bottom:0.85rem; }
+.hi-net-val { font-size:2rem; font-weight:800; line-height:1; display:block; }
+.hi-net-lbl { font-size:0.69rem; color:rgba(255,255,255,0.4); margin-top:0.25rem; }
+
+.ig-section-lbl { font-size:0.66rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:0.5rem; }
+.ig-table { width:100%; border-collapse:collapse; font-size:0.71rem; }
+.ig-table th { font-weight:700; text-align:left; padding:0.25rem 0.3rem; color:rgba(255,255,255,0.35); border-bottom:1px solid rgba(255,255,255,0.08); font-size:0.64rem; letter-spacing:0.05em; text-transform:uppercase; }
+.ig-table td { padding:0.3rem 0.3rem; color:rgba(255,255,255,0.7); border-bottom:1px solid rgba(255,255,255,0.05); vertical-align:middle; }
+.ig-table tr:last-child td { border-bottom:none; }
+.ig-bar { height:4px; border-radius:2px; background:rgba(255,255,255,0.08); overflow:hidden; width:44px; }
+.ig-bar-fill { height:100%; border-radius:2px; }
+.hi-note { font-size:0.66rem; color:rgba(255,255,255,0.25); line-height:1.55; border-top:1px solid rgba(255,255,255,0.07); padding-top:0.8rem; margin-top:0.8rem; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px) {
+  nav { padding:0 1.25rem; }
+  .nav-hamburger { display:flex; }
+  .nav-links { display:flex; flex-direction:column; position:fixed; top:0; right:0; width:min(300px,88vw); height:100vh; background:var(--white); border-left:1px solid var(--g2); padding:5rem 0 2rem; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); overflow-y:auto; z-index:99; list-style:none; }
+  nav.menu-open .nav-links { transform:translateX(0); }
+  .nav-links li { border-bottom:1px solid var(--g2); }
+  .nav-links a { padding:0.9rem 1.5rem; font-size:0.9rem; display:flex; justify-content:space-between; }
+  .nav-links a::after { display:none; }
+  .nav-links a:hover { background:var(--blue-pale); }
+  .page-body { grid-template-columns:1fr; padding:1.75rem 1.25rem 4rem; gap:1.75rem; }
+  #results-col { position:static; top:auto; align-self:auto; order:-1; }
+  .results-panel { max-height:none; overflow-y:visible; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a class="nav-brand" href="index.html">UBI<span>Project</span></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="history.html" onclick="closeMenu()">History</a></li>
+    <li><a href="why-ubi.html" onclick="closeMenu()">Why UBI</a></li>
+    <li><a href="examples.html" onclick="closeMenu()">Examples</a></li>
+    <li><a href="calculator.html" class="active" onclick="closeMenu()">Calculator</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMenu()"></div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <a class="back-link" href="index.html">← Back to home</a>
+    <h1>But how do you <em>pay</em> for it?</h1>
+    <p>Mix and match funding sources, set the rates, and see whether your plan covers the full cost. Switch to Household Impact to see who gains and who pays.</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="page-body">
+
+  <!-- ═══ LEFT: CONTROLS ═══ -->
+  <div id="controls-col">
+
+    <!-- UBI AMOUNT -->
+    <div class="ubi-panel">
+      <div class="ubi-panel-title">Monthly UBI per adult</div>
+      <div class="slider-header">
+        <span class="slider-label">Amount</span>
+        <span class="slider-current" id="ubi-display">$1,000 / mo</span>
+      </div>
+      <input type="range" id="ubi-slider" min="200" max="2000" step="50" value="1000">
+      <div class="range-row"><span>$200</span><span>$2,000</span></div>
+      <div class="ubi-meta">~258M eligible adults · Total annual cost: <strong id="ubi-total-cost">$3.1T</strong></div>
+    </div>
+
+    <!-- NEW REVENUE -->
+    <div class="ctrl-section-head">New revenue sources</div>
+
+    <!-- WEALTH TAX -->
+    <div class="fs-card" id="fc-wealth">
+      <div class="fs-header" onclick="toggleFS('wealth')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">🏦</span>
+        <span class="fs-name">Wealth tax</span>
+        <span class="fs-rev-badge" id="rev-wealth">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Annual tax on net assets above $50M.</p>
+        <button class="learn-more-btn" onclick="lm('lm-wealth',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-wealth">Elizabeth Warren's proposed 2% on wealth above $50M / 3% above $1B was estimated to raise ~$200B/yr. Proponents argue top wealth is largely self-perpetuating and lightly taxed. Critics cite capital flight risk and valuation difficulty for illiquid assets. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Inst.</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">Rate on assets &gt;$50M</span>
+            <span class="fs-slider-val" id="sv-wealth">2%</span>
+          </div>
+          <input type="range" id="sr-wealth" min="0.5" max="5" step="0.5" value="2">
+          <div class="range-row"><span>0.5%</span><span>5%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VAT -->
+    <div class="fs-card" id="fc-vat">
+      <div class="fs-header" onclick="toggleFS('vat')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">🛒</span>
+        <span class="fs-name">Value-added tax (VAT)</span>
+        <span class="fs-rev-badge" id="rev-vat">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Consumption tax applied at each production stage. Used by most developed nations.</p>
+        <button class="learn-more-btn" onclick="lm('lm-vat',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-vat">A 10% VAT on the ~$18T US consumption base raises ~$950B/yr after exemptions. Andrew Yang's Freedom Dividend relied on a 10% VAT. Regressive on its own — but UBI fully offsets this for anyone below median income, making the combined policy progressive. <a href="https://2020.yang2020.com/policies/the-freedom-dividend/" target="_blank" rel="noopener" class="src">Yang2020</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">VAT rate</span>
+            <span class="fs-slider-val" id="sv-vat">10%</span>
+          </div>
+          <input type="range" id="sr-vat" min="1" max="20" step="1" value="10">
+          <div class="range-row"><span>1%</span><span>20%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAND VALUE TAX -->
+    <div class="fs-card" id="fc-lvt">
+      <div class="fs-header" onclick="toggleFS('lvt')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">🌾</span>
+        <span class="fs-name">Land value tax (LVT)</span>
+        <span class="fs-rev-badge" id="rev-lvt">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Tax on the unimproved value of land — not buildings. Championed by Thomas Paine and Henry George.</p>
+        <button class="learn-more-btn" onclick="lm('lm-lvt',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-lvt">Total US land value is ~$23 trillion. An LVT taxes location value — created by society and infrastructure, not the owner's effort. Economists across the spectrum consider it one of the most efficient taxes: it cannot be avoided by working less or moving capital. Paine proposed a version in 1797. <a href="https://www.ssa.gov/history/paine4.html" target="_blank" rel="noopener" class="src">Paine, SSA archive</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">Annual rate on land value</span>
+            <span class="fs-slider-val" id="sv-lvt">1%</span>
+          </div>
+          <input type="range" id="sr-lvt" min="0.5" max="5" step="0.5" value="1">
+          <div class="range-row"><span>0.5%</span><span>5%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARBON DIVIDEND -->
+    <div class="fs-card" id="fc-carbon">
+      <div class="fs-header" onclick="toggleFS('carbon')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">☁️</span>
+        <span class="fs-name">Carbon dividend</span>
+        <span class="fs-rev-badge" id="rev-carbon">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Fee on fossil fuel emissions returned as equal cash dividends to all citizens.</p>
+        <button class="learn-more-btn" onclick="lm('lm-carbon',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-carbon">The Climate Leadership Council proposes $40–$100/ton, returning all proceeds as citizen dividends. Alaska's oil fund is the working model. Revenue declines over time as emissions fall — which is the point. <a href="https://www.clcouncil.org/our-plan/" target="_blank" rel="noopener" class="src">CLC</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">Price per ton CO₂</span>
+            <span class="fs-slider-val" id="sv-carbon">$50/ton</span>
+          </div>
+          <input type="range" id="sr-carbon" min="20" max="150" step="10" value="50">
+          <div class="range-row"><span>$20</span><span>$150</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCIAL TRANSACTION TAX -->
+    <div class="fs-card" id="fc-ftt">
+      <div class="fs-header" onclick="toggleFS('ftt')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">📈</span>
+        <span class="fs-name">Financial transaction tax</span>
+        <span class="fs-rev-badge" id="rev-ftt">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Small tax on stock, bond, and derivative trades. Primarily paid by high-frequency traders.</p>
+        <button class="learn-more-btn" onclick="lm('lm-ftt',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-ftt">The CBO estimates a 0.1% rate raises ~$78B/yr. ~$100T in annual US financial transactions. Revenue is sensitive to behavioral change — volume falls as rates rise, which is also the policy intent. <a href="https://www.cbo.gov/publication/56182" target="_blank" rel="noopener" class="src">CBO</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">Rate on transactions</span>
+            <span class="fs-slider-val" id="sv-ftt">0.1%</span>
+          </div>
+          <input type="range" id="sr-ftt" min="0.05" max="0.5" step="0.05" value="0.1">
+          <div class="range-row"><span>0.05%</span><span>0.5%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTOMATION LEVY -->
+    <div class="fs-card" id="fc-auto">
+      <div class="fs-header" onclick="toggleFS('auto')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">🤖</span>
+        <span class="fs-name">Automation levy</span>
+        <span class="fs-rev-badge" id="rev-auto">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Tax on companies replacing workers with automation. Proposed by Bill Gates.</p>
+        <button class="learn-more-btn" onclick="lm('lm-auto',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-auto">Links the cause directly to the remedy: companies profiting from displacement pay for the safety net beneath displaced workers. Estimated ~$1.5T in automated labor substitution value annually and growing rapidly. Key challenge is defining and measuring "automated displacement." <a href="https://www.quartz.com/911968/bill-gates-the-robot-that-takes-your-job-should-pay-taxes/" target="_blank" rel="noopener" class="src">Quartz/Gates</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">Levy rate</span>
+            <span class="fs-slider-val" id="sv-auto">10%</span>
+          </div>
+          <input type="range" id="sr-auto" min="5" max="30" step="5" value="10">
+          <div class="range-row"><span>5%</span><span>30%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP INCOME TAX -->
+    <div class="fs-card" id="fc-income">
+      <div class="fs-header" onclick="toggleFS('income')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">💼</span>
+        <span class="fs-name">Higher top income tax rates</span>
+        <span class="fs-rev-badge" id="rev-income">$0/yr</span>
+      </div>
+      <div class="fs-body">
+        <p class="fs-short-desc">Raise marginal rates on incomes above $400K. The US top rate was 91% in the 1950s.</p>
+        <button class="learn-more-btn" onclick="lm('lm-income',this)">Learn more ↓</button>
+        <div class="learn-more-content" id="lm-income">Each point above the current 37% top rate raises ~$15–20B/yr. The top rate was 91% through 1963, 70% through 1980, 50% through 1986. <a href="https://www.taxpolicycenter.org/" target="_blank" rel="noopener" class="src">Tax Policy Center</a></div>
+        <div class="fs-slider-section">
+          <div class="fs-slider-header">
+            <span class="fs-slider-label">Top marginal rate (income &gt;$400K)</span>
+            <span class="fs-slider-val" id="sv-income">45%</span>
+          </div>
+          <input type="range" id="sr-income" min="37" max="99" step="1" value="45">
+          <div class="range-row"><span>37% (current)</span><span>99%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXISTING WELFARE REDIRECT -->
+    <div class="ctrl-section-head" style="margin-top:1rem;">Redirect existing welfare programs</div>
+    <p style="font-size:0.74rem;color:var(--wg4);margin-bottom:0.7rem;line-height:1.55;">Toggle programs whose budgets would be redirected into UBI, reducing the net program cost.</p>
+
+    <div class="welfare-toggle" id="wt-ssa" onclick="toggleW('ssa')">
+      <div class="fs-dot"></div>
+      <div class="welfare-info">
+        <span class="welfare-name">Social Security — SSI supplement</span>
+        <span class="welfare-sub">Supplemental Security Income redirected to UBI floor</span>
+      </div>
+      <span class="welfare-amt" id="wrev-ssa">$65B/yr</span>
+    </div>
+
+    <div class="welfare-toggle" id="wt-ssdi" onclick="toggleW('ssdi')">
+      <div class="fs-dot"></div>
+      <div class="welfare-info">
+        <span class="welfare-name">SSDI (Disability Insurance)</span>
+        <span class="welfare-sub">Income floor replaced by UBI; disability-specific needs separate</span>
+      </div>
+      <span class="welfare-amt" id="wrev-ssdi">$162B/yr</span>
+    </div>
+
+    <div class="welfare-toggle" id="wt-ui" onclick="toggleW('ui')">
+      <div class="fs-dot"></div>
+      <div class="welfare-info">
+        <span class="welfare-name">Unemployment Insurance (UI)</span>
+        <span class="welfare-sub">UBI eliminates need for temporary income replacement</span>
+      </div>
+      <span class="welfare-amt" id="wrev-ui">$33B/yr</span>
+    </div>
+
+    <div class="welfare-toggle" id="wt-snap" onclick="toggleW('snap')">
+      <div class="fs-dot"></div>
+      <div class="welfare-info">
+        <span class="welfare-name">SNAP (Food Stamps)</span>
+        <span class="welfare-sub">Cash replaces in-kind food vouchers with full flexibility</span>
+      </div>
+      <span class="welfare-amt" id="wrev-snap">$113B/yr</span>
+    </div>
+
+    <div class="welfare-toggle" id="wt-tanf" onclick="toggleW('tanf')">
+      <div class="fs-dot"></div>
+      <div class="welfare-info">
+        <span class="welfare-name">TANF (Cash Assistance)</span>
+        <span class="welfare-sub">Replaced by universal, non-stigmatized UBI floor</span>
+      </div>
+      <span class="welfare-amt" id="wrev-tanf">$17B/yr</span>
+    </div>
+
+    <!-- MONEY PRINTING -->
+    <div class="ctrl-section-head" style="margin-top:1rem;">Monetary financing</div>
+
+    <div class="print-card" id="fc-print">
+      <div class="fs-header" onclick="toggleFS('print')">
+        <div class="fs-dot"></div>
+        <span class="fs-icon">🖨️</span>
+        <span class="fs-name">Money printing / deficit spending</span>
+        <span class="fs-rev-badge" id="rev-print">$0/yr</span>
+      </div>
+      <div class="infl-block" id="infl-block">
+        <span class="infl-pct" id="infl-pct">~1.1% additional inflation</span>
+        <span class="infl-note">Estimated additional annual inflation from unfunded monetary expansion at this scale.</span>
+        <div class="print-slider-header">
+          <span class="print-slider-label">Amount financed</span>
+          <span class="print-slider-val" id="sv-print">$500B/yr</span>
+        </div>
+        <input type="range" id="sr-print" min="100" max="3000" step="100" value="500">
+        <div class="range-row"><span>$100B</span><span>$3T</span></div>
+        <p class="print-warning">⚠️ Most serious UBI proposals do not rely on monetary expansion. Shown here for completeness — redistributive UBI funded by taxes does not cause inflation; money creation does.</p>
+      </div>
+    </div>
+
+  </div><!-- /controls-col -->
+
+
+  <!-- ═══ RIGHT: RESULTS ═══ -->
+  <div id="results-col">
+    <div class="results-panel">
+
+      <!-- VIEW TABS -->
+      <div class="view-tabs">
+        <button class="view-tab active" onclick="switchView('cost',this)">Cost &amp; Funding</button>
+        <button class="view-tab" onclick="switchView('household',this)">Household Impact</button>
+      </div>
+
+      <!-- ────── COST & FUNDING ────── -->
+      <div class="view-pane active" id="vp-cost">
+        <span class="kicker">Your UBI plan</span>
+
+        <!-- PIE CHART -->
+        <div class="pie-wrap" id="pie-wrap">
+          <svg id="pie-svg" viewBox="0 0 170 170"></svg>
+          <div class="pie-tooltip" id="pie-tt"></div>
+        </div>
+        <div class="pie-empty-hint" id="pie-hint">Select funding sources to see breakdown</div>
+
+        <div class="r-divider"></div>
+
+        <div class="r-row"><span class="r-lbl">Monthly per adult</span><span class="r-val c-neu" id="r-monthly">$1,000</span></div>
+        <div class="r-row"><span class="r-lbl">Program cost / yr</span><span class="r-val c-neg" id="r-cost">$3.1T</span></div>
+        <div class="r-row"><span class="r-lbl">Funding raised / yr</span><span class="r-val c-pos" id="r-raised">$0</span></div>
+
+        <div class="balance-box b-gap" id="balance-box">
+          <div class="balance-lbl" id="bal-lbl">Funding gap</div>
+          <div class="balance-val" id="bal-val">–$3.1T</div>
+        </div>
+
+        <div class="fund-bar-wrap">
+          <div class="fund-bar-header"><span>Funded</span><span id="r-pct">0%</span></div>
+          <div class="fund-bar-track"><div class="fund-bar-fill" id="r-bar" style="width:0%"></div></div>
+        </div>
+
+        <div class="sb-list" id="sb-list">
+          <p style="font-size:0.72rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:0.6rem;">No sources selected yet</p>
+        </div>
+
+        <div class="r-note">Revenue estimates are illustrative, based on published policy analyses. Real figures depend on legislation, enforcement, and behavioral responses. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener">Roosevelt Institute</a></div>
+      </div><!-- /vp-cost -->
+
+      <!-- ────── HOUSEHOLD IMPACT ────── -->
+      <div class="view-pane" id="vp-household">
+        <span class="kicker">Household impact</span>
+
+        <div class="hi-select-group" style="margin-top:0.5rem;">
+          <label>Household type</label>
+          <select class="hi-select" id="hi-type" onchange="updateHH()">
+            <option value="1">Single adult</option>
+            <option value="2" selected>Two adults</option>
+            <option value="3">Single parent + 1 child</option>
+            <option value="4">Two adults + 2 children</option>
+          </select>
+        </div>
+
+        <div class="hi-select-group">
+          <label>Annual household income</label>
+          <div class="slider-header" style="color:rgba(255,255,255,0.5);">
+            <span style="font-size:0.67rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Income</span>
+            <span style="font-family:var(--fd);font-size:0.9rem;font-weight:600;color:var(--amber-l);" id="hi-income-disp">$45,000/yr</span>
+          </div>
+          <input type="range" id="hi-income" min="0" max="250000" step="1000" value="45000" oninput="updateHH()" style="accent-color:var(--amber-l);">
+          <div class="range-row" style="color:rgba(255,255,255,0.3);"><span>$0</span><span>$250k+</span></div>
+        </div>
+
+        <div class="hi-stats-grid">
+          <div class="hi-stat">
+            <span class="hi-stat-val c-pos" id="hi-ubi-recv">$24,000</span>
+            <span class="hi-stat-lbl">UBI received / yr</span>
+          </div>
+          <div class="hi-stat">
+            <span class="hi-stat-val c-neg" id="hi-tax-cost">$4,500</span>
+            <span class="hi-stat-lbl">Added tax burden / yr</span>
+          </div>
+        </div>
+
+        <div class="hi-net-box">
+          <span class="hi-net-val c-pos" id="hi-net">+$19,500</span>
+          <div class="hi-net-lbl">Net annual impact</div>
+        </div>
+
+        <div class="ig-section-lbl">Tax incidence by income group</div>
+        <table class="ig-table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>UBI/yr</th>
+              <th>Tax/yr</th>
+              <th>Net</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ig-tbody"></tbody>
+        </table>
+
+        <div class="hi-note">Household estimates use approximate tax incidence by income bracket. Illustrative only — not financial advice. Real tax burden depends on specific legislation.</div>
+      </div><!-- /vp-household -->
+
+    </div><!-- /results-panel -->
+  </div><!-- /results-col -->
+
+</div><!-- /page-body -->
+
+<footer style="background:var(--ink);color:var(--wg3);padding:2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.06);">
+  <p style="font-size:0.78rem;">UBI Project · <a href="index.html" style="color:var(--amber-l);text-decoration:none;">Home</a> · <a href="history.html" style="color:var(--amber-l);text-decoration:none;">History</a> · <a href="why-ubi.html" style="color:var(--amber-l);text-decoration:none;">Why UBI</a> · <a href="examples.html" style="color:var(--amber-l);text-decoration:none;">Examples</a></p>
+</footer>
+
+<script>
+/* ════ NAV ════ */
+const _nav = document.getElementById('main-nav');
+const _hbg = document.getElementById('nav-hamburger');
+function toggleMenu() { const o = _nav.classList.toggle('menu-open'); _hbg.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden' : ''; }
+function closeMenu()  { _nav.classList.remove('menu-open'); _hbg.setAttribute('aria-expanded','false'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* ════ LEARN MORE TOGGLE ════ */
+function lm(id, btn) {
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? 'Show less ↑' : 'Learn more ↓';
+}
+
+/* ════ VIEW TABS ════ */
+function switchView(id, tab) {
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('vp-' + id).classList.add('active');
+  if (id === 'household') updateHH();
+}
+
+/* ════ DATA MODEL ════ */
+const ADULTS_M = 258; // millions
+const PIE_COLORS = {
+  wealth: '#68c5bc', vat: '#e8b86e', lvt: '#9fd18a', carbon: '#7bb8a0',
+  ftt: '#a89dd6', auto: '#f0b86e', income: '#e89090', print: '#c06060',
+  ssa: '#80cbc4', ssdi: '#80b0c0', ui: '#88d0b8', snap: '#a8c890', tanf: '#b8d8a0'
+};
+
+// Revenue calculators (returns $B)
+const REV = {
+  wealth: r => Math.round(200 * r / 2),         // ~$200B at 2% on $20T
+  vat:    r => Math.round(950 * r / 10),         // ~$950B at 10%
+  lvt:    r => Math.round(230 * r / 1),          // ~$230B at 1% on $23T
+  carbon: r => Math.round(5000 * r / 1000),      // 5Gt × $/ton ÷ 1000
+  ftt:    r => Math.round(100000 * r / 100),     // $100T × rate
+  auto:   r => Math.round(1500 * r / 100),       // $1.5T × rate
+  income: r => Math.round(Math.max(0, r - 37) * 17), // each point above 37% ≈ $17B
+  print:  r => r,                                // direct dollar input
+};
+
+const WELFARE_AMT = { ssa: 65, ssdi: 162, ui: 33, snap: 113, tanf: 17 };
+
+const activeFS = new Set();
+const activeW  = new Set();
+
+/* ════ HELPERS ════ */
+function fmt(b) {
+  if (b >= 1000) return '$' + (b / 1000).toFixed(b % 1000 === 0 ? 0 : 1) + 'T';
+  if (b >= 1)    return '$' + Math.round(b) + 'B';
+  return '$' + Math.round(b * 1000) + 'M';
+}
+function getRate(key) {
+  const el = document.getElementById('sr-' + key);
+  return el ? parseFloat(el.value) : 0;
+}
+function getMonthly() { return parseInt(document.getElementById('ubi-slider').value); }
+function totalCostB() { return Math.round(ADULTS_M * getMonthly() * 12 / 1000); }
+
+/* ════ TOGGLE FUNCTIONS ════ */
+function toggleFS(key) {
+  const card = document.getElementById('fc-' + key);
+  if (activeFS.has(key)) {
+    activeFS.delete(key);
+    card.classList.remove('active');
+    if (key === 'print') document.getElementById('infl-block').style.display = 'none';
+  } else {
+    activeFS.add(key);
+    card.classList.add('active');
+    if (key === 'print') document.getElementById('infl-block').style.display = 'block';
+  }
+  update();
+}
+
+function toggleW(key) {
+  const el = document.getElementById('wt-' + key);
+  if (activeW.has(key)) { activeW.delete(key); el.classList.remove('active'); }
+  else                  { activeW.add(key);    el.classList.add('active');    }
+  update();
+}
+
+/* ════ MAIN UPDATE ════ */
+function update() {
+  const monthly  = getMonthly();
+  const costB    = totalCostB();
+
+  // Sliders & displays
+  document.getElementById('ubi-display').textContent    = '$' + monthly.toLocaleString() + ' / mo';
+  document.getElementById('ubi-total-cost').textContent = fmt(costB);
+  document.getElementById('r-monthly').textContent      = '$' + monthly.toLocaleString();
+  document.getElementById('r-cost').textContent         = fmt(costB) + '/yr';
+
+  // Collect revenues
+  let totalRev = 0;
+  const breakdown = [];
+
+  for (const key of Object.keys(REV)) {
+    const rev = activeFS.has(key) ? REV[key](getRate(key)) : 0;
+    if (activeFS.has(key)) {
+      totalRev += rev;
+      if (rev > 0) breakdown.push({ key, name: keyName(key), color: PIE_COLORS[key], rev });
+    }
+    // update badge
+    const badge = document.getElementById('rev-' + key);
+    if (badge) badge.textContent = activeFS.has(key) ? fmt(rev) + '/yr' : '$0/yr';
+  }
+  for (const key of Object.keys(WELFARE_AMT)) {
+    if (activeW.has(key)) {
+      const rev = WELFARE_AMT[key];
+      totalRev += rev;
+      breakdown.push({ key: 'w' + key, name: welfareName(key), color: PIE_COLORS[key], rev });
+    }
+  }
+
+  // Inflation estimate for print
+  if (activeFS.has('print')) {
+    const printAmt = getRate('print');
+    const inflEst = (printAmt / 28000 * 100 * 0.55).toFixed(1);
+    document.getElementById('infl-pct').textContent = '~' + inflEst + '% additional inflation';
+    document.getElementById('sv-print').textContent  = fmt(printAmt) + '/yr';
+    document.getElementById('rev-print').textContent = fmt(printAmt) + '/yr';
+  }
+
+  document.getElementById('r-raised').textContent = fmt(totalRev) + '/yr';
+
+  const gap = costB - totalRev;
+  const pct = costB > 0 ? Math.min(100, Math.round(totalRev / costB * 100)) : 0;
+  document.getElementById('r-pct').textContent  = pct + '%';
+  document.getElementById('r-bar').style.width  = pct + '%';
+
+  const bbox = document.getElementById('balance-box');
+  if (gap <= 0) {
+    bbox.className = 'balance-box b-ok';
+    document.getElementById('bal-lbl').textContent = gap === 0 ? 'Fully funded' : 'Surplus';
+    document.getElementById('bal-val').textContent = gap === 0 ? '✓ Balanced' : '+' + fmt(-gap);
+  } else {
+    bbox.className = 'balance-box b-gap';
+    document.getElementById('bal-lbl').textContent = 'Funding gap';
+    document.getElementById('bal-val').textContent = '–' + fmt(gap);
+  }
+
+  // Source breakdown list
+  const sbl = document.getElementById('sb-list');
+  if (breakdown.length === 0) {
+    sbl.innerHTML = '<p style="font-size:0.72rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:0.6rem;">No sources selected yet</p>';
+  } else {
+    const sorted = [...breakdown].sort((a, b) => b.rev - a.rev);
+    sbl.innerHTML = sorted.map(b => {
+      const pct = totalRev > 0 ? Math.round(b.rev / totalRev * 100) : 0;
+      return `<div class="sb-row">
+        <div class="sb-dot" style="background:${b.color}"></div>
+        <span class="sb-name">${b.name}</span>
+        <span class="sb-val">${fmt(b.rev)}</span>
+        <span class="sb-pct">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  drawPie(breakdown, totalRev, costB);
+  updateHH();
+}
+
+/* ════ PIE CHART ════ */
+function drawPie(breakdown, totalRev, costB) {
+  const svg   = document.getElementById('pie-svg');
+  const hint  = document.getElementById('pie-hint');
+  const tt    = document.getElementById('pie-tt');
+  const wrap  = document.getElementById('pie-wrap');
+  svg.innerHTML = '';
+
+  const cx = 85, cy = 85, ro = 68, ri = 42;
+
+  if (breakdown.length === 0) {
+    hint.style.display = 'block';
+    // empty ring
+    const ring = makeSVG('circle', { cx, cy, r: (ro+ri)/2, fill:'none', stroke:'rgba(255,255,255,0.07)', 'stroke-width': ro - ri });
+    svg.appendChild(ring);
+    addCenter(svg, cx, cy, '0%', 'funded');
+    return;
+  }
+  hint.style.display = 'none';
+
+  // Add gap slice if underfunded
+  const gap = Math.max(0, costB - totalRev);
+  const slices = [...breakdown];
+  if (gap > 0) slices.push({ key:'gap', name:'Unfunded gap', color:'rgba(255,255,255,0.07)', rev:gap, isGap:true });
+  const grand = slices.reduce((s, b) => s + b.rev, 0);
+
+  let angle = -Math.PI / 2;
+  slices.forEach(slice => {
+    const span = (slice.rev / grand) * 2 * Math.PI;
+    if (span < 0.008) { angle += span; return; }
+    const a2 = angle + span;
+    const large = span > Math.PI ? 1 : 0;
+
+    const ox1 = cx + ro * Math.cos(angle), oy1 = cy + ro * Math.sin(angle);
+    const ox2 = cx + ro * Math.cos(a2),    oy2 = cy + ro * Math.sin(a2);
+    const ix1 = cx + ri * Math.cos(angle), iy1 = cy + ri * Math.sin(angle);
+    const ix2 = cx + ri * Math.cos(a2),    iy2 = cy + ri * Math.sin(a2);
+
+    const d = `M${ix1},${iy1} L${ox1},${oy1} A${ro},${ro} 0 ${large},1 ${ox2},${oy2} L${ix2},${iy2} A${ri},${ri} 0 ${large},0 ${ix1},${iy1}Z`;
+    const path = makeSVG('path', { d, fill:slice.color, stroke:'rgba(46,44,40,0.5)', 'stroke-width':'1', style:'cursor:'+(slice.isGap?'default':'pointer')+';transition:opacity 0.15s' });
+
+    if (!slice.isGap) {
+      const pct = Math.round(slice.rev / grand * 100);
+      const midA = angle + span / 2;
+      path.addEventListener('mouseenter', e => {
+        path.style.opacity = '0.8';
+        tt.textContent = `${slice.name}: ${fmt(slice.rev)} (${pct}%)`;
+        tt.style.opacity = '1';
+      });
+      path.addEventListener('mousemove', e => {
+        const r = wrap.getBoundingClientRect();
+        tt.style.left = (e.clientX - r.left) + 'px';
+        tt.style.top  = (e.clientY - r.top - 8) + 'px';
+      });
+      path.addEventListener('mouseleave', () => { path.style.opacity = '1'; tt.style.opacity = '0'; });
+      path.addEventListener('touchstart', e => {
+        e.preventDefault();
+        tt.textContent = `${slice.name}: ${fmt(slice.rev)} (${pct}%)`;
+        tt.style.opacity = tt.style.opacity === '1' ? '0' : '1';
+        const r = wrap.getBoundingClientRect();
+        tt.style.left = cx + 'px'; tt.style.top = (cy - 12) + 'px';
+      }, { passive: false });
+    }
+    svg.appendChild(path);
+    angle = a2;
+  });
+
+  const pctFunded = costB > 0 ? Math.min(100, Math.round(totalRev / costB * 100)) : 0;
+  addCenter(svg, cx, cy, pctFunded + '%', 'funded');
+}
+
+function makeSVG(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function addCenter(svg, cx, cy, line1, line2) {
+  const t1 = makeSVG('text', { x:cx, y:cy-5, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:'#fff', 'font-size':'15', 'font-weight':'600', 'font-family':"'Lora',serif" });
+  t1.textContent = line1;
+  const t2 = makeSVG('text', { x:cx, y:cy+12, 'text-anchor':'middle', 'dominant-baseline':'middle', fill:'rgba(255,255,255,0.4)', 'font-size':'9', 'font-family':"'Nunito',sans-serif" });
+  t2.textContent = line2;
+  svg.appendChild(t1);
+  svg.appendChild(t2);
+}
+
+/* ════ KEY NAME HELPERS ════ */
+function keyName(k) {
+  return { wealth:'Wealth tax', vat:'VAT', lvt:'Land value tax', carbon:'Carbon dividend', ftt:'Fin. transaction tax', auto:'Automation levy', income:'Top income tax', print:'Deficit/printing' }[k] || k;
+}
+function welfareName(k) {
+  return { ssa:'SSA/SSI redirect', ssdi:'SSDI redirect', ui:'UI redirect', snap:'SNAP redirect', tanf:'TANF redirect' }[k] || k;
+}
+
+/* ════ HOUSEHOLD IMPACT ════ */
+const IG = [
+  { label:'<$30k',      rep:20000,  adults:1 },
+  { label:'$30–60k',    rep:45000,  adults:1.5 },
+  { label:'$60–100k',   rep:80000,  adults:1.8 },
+  { label:'$100–200k',  rep:150000, adults:2 },
+  { label:'>$200k',     rep:280000, adults:2 },
+];
+
+function taxBurden(income, monthly) {
+  let b = 0;
+  if (activeFS.has('vat')) {
+    const consRate = Math.max(0.45, 0.88 - income * 0.0000008);
+    b += income * consRate * (getRate('vat') / 100);
+  }
+  if (activeFS.has('income')) {
+    const over400 = Math.max(0, income - 400000);
+    b += over400 * Math.max(0, getRate('income') / 100 - 0.37);
+  }
+  if (activeFS.has('wealth') && income > 500000) {
+    b += income * 0.015 * (getRate('wealth') / 2);
+  }
+  if (activeFS.has('ftt')) {
+    const assetProxy = Math.max(0, (income - 40000) * 1.5);
+    b += assetProxy * (getRate('ftt') / 100) * 0.4;
+  }
+  if (activeFS.has('carbon')) {
+    const tonsPerHh = Math.max(2.5, 4.5 + income * 0.000008);
+    b += tonsPerHh * getRate('carbon');
+  }
+  if (activeFS.has('lvt')) {
+    const landProxy = income > 80000 ? income * 0.4 * (getRate('lvt') / 100) : income * 0.15 * (getRate('lvt') / 100);
+    b += landProxy;
+  }
+  if (activeFS.has('auto') && income > 150000) {
+    b += income * 0.002 * (getRate('auto') / 10);
+  }
+  return Math.round(Math.max(0, b));
+}
+
+function updateHH() {
+  const monthly = getMonthly();
+  const income  = parseInt(document.getElementById('hi-income').value);
+  const type    = parseInt(document.getElementById('hi-type').value);
+  document.getElementById('hi-income-disp').textContent = income >= 250000 ? '$250,000+/yr' : '$' + income.toLocaleString() + '/yr';
+
+  // Adults who receive UBI
+  const ubiAdults = [0, 1, 2, 1, 2][type];
+  const ubiRecv   = ubiAdults * monthly * 12;
+  const burden    = taxBurden(income, monthly);
+  const net       = ubiRecv - burden;
+
+  document.getElementById('hi-ubi-recv').textContent = '$' + ubiRecv.toLocaleString() + '/yr';
+  document.getElementById('hi-tax-cost').textContent = '$' + burden.toLocaleString() + '/yr';
+  const netEl = document.getElementById('hi-net');
+  netEl.textContent = (net >= 0 ? '+$' : '-$') + Math.abs(net).toLocaleString();
+  netEl.className   = 'hi-net-val ' + (net >= 0 ? 'c-pos' : 'c-neg');
+
+  // Income group table
+  const ubiPerAdult = monthly * 12;
+  const rows = IG.map(g => {
+    const ubiG   = Math.round(g.adults * ubiPerAdult);
+    const taxG   = taxBurden(g.rep, monthly);
+    const netG   = ubiG - taxG;
+    const netStr = (netG >= 0 ? '+$' : '-$') + (Math.abs(netG) / 1000).toFixed(1) + 'k';
+    const cls    = netG >= 0 ? 'c-pos' : 'c-neg';
+    const maxAbs = 30000;
+    const barW   = Math.round(Math.min(100, Math.abs(netG) / maxAbs * 100));
+    const barClr = netG >= 0 ? '#7dd3c8' : '#f4a7a7';
+    return `<tr>
+      <td>${g.label}</td>
+      <td>$${(ubiG/1000).toFixed(0)}k</td>
+      <td>$${(taxG/1000).toFixed(1)}k</td>
+      <td class="${cls}">${netStr}</td>
+      <td><div class="ig-bar"><div class="ig-bar-fill" style="width:${barW}%;background:${barClr}"></div></div></td>
+    </tr>`;
+  });
+  document.getElementById('ig-tbody').innerHTML = rows.join('');
+}
+
+/* ════ WIRE UP SLIDERS ════ */
+document.getElementById('ubi-slider').addEventListener('input', update);
+document.getElementById('hi-income').addEventListener('input', updateHH);
+
+// Revenue sliders
+const sliderFmt = { wealth:'%', vat:'%', lvt:'%', carbon:'$/ton', ftt:'%', auto:'%', income:'%' };
+Object.keys(sliderFmt).forEach(key => {
+  const el = document.getElementById('sr-' + key);
+  if (!el) return;
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    const sv = document.getElementById('sv-' + key);
+    if (sv) sv.textContent = sliderFmt[key] === '$/ton' ? '$' + v + '/ton' : v + '%';
+    update();
+  });
+});
+
+// Print slider
+const printSl = document.getElementById('sr-print');
+if (printSl) {
+  printSl.addEventListener('input', () => {
+    const v = parseInt(printSl.value);
+    document.getElementById('sv-print').textContent = fmt(v) + '/yr';
+    update();
+  });
+}
+
+/* ════ INIT ════ */
+update();
+</script>
+</body>
+</html>

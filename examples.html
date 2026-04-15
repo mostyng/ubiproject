@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examples &amp; Evidence — UBI Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;--off-white:#f7f9fc;--blue-pale:#e8f0fb;--blue-light:#d0e3f8;
+  --blue:#1a4d8f;--blue-mid:#2563b0;--blue-dark:#0f2d5c;--navy:#0a1f3d;
+  --red:#c0392b;--red-hover:#a93226;--red-pale:#fdf1f0;
+  --g1:#f0f2f5;--g2:#dde2ea;--g3:#b0b8c4;--g4:#6b7685;--g5:#3d4755;
+  --teal:#1a6b5a;--teal-p:#e8f4f1;
+  --amber:#8a6020;--amber-p:#fdf4e0;
+  --fd:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --fb:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --r:8px;--rs:4px;
+  --sh:0 2px 10px rgba(10,31,61,0.07);--shm:0 4px 24px rgba(10,31,61,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fd);background:var(--white);color:var(--navy);font-size:16px;line-height:1.75;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);border-bottom:2px solid var(--blue);padding:0 2rem;display:flex;align-items:center;}
+.nav-brand{font-size:1.05rem;font-weight:800;color:var(--blue-dark);text-decoration:none;padding:1rem 0;margin-right:auto;}
+.nav-brand span{color:var(--red);}
+.nav-links{display:flex;list-style:none;}
+.nav-links a{display:block;padding:1rem 0.9rem;font-size:0.78rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--g4);text-decoration:none;transition:color 0.18s;position:relative;}
+.nav-links a::after{content:"";position:absolute;bottom:0;left:0.9rem;right:0.9rem;height:2px;background:var(--red);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--blue-dark);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--blue-dark);}
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:pointer;border-radius:var(--rs);}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--navy);border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,width 0.3s ease;transform-origin:center;}
+nav.menu-open .nav-hamburger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+nav.menu-open .nav-hamburger span:nth-child(2){opacity:0;width:0;}
+nav.menu-open .nav-hamburger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-overlay{display:none;position:fixed;inset:0;background:rgba(10,31,61,0.4);z-index:98;backdrop-filter:blur(2px);}
+nav.menu-open ~ .nav-overlay{display:block;}
+
+.page-hero{background:linear-gradient(160deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-mid) 100%);padding:4rem 2rem 3rem;}
+.back-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.65);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1.25rem;transition:color 0.18s;}
+.back-link:hover{color:#fff;}
+.page-hero h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;line-height:1.15;color:#fff;max-width:680px;margin-bottom:0.85rem;letter-spacing:-0.02em;}
+.page-hero p{font-size:1rem;color:rgba(255,255,255,0.72);max-width:600px;line-height:1.78;}
+
+section{padding:5rem 2rem;}
+.inner{max-width:780px;margin:0 auto;}
+.wide{max-width:1060px;margin:0 auto;}
+.sect-alt{background:var(--off-white);}
+
+.kicker{font-size:0.7rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;display:block;}
+h2{font-size:clamp(1.6rem,3vw,2.1rem);font-weight:800;line-height:1.18;color:var(--navy);margin-bottom:1.1rem;letter-spacing:-0.02em;}
+h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:0.35rem;}
+p{color:var(--g5);margin-bottom:1rem;}
+p:last-child{margin-bottom:0;}
+strong{color:var(--navy);font-weight:700;}
+.divider{width:40px;height:3px;background:var(--red);border-radius:2px;margin-bottom:1.5rem;}
+a.src{color:var(--blue-mid);text-decoration:none;font-size:0.75rem;font-weight:600;white-space:nowrap;transition:color 0.15s;}
+a.src:hover{color:var(--red);}
+a.src::before{content:"[";font-weight:400;color:var(--g3);}
+a.src::after{content:"]";font-weight:400;color:var(--g3);}
+
+/* PILOT CARDS */
+.pilots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.25rem;margin-top:1.75rem;}
+.pilot-card{background:var(--white);border:1px solid var(--g2);border-top:3px solid var(--blue);border-radius:0 0 var(--r) var(--r);overflow:hidden;transition:box-shadow 0.2s,transform 0.2s;}
+.sect-alt .pilot-card{background:var(--off-white);}
+.pilot-card:hover{box-shadow:var(--shm);transform:translateY(-2px);}
+.pilot-header{padding:1rem 1.2rem 0.7rem;display:flex;align-items:center;gap:0.7rem;}
+.pilot-flag{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--g1);flex-shrink:0;}
+.pilot-name{font-size:0.92rem;font-weight:700;color:var(--navy);}
+.pilot-sub{font-size:0.72rem;color:var(--g4);}
+.pilot-body{padding:0 1.2rem 1.2rem;}
+.pilot-body p{font-size:0.83rem;color:var(--g4);margin-bottom:0.45rem;}
+.pilot-outcome{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.72rem;font-weight:700;padding:0.22rem 0.6rem;border-radius:100px;margin-top:0.35rem;}
+.outcome-pos{background:var(--teal-p);color:var(--teal);}
+.outcome-mix{background:var(--amber-p);color:var(--amber);}
+.outcome-mixed{background:#f0eefa;color:#5533aa;}
+
+/* COMPARISON TABLE */
+.comp-table-wrap{overflow-x:auto;margin-top:1.5rem;border-radius:var(--r);box-shadow:var(--sh);}
+table{width:100%;border-collapse:collapse;background:var(--white);font-size:0.85rem;}
+thead tr{background:var(--navy);color:#fff;}
+thead th{font-family:var(--fb);font-weight:700;font-size:0.75rem;letter-spacing:0.04em;text-align:left;padding:0.85rem 1rem;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--g2);transition:background 0.15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--blue-pale);}
+tbody td{padding:0.8rem 1rem;color:var(--g5);vertical-align:top;}
+tbody td:first-child{font-weight:700;color:var(--navy);}
+.tag{display:inline-block;font-size:0.68rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:100px;white-space:nowrap;}
+.tag-yes{background:var(--teal-p);color:var(--teal);}
+.tag-no{background:var(--red-pale);color:var(--red);}
+.tag-partial{background:var(--amber-p);color:var(--amber);}
+
+/* PAGE LINK */
+.page-link{display:inline-flex;align-items:center;gap:0.45rem;margin-top:1.5rem;padding:0.65rem 1.4rem;border:2px solid var(--blue);border-radius:var(--rs);font-size:0.82rem;font-weight:700;color:var(--blue);text-decoration:none;transition:background 0.15s,color 0.15s;}
+.page-link:hover{background:var(--blue);color:#fff;}
+.page-link-red{border-color:var(--red);color:var(--red);}
+.page-link-red:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+footer{background:var(--navy);color:rgba(255,255,255,0.45);padding:2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+footer p{font-size:0.78rem;}
+footer a{color:var(--blue-light);text-decoration:none;}
+footer a:hover{color:#fff;}
+
+@media(max-width:860px){
+  nav{padding:0 1.25rem;}
+  .nav-hamburger{display:flex;}
+  .nav-links{display:flex;flex-direction:column;gap:0;position:fixed;top:0;right:0;width:min(300px,88vw);height:100vh;background:var(--white);border-left:1px solid var(--g2);padding:5rem 0 2rem;transform:translateX(100%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;z-index:99;}
+  nav.menu-open .nav-links{transform:translateX(0);}
+  .nav-links li{border-bottom:1px solid var(--g2);}
+  .nav-links a{padding:0.9rem 1.5rem;font-size:0.9rem;display:flex;align-items:center;justify-content:space-between;}
+  .nav-links a::after{display:none;}
+  .nav-links a:hover{background:var(--blue-pale);}
+  section{padding:3.5rem 1.25rem;}
+  .pilots-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav id="main-nav">
+  <a class="nav-brand" href="index.html">UBI<span>Project</span></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="history.html" onclick="closeMenu()">History</a></li>
+    <li><a href="why-ubi.html" onclick="closeMenu()">Why UBI</a></li>
+    <li><a href="examples.html" class="active" onclick="closeMenu()">Examples</a></li>
+    <li><a href="calculator.html" onclick="closeMenu()">Calculator</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMenu()"></div>
+
+<div class="page-hero">
+  <div class="inner">
+    <a class="back-link" href="index.html">← Back to home</a>
+    <h1>Examples &amp; evidence</h1>
+    <p>UBI has been tested in controlled pilots across the US and around the world. Here is what the evidence shows, alongside a comparison of how UBI stacks up against existing welfare programs.</p>
+  </div>
+</div>
+
+<!-- PILOTS -->
+<section id="pilots">
+  <div class="wide">
+    <p class="kicker">Real-world pilots</p>
+    <h2>What happens when you give people money, no strings attached</h2>
+    <div class="divider"></div>
+    <p>These are the most significant controlled experiments to date, ranging from government-run national trials to privately funded randomized studies.</p>
+    <div class="pilots-grid">
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇺🇸</div>
+          <div><div class="pilot-name">Alaska Permanent Fund Dividend</div><div class="pilot-sub">1982–present · All Alaska residents</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>Every Alaskan has received an annual oil dividend since 1982 — no application, no conditions, no work requirement. The world's longest-running basic income program. Dividend amounts have ranged from $331 to $3,284 per year.</p>
+          <p>Research shows it keeps 15,000–25,000 Alaskans out of poverty each year with no measurable reduction in employment. <a href="https://iseralaska.org/static/legacy_publication_links/2016_12-PFDandPoverty.pdf" target="_blank" rel="noopener" class="src">ISER</a></p>
+          <span class="pilot-outcome outcome-pos">✓ Reduced poverty</span>
+          <span class="pilot-outcome outcome-pos">✓ No employment impact</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇫🇮</div>
+          <div><div class="pilot-name">Finland National Pilot</div><div class="pilot-sub">2017–2018 · 2,000 participants</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>The first government-run, nationwide randomized UBI trial. 2,000 unemployed citizens received €560/month unconditionally for two years, compared to a matched control group receiving standard unemployment benefits.</p>
+          <p>Results: substantially improved wellbeing, reduced stress, higher trust in institutions, and employment rates statistically equal to the control group. <a href="https://stm.fi/en/-/perustulokokeilun-tulokset-tyollisyysvaikutukset-vahaisia-toimeentulo-ja-psyykkinen-terveys-koettiin-paremmaksi" target="_blank" rel="noopener" class="src">Finnish Ministry</a></p>
+          <span class="pilot-outcome outcome-pos">✓ Improved wellbeing</span>
+          <span class="pilot-outcome outcome-pos">✓ Equal employment</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇺🇸</div>
+          <div><div class="pilot-name">Stockton SEED</div><div class="pilot-sub">2019–2021 · 125 residents</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>125 Stockton residents received $500/month for 24 months with no restrictions on spending. A matched comparison group received nothing.</p>
+          <p>Full-time employment among recipients doubled from 28% to 40%. Top spending categories were food, utilities, and car repairs. Mental health measurably improved. <a href="https://www.stocktondemonstration.org/" target="_blank" rel="noopener" class="src">SEED</a></p>
+          <span class="pilot-outcome outcome-pos">✓ Employment doubled</span>
+          <span class="pilot-outcome outcome-pos">✓ Improved mental health</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇨🇦</div>
+          <div><div class="pilot-name">Mincome (Manitoba)</div><div class="pilot-sub">1974–1979 · Dauphin, Canada</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>The first large-scale guaranteed income trial in North America. Data was shelved by a new government and rediscovered 30 years later by researcher Evelyn Forget.</p>
+          <p>Hospitalization rates fell 8.5%. High school completion rates rose. Only two groups reduced work hours: new mothers and teenagers completing school. <a href="https://utppublishing.com/doi/10.3138/cpp.37.3.283" target="_blank" rel="noopener" class="src">Forget (2011)</a></p>
+          <span class="pilot-outcome outcome-pos">✓ Reduced hospitalizations</span>
+          <span class="pilot-outcome outcome-pos">✓ More students finished school</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇰🇪</div>
+          <div><div class="pilot-name">GiveDirectly Kenya</div><div class="pilot-sub">2016–present · 20,000+ recipients</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>The largest UBI trial in history. Over 20,000 rural Kenyans receive long-term unconditional cash transfers via mobile phone. A 12-year longitudinal study is underway.</p>
+          <p>Early results show increased assets, food security, and economic activity with no evidence of inflationary effects on local markets. <a href="https://www.givedirectly.org/ubi-study/" target="_blank" rel="noopener" class="src">GiveDirectly</a></p>
+          <span class="pilot-outcome outcome-pos">✓ Assets increased</span>
+          <span class="pilot-outcome outcome-pos">✓ No inflation effect</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🏴󠁧󠁢󠁷󠁬󠁳󠁿</div>
+          <div><div class="pilot-name">Wales Basic Income Pilot</div><div class="pilot-sub">2022–2023 · Care leavers</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>The Welsh government provided £1,600/month to every young person leaving care in Wales for two years. One of the first government-funded UBI pilots in the United Kingdom.</p>
+          <p>Participants reported reduced anxiety, improved housing stability, and greater ability to pursue education and employment. <a href="https://www.gov.wales/basic-income-pilot" target="_blank" rel="noopener" class="src">Welsh Government</a></p>
+          <span class="pilot-outcome outcome-pos">✓ Improved stability</span>
+          <span class="pilot-outcome outcome-mix">~ Ongoing analysis</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇩🇪</div>
+          <div><div class="pilot-name">Germany Unconditional Basic Income</div><div class="pilot-sub">2020–2023 · 122 recipients</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>122 people received €1,200/month for three years, compared to 1,380 controls. A peer-reviewed study by the German Institute for Economic Research.</p>
+          <p>Recipients took more risks, changed jobs more freely, and reported no reduction in work motivation. <a href="https://www.diw.de/en/diw_01.c.841684.en/research_projects/my_basic_income.html" target="_blank" rel="noopener" class="src">DIW Berlin</a></p>
+          <span class="pilot-outcome outcome-pos">✓ More risk-taking</span>
+          <span class="pilot-outcome outcome-pos">✓ No reduction in work</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-header">
+          <div class="pilot-flag">🇺🇸</div>
+          <div><div class="pilot-name">OpenResearch Unconditional Cash Study</div><div class="pilot-sub">2021–2024 · 1,000 US recipients</div></div>
+        </div>
+        <div class="pilot-body">
+          <p>The largest randomized UBI trial in US history. 1,000 low-income Americans received $1,000/month for three years; 2,000 controls received $50/month.</p>
+          <p>Recipients spent more on food, housing, and education. Full-time employment was slightly lower, but time use shifted toward caregiving and education. Work did not stop. <a href="https://www.openresearchlab.org/studies/unconditional-cash-study/study" target="_blank" rel="noopener" class="src">OpenResearch</a></p>
+          <span class="pilot-outcome outcome-pos">✓ More on basics</span>
+          <span class="pilot-outcome outcome-mix">~ Slightly less paid work</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="sect-alt" id="comparison">
+  <div class="wide">
+    <p class="kicker">Program comparison</p>
+    <h2>UBI vs. existing welfare programs</h2>
+    <div class="divider"></div>
+    <p>How does a universal basic income compare to the programs that currently form the American safety net? Here are the key structural differences.</p>
+    <div class="comp-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Program</th>
+            <th>Annual spending</th>
+            <th>Universal</th>
+            <th>Unconditional</th>
+            <th>Cash</th>
+            <th>Eliminates poverty gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Universal Basic Income (proposed)</td>
+            <td>$3.1T gross / ~$288B net</td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+          </tr>
+          <tr>
+            <td>Social Security (retirement)</td>
+            <td>$1.35T</td>
+            <td><span class="tag tag-partial">Earned</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>SNAP (Food Stamps)</td>
+            <td>$113B</td>
+            <td><span class="tag tag-no">No</span></td>
+            <td><span class="tag tag-no">Work req.</span></td>
+            <td><span class="tag tag-no">In-kind</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>TANF (Cash Assistance)</td>
+            <td>$17B</td>
+            <td><span class="tag tag-no">No</span></td>
+            <td><span class="tag tag-no">Work req.</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>SSI (Supplemental Security Income)</td>
+            <td>$65B</td>
+            <td><span class="tag tag-no">No</span></td>
+            <td><span class="tag tag-no">Means-tested</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>Unemployment Insurance</td>
+            <td>$33B</td>
+            <td><span class="tag tag-no">No</span></td>
+            <td><span class="tag tag-no">Conditional</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>Section 8 / Housing</td>
+            <td>$60B</td>
+            <td><span class="tag tag-no">No</span></td>
+            <td><span class="tag tag-no">Means-tested</span></td>
+            <td><span class="tag tag-no">In-kind</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>EITC (Earned Income Tax Credit)</td>
+            <td>$68B</td>
+            <td><span class="tag tag-no">No</span></td>
+            <td><span class="tag tag-no">Work req.</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-no">No</span></td>
+          </tr>
+          <tr>
+            <td>Alaska Permanent Fund</td>
+            <td>~$2B</td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-yes">Yes</span></td>
+            <td><span class="tag tag-partial">Partial</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.78rem;color:var(--g4);margin-top:1rem;">UBI gross cost assumes $1,000/month to 258M adults. Net cost accounts for tax clawback and welfare program offsets. All figures are approximate and vary by year and proposal design.</p>
+    <a href="calculator.html" class="page-link" style="margin-top:1.5rem;">Build your own UBI funding plan →</a>
+  </div>
+</section>
+
+<footer>
+  <p>UBI Project · <a href="index.html">Home</a> · <a href="history.html">History</a> · <a href="why-ubi.html">Why UBI</a> · <a href="calculator.html">Calculator</a></p>
+</footer>
+
+<script>
+const mainNav=document.getElementById("main-nav"),hamburger=document.getElementById("nav-hamburger");
+function toggleMenu(){const o=mainNav.classList.toggle("menu-open");hamburger.setAttribute("aria-expanded",o);document.body.style.overflow=o?"hidden":"";}
+function closeMenu(){mainNav.classList.remove("menu-open");hamburger.setAttribute("aria-expanded","false");document.body.style.overflow="";}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu();});
+</script>
+</body>
+</html>

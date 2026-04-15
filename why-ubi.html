@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why UBI — UBI Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;--off-white:#f7f9fc;--blue-pale:#e8f0fb;--blue-light:#d0e3f8;
+  --blue:#1a4d8f;--blue-mid:#2563b0;--blue-dark:#0f2d5c;--navy:#0a1f3d;
+  --red:#c0392b;--red-hover:#a93226;--red-pale:#fdf1f0;
+  --g1:#f0f2f5;--g2:#dde2ea;--g3:#b0b8c4;--g4:#6b7685;--g5:#3d4755;
+  --fd:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --fb:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --r:8px;--rs:4px;
+  --sh:0 2px 10px rgba(10,31,61,0.07);--shm:0 4px 24px rgba(10,31,61,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fd);background:var(--white);color:var(--navy);font-size:16px;line-height:1.75;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);border-bottom:2px solid var(--blue);padding:0 2rem;display:flex;align-items:center;}
+.nav-brand{font-size:1.05rem;font-weight:800;color:var(--blue-dark);text-decoration:none;padding:1rem 0;margin-right:auto;}
+.nav-brand span{color:var(--red);}
+.nav-links{display:flex;list-style:none;}
+.nav-links a{display:block;padding:1rem 0.9rem;font-size:0.78rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--g4);text-decoration:none;transition:color 0.18s;position:relative;}
+.nav-links a::after{content:"";position:absolute;bottom:0;left:0.9rem;right:0.9rem;height:2px;background:var(--red);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--blue-dark);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--blue-dark);}
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:pointer;border-radius:var(--rs);}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--navy);border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,width 0.3s ease;transform-origin:center;}
+nav.menu-open .nav-hamburger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+nav.menu-open .nav-hamburger span:nth-child(2){opacity:0;width:0;}
+nav.menu-open .nav-hamburger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-overlay{display:none;position:fixed;inset:0;background:rgba(10,31,61,0.4);z-index:98;backdrop-filter:blur(2px);}
+nav.menu-open ~ .nav-overlay{display:block;}
+
+.page-hero{background:linear-gradient(160deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-mid) 100%);padding:4rem 2rem 3rem;}
+.back-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.65);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1.25rem;transition:color 0.18s;}
+.back-link:hover{color:#fff;}
+.page-hero h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;line-height:1.15;color:#fff;max-width:680px;margin-bottom:0.85rem;letter-spacing:-0.02em;}
+.page-hero p{font-size:1rem;color:rgba(255,255,255,0.72);max-width:600px;line-height:1.78;}
+
+section{padding:5rem 2rem;}
+.inner{max-width:780px;margin:0 auto;}
+.wide{max-width:1060px;margin:0 auto;}
+.sect-alt{background:var(--off-white);}
+
+.kicker{font-size:0.7rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;display:block;}
+h2{font-size:clamp(1.6rem,3vw,2.1rem);font-weight:800;line-height:1.18;color:var(--navy);margin-bottom:1.1rem;letter-spacing:-0.02em;}
+h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:0.35rem;}
+p{color:var(--g5);margin-bottom:1rem;}
+p:last-child{margin-bottom:0;}
+strong{color:var(--navy);font-weight:700;}
+.divider{width:40px;height:3px;background:var(--red);border-radius:2px;margin-bottom:1.5rem;}
+a.src{color:var(--blue-mid);text-decoration:none;font-size:0.75rem;font-weight:600;white-space:nowrap;transition:color 0.15s;}
+a.src:hover{color:var(--red);}
+a.src::before{content:"[";font-weight:400;color:var(--g3);}
+a.src::after{content:"]";font-weight:400;color:var(--g3);}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin:2rem 0;}
+.stat-box{background:var(--blue-pale);border:1px solid var(--blue-light);border-radius:var(--r);padding:1.3rem;text-align:center;}
+.sect-alt .stat-box{background:var(--white);border-color:var(--g2);}
+.stat-num{font-size:2rem;font-weight:800;color:var(--blue);line-height:1;display:block;margin-bottom:0.3rem;}
+.stat-label{font-size:0.78rem;color:var(--g4);line-height:1.4;}
+
+/* ALERT BOX */
+.alert-box{background:var(--blue-pale);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:1rem 1.25rem;font-size:0.9rem;color:var(--blue-dark);margin:1.5rem 0;font-weight:500;}
+
+/* ISSUE GRID */
+.issue-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.75rem;}
+.issue-card{border-radius:var(--r);padding:1.6rem;border:1px solid var(--g2);background:var(--white);}
+.sect-alt .issue-card{background:var(--off-white);}
+.issue-icon{font-size:1.75rem;margin-bottom:0.65rem;}
+.issue-card h3{font-size:0.97rem;margin-bottom:0.45rem;}
+.issue-card p{font-size:0.86rem;color:var(--g4);}
+
+/* PAGE LINK */
+.page-link{display:inline-flex;align-items:center;gap:0.45rem;margin-top:1.5rem;padding:0.65rem 1.4rem;border:2px solid var(--blue);border-radius:var(--rs);font-size:0.82rem;font-weight:700;color:var(--blue);text-decoration:none;transition:background 0.15s,color 0.15s;}
+.page-link:hover{background:var(--blue);color:#fff;}
+.page-link-red{border-color:var(--red);color:var(--red);}
+.page-link-red:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+footer{background:var(--navy);color:rgba(255,255,255,0.45);padding:2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+footer p{font-size:0.78rem;}
+footer a{color:var(--blue-light);text-decoration:none;}
+footer a:hover{color:#fff;}
+
+@media(max-width:860px){
+  nav{padding:0 1.25rem;}
+  .nav-hamburger{display:flex;}
+  .nav-links{display:flex;flex-direction:column;gap:0;position:fixed;top:0;right:0;width:min(300px,88vw);height:100vh;background:var(--white);border-left:1px solid var(--g2);padding:5rem 0 2rem;transform:translateX(100%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;z-index:99;}
+  nav.menu-open .nav-links{transform:translateX(0);}
+  .nav-links li{border-bottom:1px solid var(--g2);}
+  .nav-links a{padding:0.9rem 1.5rem;font-size:0.9rem;display:flex;align-items:center;justify-content:space-between;}
+  .nav-links a::after{display:none;}
+  .nav-links a:hover{background:var(--blue-pale);}
+  section{padding:3.5rem 1.25rem;}
+  .issue-grid{grid-template-columns:1fr;}
+  .stat-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav id="main-nav">
+  <a class="nav-brand" href="index.html">UBI<span>Project</span></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="history.html" onclick="closeMenu()">History</a></li>
+    <li><a href="why-ubi.html" class="active" onclick="closeMenu()">Why UBI</a></li>
+    <li><a href="examples.html" onclick="closeMenu()">Examples</a></li>
+    <li><a href="calculator.html" onclick="closeMenu()">Calculator</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMenu()"></div>
+
+<div class="page-hero">
+  <div class="inner">
+    <a class="back-link" href="index.html">← Back to home</a>
+    <h1>Why America owes it</h1>
+    <p>Four concrete arguments rooted in American economic history, backed by data, and supported across the political spectrum. UBI is not charity. It is accountability.</p>
+  </div>
+</div>
+
+<!-- POVERTY -->
+<section id="poverty">
+  <div class="inner">
+    <p class="kicker">Argument one</p>
+    <h2>America has enough wealth to end poverty right now.</h2>
+    <div class="divider"></div>
+    <p>The US generates $28 trillion in economic output every year. Filling the entire national poverty gap — bringing every person's income above the poverty line — would cost an estimated <strong>$288 billion</strong> annually. <a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">Federal Safety Net</a> That is just over 1% of GDP.</p>
+    <p>For comparison, the federal government spent <strong>$481 billion</strong> in 2024 on 13 welfare programs, not including Medicaid. That is $193 billion more than it would cost to simply end poverty. Yet poverty has hovered between 10–15% for five decades. <a href="https://www.census.gov/library/publications/2025/demo/p60-287.html" target="_blank" rel="noopener" class="src">US Census 2024</a></p>
+    <div class="alert-box">The current system costs more than ending poverty would — and still hasn't ended poverty. UBI addresses the root cause directly.</div>
+    <div class="stat-row">
+      <div class="stat-box"><span class="stat-num">$288B</span><span class="stat-label">annual cost to eliminate poverty entirely <a href="https://federalsafetynet.com/poverty-gap/" target="_blank" rel="noopener" class="src">source</a></span></div>
+      <div class="stat-box"><span class="stat-num">35.9M</span><span class="stat-label">Americans below the poverty line in 2024 <a href="https://www.census.gov/library/publications/2025/demo/p60-287.html" target="_blank" rel="noopener" class="src">US Census</a></span></div>
+      <div class="stat-box"><span class="stat-num">50 yrs</span><span class="stat-label">the poverty rate has barely moved despite trillions spent on welfare</span></div>
+    </div>
+    <p>The current system fails not because of a shortage of money, but because funding is routed through dozens of fragmented programs with eligibility cliffs, work requirements, means-testing, and administrative overhead. Billions go to administration rather than people. Millions of eligible Americans never receive benefits they are entitled to because the system is too difficult to navigate.</p>
+    <p>A UBI bypasses this machinery. Cash, directly to people, monthly. No case worker, no recertification, no cliff. The poverty gap closes not by spending more, but by spending smarter.</p>
+  </div>
+</section>
+
+<!-- WAGES -->
+<section id="wages" class="sect-alt">
+  <div class="inner">
+    <p class="kicker">Argument two</p>
+    <h2>Workers are owed money. The math says so.</h2>
+    <div class="divider"></div>
+    <p>From 1948 to the early 1970s, wages rose with productivity. Workers became more productive; they earned more. This was how postwar prosperity was shared broadly across income levels.</p>
+    <p>That relationship broke around 1973. Since then, productivity has grown <strong>nearly 3× faster</strong> than typical worker pay. The economy kept growing. Workers kept showing up. The gains went to shareholders, executives, and capital owners instead. <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">Economic Policy Institute</a></p>
+    <div class="stat-row">
+      <div class="stat-box"><span class="stat-num">+90%</span><span class="stat-label">productivity growth since 1979 <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener" class="src">EPI</a></span></div>
+      <div class="stat-box"><span class="stat-num">+33%</span><span class="stat-label">typical worker pay growth in the same period</span></div>
+      <div class="stat-box"><span class="stat-num">2.7×</span><span class="stat-label">faster: how much more productivity grew than worker pay <a href="https://clockify.me/productivity-pay-gap" target="_blank" rel="noopener" class="src">source</a></span></div>
+    </div>
+    <p>That gap represents decades of labor value that workers created but never received. The divergence was not accidental. It resulted from deliberate policy decisions: union busting, deregulation, trade agreements that undercut labor bargaining power, and tax policy that favored returns on capital over returns on work.</p>
+    <p>A UBI framed as restitution is a partial correction of this imbalance. It doesn't replace collective bargaining or worker protections. It acknowledges that the current distribution of economic output reflects choices that systematically favored capital over labor, and that correcting it requires a structural response.</p>
+  </div>
+</section>
+
+<!-- AUTOMATION -->
+<section id="automation">
+  <div class="inner">
+    <p class="kicker">Argument three</p>
+    <h2>Automation is eliminating jobs. Retraining programs don't work.</h2>
+    <div class="divider"></div>
+    <p>AI and robotics are eliminating entire job categories faster than new ones appear. McKinsey estimates <strong>up to 400 million jobs</strong> could be displaced globally by 2030. Oxford researchers found <strong>47% of US jobs</strong> are at high risk. <a href="https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages" target="_blank" rel="noopener" class="src">McKinsey</a> <a href="https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf" target="_blank" rel="noopener" class="src">Oxford Martin</a></p>
+    <div class="stat-row">
+      <div class="stat-box"><span class="stat-num">400M</span><span class="stat-label">jobs potentially displaced globally by 2030 <a href="https://www.mckinsey.com/featured-insights/future-of-work/jobs-lost-jobs-gained-what-the-future-of-work-will-mean-for-jobs-skills-and-wages" target="_blank" rel="noopener" class="src">McKinsey</a></span></div>
+      <div class="stat-box"><span class="stat-num">47%</span><span class="stat-label">of US jobs at high risk of automation <a href="https://www.oxfordmartin.ox.ac.uk/downloads/academic/The_Future_of_Employment.pdf" target="_blank" rel="noopener" class="src">Oxford</a></span></div>
+      <div class="stat-box"><span class="stat-num">$15.7T</span><span class="stat-label">projected GDP boost from AI by 2030 — wealth that should be shared <a href="https://www.pwc.com/gx/en/issues/data-and-analytics/publications/artificial-intelligence-study.html" target="_blank" rel="noopener" class="src">PwC</a></span></div>
+    </div>
+    <p>The standard political response is job retraining. A GAO review found that most federal worker training programs produce minimal, short-lived gains in earnings. <a href="https://www.gao.gov/products/gao-11-92" target="_blank" rel="noopener" class="src">GAO</a> Workers displaced at 50 from a manufacturing job are not, as a rule, successfully retrained into new fields within a year. And even those who manage it still face the question of who pays rent during the transition.</p>
+    <p>A UBI doesn't pretend that retraining solves structural displacement. It provides the floor that makes any transition survivable — and gives displaced workers the time and security to find what comes next on their own terms.</p>
+    <p>There is also a direct connection to automation's gains: the productivity that machines create accrues almost entirely to the companies deploying them. A UBI can function as a citizen's dividend on the automation economy — a mechanism for distributing the gains of technology to the workers and communities whose labor trained the models and built the supply chains that made automation possible.</p>
+  </div>
+</section>
+
+<!-- WORKER POWER -->
+<section id="worker-power" class="sect-alt">
+  <div class="wide">
+    <p class="kicker">Argument four</p>
+    <h2>A floor gives workers the power to say no, and to build something of their own.</h2>
+    <div class="divider"></div>
+    <p style="max-width:680px;">Financial precarity is the most powerful management tool in America. When you cannot afford to miss a paycheck, you accept what is offered. You stay in jobs that exploit you, workplaces that harm you, and arrangements that leave you no room for anything else. This is not a personal failure. It is a structural feature of an economy that removed the floor and calls it freedom.</p>
+    <div class="stat-row" style="max-width:780px;">
+      <div class="stat-box"><span class="stat-num">60%</span><span class="stat-label">of Americans cannot cover a $1,000 emergency from savings <a href="https://www.federalreserve.gov/publications/report-economic-well-being-us-households.htm" target="_blank" rel="noopener" class="src">Federal Reserve</a></span></div>
+      <div class="stat-box"><span class="stat-num">1 in 4</span><span class="stat-label">American workers held gig or contract work in 2024 <a href="https://www.adpresearch.com/the-gig-economy-a-tale-of-two-labor-markets/" target="_blank" rel="noopener" class="src">ADP Research</a></span></div>
+      <div class="stat-box"><span class="stat-num">60%</span><span class="stat-label">of short-term task workers wish their pay was more consistent <a href="https://www.federalreserve.gov/publications/2025-economic-well-being-of-us-households-in-2024-employment-and-gig-work.htm" target="_blank" rel="noopener" class="src">Federal Reserve</a></span></div>
+    </div>
+    <div class="issue-grid" style="max-width:860px;">
+      <div class="issue-card">
+        <div class="issue-icon">✊</div>
+        <h3>Real bargaining power</h3>
+        <p>A guaranteed floor changes every employment negotiation. Workers cannot be pressured to accept abusive conditions or poverty wages when walking away doesn't mean missing rent. The threat of replacement only works when workers have no cushion.</p>
+      </div>
+      <div class="issue-card">
+        <div class="issue-icon">🚀</div>
+        <h3>A startup fund for everyone</h3>
+        <p>America prizes entrepreneurship but denies most people the financial cushion that makes risk-taking possible. Countries with the strongest social floors — Denmark, Germany, the Netherlands — have higher rates of new business formation than the US. <a href="https://www.oecd.org/en/topics/entrepreneurship.html" target="_blank" rel="noopener" class="src">OECD</a> A UBI is the seed capital that reaches people who don't have venture networks.</p>
+      </div>
+      <div class="issue-card">
+        <div class="issue-icon">📱</div>
+        <h3>The gig economy trap</h3>
+        <p>Platforms like Uber and DoorDash offloaded employer costs — health insurance, retirement, unemployment protection — onto workers who have no safety net. Over 1 in 4 American workers held some form of gig work in 2024. <a href="https://www.adpresearch.com/the-gig-economy-a-tale-of-two-labor-markets/" target="_blank" rel="noopener" class="src">ADP Research</a> A UBI provides the floor that makes precarious work survivable.</p>
+      </div>
+      <div class="issue-card">
+        <div class="issue-icon">🎓</div>
+        <h3>Time to retrain — for real</h3>
+        <p>Retraining from a declining industry into a growing one takes time and money. Most Americans have neither. A UBI creates the financial breathing room to pursue a certificate, build a new skill, or spend months finding the right next step — without risking eviction.</p>
+      </div>
+      <div class="issue-card">
+        <div class="issue-icon">🧑‍🍼</div>
+        <h3>Recognition for care work</h3>
+        <p>Around 53 million Americans provide unpaid care to a family member. That labor is economically essential and entirely uncompensated by the market. A UBI is the most practical way to recognize this work without creating a new bureaucracy to verify and administer it.</p>
+      </div>
+      <div class="issue-card">
+        <div class="issue-icon">🏘️</div>
+        <h3>Revitalizing left-behind places</h3>
+        <p>Deindustrialization didn't just eliminate jobs — it hollowed out communities. A UBI flows to individuals wherever they are, which means it can support rural and small-town economies in places that no targeted program reaches. Alaska's Permanent Fund demonstrates this in practice.</p>
+      </div>
+    </div>
+    <a href="examples.html" class="page-link" style="margin-top:2rem;">See the evidence from real pilots →</a>
+  </div>
+</section>
+
+<footer>
+  <p>UBI Project · <a href="index.html">Home</a> · <a href="history.html">History</a> · <a href="examples.html">Examples</a> · <a href="calculator.html">Calculator</a></p>
+</footer>
+
+<script>
+const mainNav=document.getElementById("main-nav"),hamburger=document.getElementById("nav-hamburger");
+function toggleMenu(){const o=mainNav.classList.toggle("menu-open");hamburger.setAttribute("aria-expanded",o);document.body.style.overflow=o?"hidden":"";}
+function closeMenu(){mainNav.classList.remove("menu-open");hamburger.setAttribute("aria-expanded","false");document.body.style.overflow="";}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu();});
+</script>
+</body>
+</html>

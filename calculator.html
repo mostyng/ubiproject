@@ -111,7 +111,42 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
 .welfare-sub  { font-size:0.71rem; color:var(--g4); display:block; margin-top:0.05rem; }
 .welfare-amt  { font-size:0.8rem; font-weight:700; color:var(--blue-mid); flex-shrink:0; min-width:56px; text-align:right; }
 
-/* ── MONEY PRINTING CARD ── */
+/* ── CTRL TABS (left column) ── */
+.ctrl-tabs { display:flex; gap:0; background:var(--g1); border-radius:var(--r); padding:3px; margin-bottom:1rem; }
+.ctrl-tab {
+  flex:1; text-align:center; padding:0.45rem 0.5rem;
+  font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+  border-radius:6px; cursor:pointer; color:var(--g4);
+  transition:all 0.18s; border:none; background:transparent; font-family:var(--fd);
+}
+.ctrl-tab.active { background:var(--white); color:var(--navy); box-shadow:var(--sh); }
+.ctrl-tab:hover:not(.active) { color:var(--navy); }
+.ctrl-pane { display:none; }
+.ctrl-pane.active { display:block; }
+
+/* ── SAVINGS ITEM ── */
+.savings-item {
+  display:flex; align-items:flex-start; gap:0.75rem;
+  padding:0.85rem 1rem; border:1.5px solid var(--g2);
+  border-radius:var(--r); margin-bottom:0.55rem;
+  background:var(--white); transition:border-color 0.18s, background 0.18s;
+  cursor:pointer; user-select:none;
+}
+.savings-item:hover { background:var(--blue-pale); }
+.savings-item.active { border-color:var(--blue); background:var(--blue-pale); }
+.savings-item.active .fs-dot { background:var(--blue); border-color:var(--blue); }
+.savings-item.active .fs-dot::after { opacity:1; }
+.savings-info { flex:1; min-width:0; }
+.savings-name { font-size:0.84rem; font-weight:600; color:var(--navy); display:block; }
+.savings-sub  { font-size:0.71rem; color:var(--g4); display:block; margin-top:0.05rem; line-height:1.45; }
+.savings-amt  { font-size:0.8rem; font-weight:700; color:var(--blue-mid); flex-shrink:0; min-width:60px; text-align:right; }
+.savings-lm-btn { font-size:0.7rem; font-weight:700; color:var(--blue-mid); background:none; border:none; cursor:pointer; padding:0.3rem 0 0; text-decoration:underline; text-underline-offset:2px; display:block; transition:color 0.15s; }
+.savings-lm-btn:hover { color:var(--red); }
+.savings-lm-content { display:none; font-size:0.74rem; color:var(--g5); background:var(--blue-pale); border-radius:var(--rs); border-left:3px solid var(--blue-light); padding:0.6rem 0.75rem; margin-top:0.45rem; line-height:1.6; }
+.savings-lm-content.open { display:block; }
+
+/* ── MONETARY FINANCING (moved inside Revenue tab) ── */
+.monetary-section { margin-top:1rem; }
 .print-card { border:1.5px solid rgba(192,57,43,0.3); border-radius:var(--r); margin-bottom:0.55rem; background:var(--white); overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
 .print-card.active { border-color:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,0.08); background:var(--red-pale); }
 .print-card .fs-header:hover { background:rgba(192,57,43,0.05); }
@@ -274,241 +309,301 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
       <div class="ubi-meta">~258M eligible adults · Total annual cost: <strong id="ubi-total-cost">$3.1T</strong></div>
     </div>
 
-    <!-- NEW REVENUE -->
-    <div class="ctrl-section-head">New revenue sources</div>
+    <!-- SOURCE TABS -->
+    <div class="ctrl-tabs">
+      <button class="ctrl-tab active" onclick="switchSrcTab('revenue',this)">Revenue Sources</button>
+      <button class="ctrl-tab" onclick="switchSrcTab('welfare',this)">Welfare</button>
+      <button class="ctrl-tab" onclick="switchSrcTab('savings',this)">Savings</button>
+    </div>
 
-    <!-- WEALTH TAX -->
-    <div class="fs-card" id="fc-wealth">
-      <div class="fs-header" onclick="toggleFS('wealth')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">🏦</span>
-        <span class="fs-name">Wealth tax</span>
-        <span class="fs-rev-badge" id="rev-wealth">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Annual tax on net assets above $50M.</p>
-        <button class="learn-more-btn" onclick="lm('lm-wealth',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-wealth">Elizabeth Warren's proposed 2% on wealth above $50M / 3% above $1B was estimated to raise ~$200B/yr. Proponents argue top wealth is largely self-perpetuating and lightly taxed. Critics cite capital flight risk and valuation difficulty for illiquid assets. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Inst.</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">Rate on assets &gt;$50M</span>
-            <span class="fs-slider-val" id="sv-wealth">2%</span>
+    <!-- ── TAB: REVENUE SOURCES ── -->
+    <div class="ctrl-pane active" id="sp-revenue">
+
+      <!-- WEALTH TAX -->
+      <div class="fs-card" id="fc-wealth">
+        <div class="fs-header" onclick="toggleFS('wealth')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">🏦</span>
+          <span class="fs-name">Wealth tax</span>
+          <span class="fs-rev-badge" id="rev-wealth">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Annual tax on net assets above $50M.</p>
+          <button class="learn-more-btn" onclick="lm('lm-wealth',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-wealth">Elizabeth Warren's proposed 2% on wealth above $50M / 3% above $1B was estimated to raise ~$200B/yr. Critics cite capital flight risk and valuation difficulty for illiquid assets. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Inst.</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">Rate on assets &gt;$50M</span><span class="fs-slider-val" id="sv-wealth">2%</span></div>
+            <input type="range" id="sr-wealth" min="0.5" max="5" step="0.5" value="2">
+            <div class="range-row"><span>0.5%</span><span>5%</span></div>
           </div>
-          <input type="range" id="sr-wealth" min="0.5" max="5" step="0.5" value="2">
-          <div class="range-row"><span>0.5%</span><span>5%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- VAT -->
-    <div class="fs-card" id="fc-vat">
-      <div class="fs-header" onclick="toggleFS('vat')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">🛒</span>
-        <span class="fs-name">Value-added tax (VAT)</span>
-        <span class="fs-rev-badge" id="rev-vat">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Consumption tax applied at each production stage. Used by most developed nations.</p>
-        <button class="learn-more-btn" onclick="lm('lm-vat',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-vat">A 10% VAT on the ~$18T US consumption base raises ~$950B/yr after exemptions. Andrew Yang's Freedom Dividend relied on a 10% VAT. Regressive on its own — but UBI fully offsets this for anyone below median income, making the combined policy progressive. <a href="https://2020.yang2020.com/policies/the-freedom-dividend/" target="_blank" rel="noopener" class="src">Yang2020</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">VAT rate</span>
-            <span class="fs-slider-val" id="sv-vat">10%</span>
+      <!-- VAT -->
+      <div class="fs-card" id="fc-vat">
+        <div class="fs-header" onclick="toggleFS('vat')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">🛒</span>
+          <span class="fs-name">Value-added tax (VAT)</span>
+          <span class="fs-rev-badge" id="rev-vat">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Consumption tax applied at each production stage. Used by most developed nations.</p>
+          <button class="learn-more-btn" onclick="lm('lm-vat',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-vat">A 10% VAT on the ~$18T US consumption base raises ~$950B/yr after exemptions. Regressive on its own — but UBI fully offsets this for anyone below median income. <a href="https://2020.yang2020.com/policies/the-freedom-dividend/" target="_blank" rel="noopener" class="src">Yang2020</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">VAT rate</span><span class="fs-slider-val" id="sv-vat">10%</span></div>
+            <input type="range" id="sr-vat" min="1" max="20" step="1" value="10">
+            <div class="range-row"><span>1%</span><span>20%</span></div>
           </div>
-          <input type="range" id="sr-vat" min="1" max="20" step="1" value="10">
-          <div class="range-row"><span>1%</span><span>20%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- LAND VALUE TAX -->
-    <div class="fs-card" id="fc-lvt">
-      <div class="fs-header" onclick="toggleFS('lvt')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">🌾</span>
-        <span class="fs-name">Land value tax (LVT)</span>
-        <span class="fs-rev-badge" id="rev-lvt">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Tax on the unimproved value of land — not buildings. Championed by Thomas Paine and Henry George.</p>
-        <button class="learn-more-btn" onclick="lm('lm-lvt',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-lvt">Total US land value is ~$23 trillion. An LVT taxes location value — created by society and infrastructure, not the owner's effort. Economists across the spectrum consider it one of the most efficient taxes: it cannot be avoided by working less or moving capital. Paine proposed a version in 1797. <a href="https://www.ssa.gov/history/paine4.html" target="_blank" rel="noopener" class="src">Paine, SSA archive</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">Annual rate on land value</span>
-            <span class="fs-slider-val" id="sv-lvt">1%</span>
+      <!-- LAND VALUE TAX -->
+      <div class="fs-card" id="fc-lvt">
+        <div class="fs-header" onclick="toggleFS('lvt')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">🌾</span>
+          <span class="fs-name">Land value tax (LVT)</span>
+          <span class="fs-rev-badge" id="rev-lvt">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Tax on the unimproved value of land — not buildings. Championed by Thomas Paine and Henry George.</p>
+          <button class="learn-more-btn" onclick="lm('lm-lvt',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-lvt">Total US land value is ~$23 trillion. An LVT taxes location value created by society and infrastructure, not the owner's effort. One of the most efficient taxes known to economics. <a href="https://www.ssa.gov/history/paine4.html" target="_blank" rel="noopener" class="src">Paine, SSA archive</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">Annual rate on land value</span><span class="fs-slider-val" id="sv-lvt">1%</span></div>
+            <input type="range" id="sr-lvt" min="0.5" max="5" step="0.5" value="1">
+            <div class="range-row"><span>0.5%</span><span>5%</span></div>
           </div>
-          <input type="range" id="sr-lvt" min="0.5" max="5" step="0.5" value="1">
-          <div class="range-row"><span>0.5%</span><span>5%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- CARBON DIVIDEND -->
-    <div class="fs-card" id="fc-carbon">
-      <div class="fs-header" onclick="toggleFS('carbon')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">☁️</span>
-        <span class="fs-name">Carbon dividend</span>
-        <span class="fs-rev-badge" id="rev-carbon">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Fee on fossil fuel emissions returned as equal cash dividends to all citizens.</p>
-        <button class="learn-more-btn" onclick="lm('lm-carbon',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-carbon">The Climate Leadership Council proposes $40–$100/ton, returning all proceeds as citizen dividends. Alaska's oil fund is the working model. Revenue declines over time as emissions fall — which is the point. <a href="https://www.clcouncil.org/our-plan/" target="_blank" rel="noopener" class="src">CLC</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">Price per ton CO₂</span>
-            <span class="fs-slider-val" id="sv-carbon">$50/ton</span>
+      <!-- CARBON DIVIDEND -->
+      <div class="fs-card" id="fc-carbon">
+        <div class="fs-header" onclick="toggleFS('carbon')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">☁️</span>
+          <span class="fs-name">Carbon dividend</span>
+          <span class="fs-rev-badge" id="rev-carbon">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Fee on fossil fuel emissions returned as equal cash dividends to all citizens.</p>
+          <button class="learn-more-btn" onclick="lm('lm-carbon',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-carbon">The Climate Leadership Council proposes $40–$100/ton, returning all proceeds as citizen dividends. Alaska's oil fund is the working model. Revenue declines as emissions fall. <a href="https://www.clcouncil.org/our-plan/" target="_blank" rel="noopener" class="src">CLC</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">Price per ton CO₂</span><span class="fs-slider-val" id="sv-carbon">$50/ton</span></div>
+            <input type="range" id="sr-carbon" min="20" max="150" step="10" value="50">
+            <div class="range-row"><span>$20</span><span>$150</span></div>
           </div>
-          <input type="range" id="sr-carbon" min="20" max="150" step="10" value="50">
-          <div class="range-row"><span>$20</span><span>$150</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- FINANCIAL TRANSACTION TAX -->
-    <div class="fs-card" id="fc-ftt">
-      <div class="fs-header" onclick="toggleFS('ftt')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">📈</span>
-        <span class="fs-name">Financial transaction tax</span>
-        <span class="fs-rev-badge" id="rev-ftt">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Small tax on stock, bond, and derivative trades. Primarily paid by high-frequency traders.</p>
-        <button class="learn-more-btn" onclick="lm('lm-ftt',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-ftt">The CBO estimates a 0.1% rate raises ~$78B/yr. ~$100T in annual US financial transactions. Revenue is sensitive to behavioral change — volume falls as rates rise, which is also the policy intent. <a href="https://www.cbo.gov/publication/56182" target="_blank" rel="noopener" class="src">CBO</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">Rate on transactions</span>
-            <span class="fs-slider-val" id="sv-ftt">0.1%</span>
+      <!-- FINANCIAL TRANSACTION TAX -->
+      <div class="fs-card" id="fc-ftt">
+        <div class="fs-header" onclick="toggleFS('ftt')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">📈</span>
+          <span class="fs-name">Financial transaction tax</span>
+          <span class="fs-rev-badge" id="rev-ftt">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Small tax on stock, bond, and derivative trades. Primarily paid by high-frequency traders.</p>
+          <button class="learn-more-btn" onclick="lm('lm-ftt',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-ftt">The CBO estimates a 0.1% rate raises ~$78B/yr on ~$100T in annual US financial transactions. <a href="https://www.cbo.gov/publication/56182" target="_blank" rel="noopener" class="src">CBO</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">Rate on transactions</span><span class="fs-slider-val" id="sv-ftt">0.1%</span></div>
+            <input type="range" id="sr-ftt" min="0.05" max="0.5" step="0.05" value="0.1">
+            <div class="range-row"><span>0.05%</span><span>0.5%</span></div>
           </div>
-          <input type="range" id="sr-ftt" min="0.05" max="0.5" step="0.05" value="0.1">
-          <div class="range-row"><span>0.05%</span><span>0.5%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- AUTOMATION LEVY -->
-    <div class="fs-card" id="fc-auto">
-      <div class="fs-header" onclick="toggleFS('auto')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">🤖</span>
-        <span class="fs-name">Automation levy</span>
-        <span class="fs-rev-badge" id="rev-auto">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Tax on companies replacing workers with automation. Proposed by Bill Gates.</p>
-        <button class="learn-more-btn" onclick="lm('lm-auto',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-auto">Links the cause directly to the remedy: companies profiting from displacement pay for the safety net beneath displaced workers. Estimated ~$1.5T in automated labor substitution value annually and growing rapidly. Key challenge is defining and measuring "automated displacement." <a href="https://www.quartz.com/911968/bill-gates-the-robot-that-takes-your-job-should-pay-taxes/" target="_blank" rel="noopener" class="src">Quartz/Gates</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">Levy rate</span>
-            <span class="fs-slider-val" id="sv-auto">10%</span>
+      <!-- AUTOMATION LEVY -->
+      <div class="fs-card" id="fc-auto">
+        <div class="fs-header" onclick="toggleFS('auto')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">🤖</span>
+          <span class="fs-name">Automation levy</span>
+          <span class="fs-rev-badge" id="rev-auto">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Tax on companies replacing workers with automation. Proposed by Bill Gates.</p>
+          <button class="learn-more-btn" onclick="lm('lm-auto',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-auto">Companies profiting from displacement pay for the safety net beneath displaced workers. Estimated ~$1.5T in automated labor substitution value annually. Key challenge is defining "automated displacement." <a href="https://www.quartz.com/911968/bill-gates-the-robot-that-takes-your-job-should-pay-taxes/" target="_blank" rel="noopener" class="src">Quartz/Gates</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">Levy rate</span><span class="fs-slider-val" id="sv-auto">10%</span></div>
+            <input type="range" id="sr-auto" min="5" max="30" step="5" value="10">
+            <div class="range-row"><span>5%</span><span>30%</span></div>
           </div>
-          <input type="range" id="sr-auto" min="5" max="30" step="5" value="10">
-          <div class="range-row"><span>5%</span><span>30%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- TOP INCOME TAX -->
-    <div class="fs-card" id="fc-income">
-      <div class="fs-header" onclick="toggleFS('income')">
-        <div class="fs-dot"></div>
-        <span class="fs-icon">💼</span>
-        <span class="fs-name">Higher top income tax rates</span>
-        <span class="fs-rev-badge" id="rev-income">$0/yr</span>
-      </div>
-      <div class="fs-body">
-        <p class="fs-short-desc">Raise marginal rates on incomes above $400K. The US top rate was 91% in the 1950s.</p>
-        <button class="learn-more-btn" onclick="lm('lm-income',this)">Learn more ↓</button>
-        <div class="learn-more-content" id="lm-income">Each point above the current 37% top rate raises ~$15–20B/yr. The top rate was 91% through 1963, 70% through 1980, 50% through 1986. <a href="https://www.taxpolicycenter.org/" target="_blank" rel="noopener" class="src">Tax Policy Center</a></div>
-        <div class="fs-slider-section">
-          <div class="fs-slider-header">
-            <span class="fs-slider-label">Top marginal rate (income &gt;$400K)</span>
-            <span class="fs-slider-val" id="sv-income">45%</span>
+      <!-- TOP INCOME TAX -->
+      <div class="fs-card" id="fc-income">
+        <div class="fs-header" onclick="toggleFS('income')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">💼</span>
+          <span class="fs-name">Higher top income tax rates</span>
+          <span class="fs-rev-badge" id="rev-income">$0/yr</span>
+        </div>
+        <div class="fs-body">
+          <p class="fs-short-desc">Raise marginal rates on incomes above $400K. The US top rate was 91% in the 1950s.</p>
+          <button class="learn-more-btn" onclick="lm('lm-income',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-income">Each point above the current 37% top rate raises ~$15–20B/yr. The top rate was 91% through 1963, 70% through 1980. <a href="https://www.taxpolicycenter.org/" target="_blank" rel="noopener" class="src">Tax Policy Center</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><span class="fs-slider-label">Top marginal rate (income &gt;$400K)</span><span class="fs-slider-val" id="sv-income">45%</span></div>
+            <input type="range" id="sr-income" min="37" max="99" step="1" value="45">
+            <div class="range-row"><span>37% (current)</span><span>99%</span></div>
           </div>
-          <input type="range" id="sr-income" min="37" max="99" step="1" value="45">
-          <div class="range-row"><span>37% (current)</span><span>99%</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- EXISTING WELFARE REDIRECT -->
-    <div class="ctrl-section-head" style="margin-top:1rem;">Redirect existing welfare programs</div>
-    <p style="font-size:0.74rem;color:var(--wg4);margin-bottom:0.7rem;line-height:1.55;">Toggle programs whose budgets would be redirected into UBI, reducing the net program cost.</p>
-
-    <div class="welfare-toggle" id="wt-ssa" onclick="toggleW('ssa')">
-      <div class="fs-dot"></div>
-      <div class="welfare-info">
-        <span class="welfare-name">Social Security — SSI supplement</span>
-        <span class="welfare-sub">Supplemental Security Income redirected to UBI floor</span>
+      <!-- DEFICIT SPENDING (at bottom of Revenue tab) -->
+      <div class="ctrl-section-head" style="margin-top:1rem;">Monetary financing</div>
+      <div class="print-card" id="fc-print">
+        <div class="fs-header" onclick="toggleFS('print')">
+          <div class="fs-dot"></div>
+          <span class="fs-icon">🖨️</span>
+          <span class="fs-name">Money printing / deficit spending</span>
+          <span class="fs-rev-badge" id="rev-print">$0/yr</span>
+        </div>
+        <div class="infl-block" id="infl-block">
+          <span class="infl-pct" id="infl-pct">~1.1% additional inflation</span>
+          <span class="infl-note">Estimated additional annual inflation from unfunded monetary expansion at this scale.</span>
+          <div class="print-slider-header">
+            <span class="print-slider-label">Amount financed</span>
+            <span class="print-slider-val" id="sv-print">$500B/yr</span>
+          </div>
+          <input type="range" id="sr-print" min="100" max="3000" step="100" value="500">
+          <div class="range-row"><span>$100B</span><span>$3T</span></div>
+          <p class="print-warning">⚠️ Most serious UBI proposals do not rely on monetary expansion. Shown here for completeness — redistributive UBI funded by taxes does not cause inflation; money creation does.</p>
+        </div>
       </div>
-      <span class="welfare-amt" id="wrev-ssa">$65B/yr</span>
-    </div>
 
-    <div class="welfare-toggle" id="wt-ssdi" onclick="toggleW('ssdi')">
-      <div class="fs-dot"></div>
-      <div class="welfare-info">
-        <span class="welfare-name">SSDI (Disability Insurance)</span>
-        <span class="welfare-sub">Income floor replaced by UBI; disability-specific needs separate</span>
-      </div>
-      <span class="welfare-amt" id="wrev-ssdi">$162B/yr</span>
-    </div>
+    </div><!-- /sp-revenue -->
 
-    <div class="welfare-toggle" id="wt-ui" onclick="toggleW('ui')">
-      <div class="fs-dot"></div>
-      <div class="welfare-info">
-        <span class="welfare-name">Unemployment Insurance (UI)</span>
-        <span class="welfare-sub">UBI eliminates need for temporary income replacement</span>
-      </div>
-      <span class="welfare-amt" id="wrev-ui">$33B/yr</span>
-    </div>
+    <!-- ── TAB: WELFARE ── -->
+    <div class="ctrl-pane" id="sp-welfare">
+      <p style="font-size:0.78rem;color:var(--g4);margin-bottom:0.85rem;line-height:1.6;">Redirect existing program budgets into UBI, reducing the net cost. Toggle programs whose spending would be replaced by a direct cash floor.</p>
 
-    <div class="welfare-toggle" id="wt-snap" onclick="toggleW('snap')">
-      <div class="fs-dot"></div>
-      <div class="welfare-info">
-        <span class="welfare-name">SNAP (Food Stamps)</span>
-        <span class="welfare-sub">Cash replaces in-kind food vouchers with full flexibility</span>
-      </div>
-      <span class="welfare-amt" id="wrev-snap">$113B/yr</span>
-    </div>
-
-    <div class="welfare-toggle" id="wt-tanf" onclick="toggleW('tanf')">
-      <div class="fs-dot"></div>
-      <div class="welfare-info">
-        <span class="welfare-name">TANF (Cash Assistance)</span>
-        <span class="welfare-sub">Replaced by universal, non-stigmatized UBI floor</span>
-      </div>
-      <span class="welfare-amt" id="wrev-tanf">$17B/yr</span>
-    </div>
-
-    <!-- MONEY PRINTING -->
-    <div class="ctrl-section-head" style="margin-top:1rem;">Monetary financing</div>
-
-    <div class="print-card" id="fc-print">
-      <div class="fs-header" onclick="toggleFS('print')">
+      <div class="welfare-toggle" id="wt-ssa" onclick="toggleW('ssa')">
         <div class="fs-dot"></div>
-        <span class="fs-icon">🖨️</span>
-        <span class="fs-name">Money printing / deficit spending</span>
-        <span class="fs-rev-badge" id="rev-print">$0/yr</span>
-      </div>
-      <div class="infl-block" id="infl-block">
-        <span class="infl-pct" id="infl-pct">~1.1% additional inflation</span>
-        <span class="infl-note">Estimated additional annual inflation from unfunded monetary expansion at this scale.</span>
-        <div class="print-slider-header">
-          <span class="print-slider-label">Amount financed</span>
-          <span class="print-slider-val" id="sv-print">$500B/yr</span>
+        <div class="welfare-info">
+          <span class="welfare-name">Social Security — SSI supplement</span>
+          <span class="welfare-sub">Supplemental Security Income redirected to UBI floor</span>
         </div>
-        <input type="range" id="sr-print" min="100" max="3000" step="100" value="500">
-        <div class="range-row"><span>$100B</span><span>$3T</span></div>
-        <p class="print-warning">⚠️ Most serious UBI proposals do not rely on monetary expansion. Shown here for completeness — redistributive UBI funded by taxes does not cause inflation; money creation does.</p>
+        <span class="welfare-amt" id="wrev-ssa">$65B/yr</span>
       </div>
-    </div>
+
+      <div class="welfare-toggle" id="wt-ssdi" onclick="toggleW('ssdi')">
+        <div class="fs-dot"></div>
+        <div class="welfare-info">
+          <span class="welfare-name">SSDI (Disability Insurance)</span>
+          <span class="welfare-sub">Income floor replaced by UBI; disability-specific needs kept separate</span>
+        </div>
+        <span class="welfare-amt" id="wrev-ssdi">$162B/yr</span>
+      </div>
+
+      <div class="welfare-toggle" id="wt-ui" onclick="toggleW('ui')">
+        <div class="fs-dot"></div>
+        <div class="welfare-info">
+          <span class="welfare-name">Unemployment Insurance (UI)</span>
+          <span class="welfare-sub">UBI eliminates need for temporary income replacement</span>
+        </div>
+        <span class="welfare-amt" id="wrev-ui">$33B/yr</span>
+      </div>
+
+      <div class="welfare-toggle" id="wt-snap" onclick="toggleW('snap')">
+        <div class="fs-dot"></div>
+        <div class="welfare-info">
+          <span class="welfare-name">SNAP (Food Stamps)</span>
+          <span class="welfare-sub">Cash replaces in-kind food vouchers with full flexibility</span>
+        </div>
+        <span class="welfare-amt" id="wrev-snap">$113B/yr</span>
+      </div>
+
+      <div class="welfare-toggle" id="wt-tanf" onclick="toggleW('tanf')">
+        <div class="fs-dot"></div>
+        <div class="welfare-info">
+          <span class="welfare-name">TANF (Cash Assistance)</span>
+          <span class="welfare-sub">Replaced by universal, non-stigmatized UBI floor</span>
+        </div>
+        <span class="welfare-amt" id="wrev-tanf">$17B/yr</span>
+      </div>
+    </div><!-- /sp-welfare -->
+
+    <!-- ── TAB: SAVINGS ── -->
+    <div class="ctrl-pane" id="sp-savings">
+      <p style="font-size:0.78rem;color:var(--g4);margin-bottom:0.85rem;line-height:1.6;">UBI generates economic returns that offset its gross cost. Toggle the savings and growth effects you consider credible. These reduce the net cost of the program.</p>
+
+      <div class="savings-item" id="sv-gdp" onclick="toggleSav('gdp')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">GDP &amp; consumer spending growth</span>
+          <span class="savings-sub">UBI flows directly into local economies, boosting consumer spending and GDP. The Roosevelt Institute estimated a $1,000/mo UBI could grow the economy by $2.5T over 8 years, generating hundreds of billions in new tax revenue.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-gdp',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-gdp">A 2017 Roosevelt Institute macroeconomic model found a fully-funded UBI of $1,000/month would increase GDP by 12.56% — roughly $2.5T — over 8 years. Even conservative estimates project meaningful multiplier effects, as low-income recipients spend virtually all of a UBI on goods and services in their local communities. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Institute</a></div>
+        </div>
+        <span class="savings-amt" id="srev-gdp">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-health" onclick="toggleSav('health')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Reduced healthcare costs</span>
+          <span class="savings-sub">Financial stress is a leading driver of poor health outcomes. UBI pilots consistently show reduced hospitalizations, fewer ER visits, and lower rates of chronic illness — generating measurable government healthcare savings.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-health',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-health">Manitoba's Mincome experiment found hospitalization rates fell 8.5% during the pilot. The Stockton SEED study showed significant improvements in mental health. If UBI reduces US healthcare utilization by even 2–3%, the savings to Medicare, Medicaid, and employer-sponsored insurance would be substantial. Estimated at ~$100–200B/yr under conservative assumptions. <a href="https://utppublishing.com/doi/10.3138/cpp.37.3.283" target="_blank" rel="noopener" class="src">Forget (2011)</a></div>
+        </div>
+        <span class="savings-amt" id="srev-health">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-crime" onclick="toggleSav('crime')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Reduced crime &amp; incarceration costs</span>
+          <span class="savings-sub">Poverty is a primary driver of crime. The US spends ~$80B/yr incarcerating 2.3 million people. UBI addresses the economic desperation at the root of most property crime and drug offenses.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-crime',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-crime">The US spends approximately $35,000–$60,000 per prisoner per year. Studies on cash transfer programs consistently show reductions in property crime. A conservative 5% reduction in incarceration costs would save ~$4B/yr directly, plus additional costs in police, courts, and social services. <a href="https://www.vera.org/publications/price-of-prisons-2015-state-spending-trends" target="_blank" rel="noopener" class="src">Vera Institute</a></div>
+        </div>
+        <span class="savings-amt" id="srev-crime">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-admin" onclick="toggleSav('admin')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Welfare administration savings</span>
+          <span class="savings-sub">The US operates dozens of means-tested programs with overlapping bureaucracies. Consolidating them into a single universal payment eliminates enormous administrative overhead.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-admin',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-admin">Administrative costs for means-tested programs average 10–20% of total spending. SNAP alone costs ~$6B/yr to administer. A universal cash transfer requires only identity verification and payment processing — a far leaner system. Consolidating major programs could save $30–60B/yr in administrative costs alone. <a href="https://www.cbpp.org/research/income-security/universal-basic-income" target="_blank" rel="noopener" class="src">CBPP</a></div>
+        </div>
+        <span class="savings-amt" id="srev-admin">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-work" onclick="toggleSav('work')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Increased workforce participation &amp; tax base</span>
+          <span class="savings-sub">UBI reduces the "welfare cliff" that discourages people from taking jobs. Pilots in Stockton and Finland showed employment either held steady or increased — broadening the income tax base.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-work',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-work">In Stockton, full-time employment among recipients doubled from 28% to 40%. Finland's pilot showed no reduction in employment. More workers earning income means more income tax and payroll tax revenue, partially offsetting the gross cost of the program. A 1% increase in labor force participation generates roughly $50–100B in additional tax revenues annually. <a href="https://www.stocktondemonstration.org/" target="_blank" rel="noopener" class="src">SEED</a></div>
+        </div>
+        <span class="savings-amt" id="srev-work">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-poverty" onclick="toggleSav('poverty')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Poverty reduction multiplier</span>
+          <span class="savings-sub">Every dollar invested in reducing poverty generates returns in education outcomes, reduced social services use, and long-term tax contributions. Childhood poverty alone costs the US an estimated $1T/yr in lost productivity.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-poverty',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-poverty">A 2018 Child Trends analysis estimated the annual cost of childhood poverty at $1.03 trillion — through reduced adult earnings, increased crime, and higher health spending. Eliminating child poverty through a UBI floor would generate long-run fiscal savings that dwarf the short-run cost. <a href="https://www.childtrends.org/publications/reducing-child-poverty-in-the-us" target="_blank" rel="noopener" class="src">Child Trends</a></div>
+        </div>
+        <span class="savings-amt" id="srev-poverty">$0/yr</span>
+      </div>
+
+    </div><!-- /sp-savings -->
 
   </div><!-- /controls-col -->
 
@@ -538,7 +633,7 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
 
         <div class="r-row"><span class="r-lbl">Monthly per adult</span><span class="r-val c-neu" id="r-monthly">$1,000</span></div>
         <div class="r-row"><span class="r-lbl">Program cost / yr</span><span class="r-val c-neg" id="r-cost">$3.1T</span></div>
-        <div class="r-row"><span class="r-lbl">Funding raised / yr</span><span class="r-val c-pos" id="r-raised">$0</span></div>
+        <div class="r-row"><span class="r-lbl">Funding + savings / yr</span><span class="r-val c-pos" id="r-raised">$0</span></div>
 
         <div class="balance-box b-gap" id="balance-box">
           <div class="balance-lbl" id="bal-lbl">Funding gap</div>
@@ -575,9 +670,9 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
           <label>Annual household income</label>
           <div class="slider-header" style="color:rgba(255,255,255,0.5);">
             <span style="font-size:0.67rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Income</span>
-            <span style="font-family:var(--fd);font-size:0.9rem;font-weight:600;color:var(--amber-l);" id="hi-income-disp">$45,000/yr</span>
+            <span style="font-size:0.9rem;font-weight:800;color:var(--blue-light);" id="hi-income-disp">$45,000/yr</span>
           </div>
-          <input type="range" id="hi-income" min="0" max="250000" step="1000" value="45000" oninput="updateHH()" style="accent-color:var(--amber-l);">
+          <input type="range" id="hi-income" min="0" max="250000" step="1000" value="45000" oninput="updateHH()" style="accent-color:var(--blue)">
           <div class="range-row" style="color:rgba(255,255,255,0.3);"><span>$0</span><span>$250k+</span></div>
         </div>
 
@@ -624,6 +719,40 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
 </footer>
 
 <script>
+/* ════ SOURCE TAB SWITCHING ════ */
+function switchSrcTab(id, tab) {
+  document.querySelectorAll('.ctrl-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ctrl-pane').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('sp-' + id).classList.add('active');
+}
+
+/* ════ SAVINGS LEARN MORE ════ */
+function lmSav(e, id, btn) {
+  e.stopPropagation();
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? 'Show less ↑' : 'Learn more ↓';
+}
+
+/* ════ SAVINGS DATA ($B/yr) ════ */
+const SAVINGS_DATA = {
+  gdp:     { name:'GDP growth',         color:'#68c5bc', amount: 312 }, // ~$2.5T over 8yr ÷ 8
+  health:  { name:'Healthcare savings', color:'#7bb8a0', amount: 150 },
+  crime:   { name:'Crime & incarceration', color:'#9fd18a', amount: 30 },
+  admin:   { name:'Admin savings',      color:'#a8d4d2', amount: 45 },
+  work:    { name:'Workforce/tax base', color:'#68b5d6', amount: 75 },
+  poverty: { name:'Poverty multiplier', color:'#9db8e0', amount: 100 },
+};
+const activeSav = new Set();
+
+function toggleSav(key) {
+  const el = document.getElementById('sv-' + key);
+  if (activeSav.has(key)) { activeSav.delete(key); el.classList.remove('active'); }
+  else                     { activeSav.add(key);    el.classList.add('active');    }
+  update();
+}
+
 /* ════ NAV ════ */
 const _nav = document.getElementById('main-nav');
 const _hbg = document.getElementById('nav-hamburger');
@@ -749,7 +878,14 @@ function update() {
     document.getElementById('rev-print').textContent = fmt(printAmt) + '/yr';
   }
 
-  document.getElementById('r-raised').textContent = fmt(totalRev) + '/yr';
+  // Savings offsets
+  for (const key of Object.keys(SAVINGS_DATA)) {
+    const sav = activeSav.has(key) ? SAVINGS_DATA[key].amount : 0;
+    totalRev += sav;
+    const badge = document.getElementById('srev-' + key);
+    if (badge) badge.textContent = activeSav.has(key) ? fmt(SAVINGS_DATA[key].amount) + '/yr' : '$0/yr';
+    if (sav > 0) breakdown.push({ key: 's' + key, name: SAVINGS_DATA[key].name, color: SAVINGS_DATA[key].color, rev: sav });
+  }
 
   const gap = costB - totalRev;
   const pct = costB > 0 ? Math.min(100, Math.round(totalRev / costB * 100)) : 0;

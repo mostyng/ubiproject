@@ -100,16 +100,32 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
 .fs-slider-label { font-size:0.68rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--g4); }
 .fs-slider-val { font-size:0.88rem; font-weight:800; color:var(--blue); }
 
-/* ── WELFARE TOGGLE ITEMS ── */
-.welfare-toggle { display:flex; align-items:center; gap:0.75rem; padding:0.7rem 0.95rem; border:1.5px solid var(--g2); border-radius:var(--r); margin-bottom:0.5rem; cursor:pointer; user-select:none; background:var(--white); transition:border-color 0.18s, background 0.18s; }
-.welfare-toggle:hover { background:var(--blue-pale); }
-.welfare-toggle.active { border-color:var(--blue); background:var(--blue-pale); }
-.welfare-toggle.active .fs-dot { background:var(--blue); border-color:var(--blue); }
-.welfare-toggle.active .fs-dot::after { opacity:1; }
-.welfare-info { flex:1; min-width:0; }
-.welfare-name { font-size:0.84rem; font-weight:600; color:var(--navy); display:block; }
-.welfare-sub  { font-size:0.71rem; color:var(--g4); display:block; margin-top:0.05rem; }
-.welfare-amt  { font-size:0.8rem; font-weight:700; color:var(--blue-mid); flex-shrink:0; min-width:56px; text-align:right; }
+/* ── SPENDING TAB (pie + sliders) ── */
+.sp-intro { font-size:0.78rem; color:var(--g4); margin-bottom:0.85rem; line-height:1.6; }
+.sp-top { display:flex; align-items:center; gap:1.25rem; margin-bottom:1rem; }
+.sp-pie-wrap { position:relative; width:220px; max-width:55%; flex-shrink:0; }
+.sp-pie-wrap svg { display:block; width:100%; height:auto; overflow:visible; }
+.sp-pie-wrap path { cursor:pointer; transition:opacity 0.15s; }
+.sp-tt { position:absolute; pointer-events:none; background:var(--navy); color:#fff; font-size:0.72rem; font-weight:600; padding:0.35rem 0.55rem; border-radius:var(--rs); white-space:nowrap; transform:translate(-50%,-110%); opacity:0; transition:opacity 0.12s; z-index:5; }
+.sp-summary { flex:1; min-width:0; }
+.sp-sum-lbl { display:block; font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--g4); }
+.sp-sum-val { display:block; font-size:2rem; font-weight:800; color:var(--red); line-height:1.15; font-variant-numeric:tabular-nums; }
+.sp-sum-sub { display:block; font-size:0.75rem; color:var(--g4); margin-bottom:0.6rem; }
+.sp-reset { font:inherit; font-size:0.7rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:0.4rem 0.8rem; border-radius:var(--rs); border:1.5px solid var(--g3); background:var(--white); color:var(--g5); cursor:pointer; }
+.sp-reset:hover { border-color:var(--blue); color:var(--blue); }
+.sp-row { border:1.5px solid var(--g2); border-radius:var(--r); padding:0.6rem 0.85rem 0.55rem; margin-bottom:0.45rem; background:var(--white); transition:border-color 0.18s, background 0.18s; }
+.sp-row.cut { border-color:var(--blue); background:var(--blue-pale); }
+.sp-row-head { display:flex; align-items:center; gap:0.55rem; }
+.sp-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.sp-name { font-size:0.84rem; font-weight:600; color:var(--navy); flex:1; min-width:0; }
+.sp-amt { font-size:0.82rem; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+.sp-share { font-size:0.72rem; color:var(--g4); min-width:42px; text-align:right; font-variant-numeric:tabular-nums; }
+.sp-row input[type=range] { margin-top:0.35rem; }
+.sp-row-foot { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--g4); margin-top:0.1rem; font-variant-numeric:tabular-nums; }
+.sp-row-foot strong { color:var(--red); font-weight:700; }
+.sp-locked { font-size:0.7rem; color:var(--g4); margin-top:0.2rem; padding-left:calc(12px + 0.55rem); }
+.sp-source { font-size:0.7rem; color:var(--g4); line-height:1.55; margin-top:0.7rem; }
+.sp-source a { color:var(--blue-mid); }
 
 /* ── CTRL TABS (left column) ── */
 .ctrl-tabs { display:flex; gap:0; background:var(--g1); border-radius:var(--r); padding:3px; margin-bottom:1rem; }
@@ -312,7 +328,7 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
     <!-- SOURCE TABS -->
     <div class="ctrl-tabs">
       <button class="ctrl-tab active" onclick="switchSrcTab('revenue',this)">Revenue Sources</button>
-      <button class="ctrl-tab" onclick="switchSrcTab('welfare',this)">Welfare</button>
+      <button class="ctrl-tab" onclick="switchSrcTab('spending',this)">Spending</button>
       <button class="ctrl-tab" onclick="switchSrcTab('savings',this)">Savings</button>
     </div>
 
@@ -483,55 +499,30 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
 
     </div><!-- /sp-revenue -->
 
-    <!-- ── TAB: WELFARE ── -->
-    <div class="ctrl-pane" id="sp-welfare">
-      <p style="font-size:0.78rem;color:var(--g4);margin-bottom:0.85rem;line-height:1.6;">Redirect existing program budgets into UBI, reducing the net cost. Toggle programs whose spending would be replaced by a direct cash floor.</p>
+    <!-- ── TAB: SPENDING ──
+         One pie = all federal spending. Each slider redirects part of a
+         category to UBI; the red slice shows the total redirected.
+         Data lives in SPENDING_DATA in the script below. -->
+    <div class="ctrl-pane" id="sp-spending">
+      <p class="sp-intro">The federal government spent <strong id="sp-total-txt">$7.4T</strong> in <span id="sp-fy-txt">FY 2026</span>. Each slice is one part of that budget. Slide to redirect some of it to UBI — the red slice grows as you do.</p>
 
-      <div class="welfare-toggle" id="wt-ssa" onclick="toggleW('ssa')">
-        <div class="fs-dot"></div>
-        <div class="welfare-info">
-          <span class="welfare-name">Social Security — SSI supplement</span>
-          <span class="welfare-sub">Supplemental Security Income redirected to UBI floor</span>
+      <div class="sp-top">
+        <div class="sp-pie-wrap" id="sp-pie-wrap">
+          <svg id="sp-pie" viewBox="0 0 220 220" role="img" aria-label="Pie chart of federal spending by category"></svg>
+          <div class="sp-tt" id="sp-tt"></div>
         </div>
-        <span class="welfare-amt" id="wrev-ssa">$65B/yr</span>
+        <div class="sp-summary">
+          <span class="sp-sum-lbl">Redirected to UBI</span>
+          <span class="sp-sum-val" id="sp-freed" aria-live="polite">$0</span>
+          <span class="sp-sum-sub" id="sp-freed-sub">0% of federal spending</span>
+          <button type="button" class="sp-reset" onclick="resetSpending()">Reset sliders</button>
+        </div>
       </div>
 
-      <div class="welfare-toggle" id="wt-ssdi" onclick="toggleW('ssdi')">
-        <div class="fs-dot"></div>
-        <div class="welfare-info">
-          <span class="welfare-name">SSDI (Disability Insurance)</span>
-          <span class="welfare-sub">Income floor replaced by UBI; disability-specific needs kept separate</span>
-        </div>
-        <span class="welfare-amt" id="wrev-ssdi">$162B/yr</span>
-      </div>
+      <div id="sp-list"></div>
 
-      <div class="welfare-toggle" id="wt-ui" onclick="toggleW('ui')">
-        <div class="fs-dot"></div>
-        <div class="welfare-info">
-          <span class="welfare-name">Unemployment Insurance (UI)</span>
-          <span class="welfare-sub">UBI eliminates need for temporary income replacement</span>
-        </div>
-        <span class="welfare-amt" id="wrev-ui">$33B/yr</span>
-      </div>
-
-      <div class="welfare-toggle" id="wt-snap" onclick="toggleW('snap')">
-        <div class="fs-dot"></div>
-        <div class="welfare-info">
-          <span class="welfare-name">SNAP (Food Stamps)</span>
-          <span class="welfare-sub">Cash replaces in-kind food vouchers with full flexibility</span>
-        </div>
-        <span class="welfare-amt" id="wrev-snap">$113B/yr</span>
-      </div>
-
-      <div class="welfare-toggle" id="wt-tanf" onclick="toggleW('tanf')">
-        <div class="fs-dot"></div>
-        <div class="welfare-info">
-          <span class="welfare-name">TANF (Cash Assistance)</span>
-          <span class="welfare-sub">Replaced by universal, non-stigmatized UBI floor</span>
-        </div>
-        <span class="welfare-amt" id="wrev-tanf">$17B/yr</span>
-      </div>
-    </div><!-- /sp-welfare -->
+      <p class="sp-source">Source: <a href="https://www.cbo.gov/publication/61985" target="_blank" rel="noopener">Congressional Budget Office, Monthly Budget Review: September 2026</a> (preliminary FY 2026 outlays). Small line items are merged into larger categories. <strong>Illustrative only</strong> — these cuts are a thought experiment, not policy recommendations.</p>
+    </div><!-- /sp-spending -->
 
     <!-- ── TAB: SAVINGS ── -->
     <div class="ctrl-pane" id="sp-savings">
@@ -780,8 +771,7 @@ function switchView(id, tab) {
 const ADULTS_M = 258; // millions
 const PIE_COLORS = {
   wealth: '#68c5bc', vat: '#e8b86e', lvt: '#9fd18a', carbon: '#7bb8a0',
-  ftt: '#a89dd6', auto: '#f0b86e', income: '#e89090', print: '#c06060',
-  ssa: '#80cbc4', ssdi: '#80b0c0', ui: '#88d0b8', snap: '#a8c890', tanf: '#b8d8a0'
+  ftt: '#a89dd6', auto: '#f0b86e', income: '#e89090', print: '#c06060'
 };
 
 // Revenue calculators (returns $B)
@@ -796,10 +786,32 @@ const REV = {
   print:  r => r,                                // direct dollar input
 };
 
-const WELFARE_AMT = { ssa: 65, ssdi: 162, ui: 33, snap: 113, tanf: 17 };
+/* ════ SPENDING DATA — EDIT HERE ════
+   Source: CBO "Monthly Budget Review: September 2026" (Oct 8, 2026), Table 3,
+   preliminary FY 2026 outlays in $ billions. https://www.cbo.gov/publication/61985
+   To update: copy the newest September review's Table 3 into `b`, then update
+   SPENDING_META. Categories should add up to SPENDING_META.total (a console
+   warning fires if not). To add a category, add a row here — order sets the
+   slice order around the pie, so keep related categories next to each other.
+   `locked: true` hides the slider (used for interest, which is legally owed). */
+const SPENDING_META = { fy: 'FY 2026', total: 7396 };
+const SPENDING_DATA = [
+  { id:'ss',       name:'Social Security',         b:1654, color:'#2563b0' },
+  { id:'medicare', name:'Medicare',                b:1069, color:'#4f86cc' }, // net of premiums
+  { id:'medicaid', name:'Medicaid',                b:723,  color:'#86afe0' },
+  { id:'snap',     name:'Food & Nutrition (SNAP)', b:137,  color:'#00897b' },
+  { id:'eduhud',   name:'Education & Housing',     b:143,  color:'#5cbcae' }, // Education 75 + HUD 68
+  { id:'defense',  name:'Defense',                 b:916,  color:'#c27c0e' },
+  { id:'va',       name:'Veterans Affairs',        b:416,  color:'#e0aa55' },
+  { id:'interest', name:'Net interest on debt',    b:1143, color:'#8e4fa8', locked:true,
+    note:'Can’t be cut — it’s owed to bondholders.' },
+  { id:'other',    name:'All other programs',      b:1195, color:'#8a94a3' }, // CBO Other 1,146 + EPA, Commerce, SBA, COVID credits
+];
+const UBI_SLICE_COLOR = '#c0392b';
+const spendCut = {};             // id → % cut (0–100)
+SPENDING_DATA.forEach(c => spendCut[c.id] = 0);
 
 const activeFS = new Set();
-const activeW  = new Set();
 
 /* ════ HELPERS ════ */
 function fmt(b) {
@@ -829,12 +841,131 @@ function toggleFS(key) {
   update();
 }
 
-function toggleW(key) {
-  const el = document.getElementById('wt-' + key);
-  if (activeW.has(key)) { activeW.delete(key); el.classList.remove('active'); }
-  else                  { activeW.add(key);    el.classList.add('active');    }
-  update();
+/* ════ SPENDING TAB ════ */
+// Net dollars ($B) redirected from federal spending to UBI.
+function spendingFreed() {
+  return SPENDING_DATA.reduce((sum, c) => sum + c.b * spendCut[c.id] / 100, 0);
 }
+function fmtSp(b) {            // two decimals for trillions so small moves still show
+  return b >= 999.5 ? '$' + (b / 1000).toFixed(2) + 'T' : '$' + Math.round(b) + 'B';
+}
+
+// Build one row (name, amount, share, slider) per category.
+function buildSpending() {
+  const total = SPENDING_DATA.reduce((s, c) => s + c.b, 0);
+  if (Math.abs(total - SPENDING_META.total) > 2)
+    console.warn(`[spending] categories sum to ${total}B, expected ${SPENDING_META.total}B`);
+  document.getElementById('sp-total-txt').textContent = '$' + (SPENDING_META.total / 1000).toFixed(1) + 'T';
+  document.getElementById('sp-fy-txt').textContent = SPENDING_META.fy;
+
+  document.getElementById('sp-list').innerHTML = SPENDING_DATA.map(c => `
+    <div class="sp-row" id="spr-${c.id}" data-id="${c.id}">
+      <div class="sp-row-head">
+        <span class="sp-dot" style="background:${c.color}"></span>
+        <label class="sp-name" for="sps-${c.id}">${c.name}</label>
+        <span class="sp-amt" id="spa-${c.id}"></span>
+        <span class="sp-share" id="sph-${c.id}"></span>
+      </div>
+      ${c.locked
+        ? `<div class="sp-locked">${c.note}</div>`
+        : `<input type="range" id="sps-${c.id}" min="0" max="100" step="1" value="0">
+           <div class="sp-row-foot"><span id="spc-${c.id}">No cut</span><span id="spu-${c.id}"></span></div>`}
+    </div>`).join('');
+
+  SPENDING_DATA.forEach(c => {
+    const sl = document.getElementById('sps-' + c.id);
+    if (sl) sl.addEventListener('input', () => { spendCut[c.id] = +sl.value; updateSpending(); update(); });
+    // Hovering a row highlights its slice.
+    const row = document.getElementById('spr-' + c.id);
+    row.addEventListener('mouseenter', () => highlightSlice(c.id));
+    row.addEventListener('mouseleave', () => highlightSlice(null));
+  });
+  updateSpending();
+}
+
+function updateSpending() {
+  const total = SPENDING_DATA.reduce((s, c) => s + c.b, 0);
+  const freed = spendingFreed();
+  SPENDING_DATA.forEach(c => {
+    const cut = spendCut[c.id], cur = c.b * (1 - cut / 100), moved = c.b - cur;
+    document.getElementById('spa-' + c.id).textContent = fmtSp(cur);
+    document.getElementById('sph-' + c.id).textContent = (cur / total * 100).toFixed(1) + '%';
+    document.getElementById('spr-' + c.id).classList.toggle('cut', cut > 0);
+    const sl = document.getElementById('sps-' + c.id);
+    if (sl) {
+      document.getElementById('spc-' + c.id).textContent = cut ? `Cut ${cut}%` : 'No cut';
+      document.getElementById('spu-' + c.id).innerHTML = cut ? `<strong>${fmtSp(moved)}</strong> to UBI` : '';
+      sl.setAttribute('aria-valuetext', cut
+        ? `${cut} percent cut, ${fmtSp(moved)} redirected to UBI, ${fmtSp(cur)} remaining`
+        : 'no cut');
+    }
+  });
+  document.getElementById('sp-freed').textContent = fmtSp(freed);
+  document.getElementById('sp-freed-sub').textContent = (freed / total * 100).toFixed(1) + '% of federal spending';
+  animateSpendPie();
+}
+
+function resetSpending() {
+  SPENDING_DATA.forEach(c => {
+    spendCut[c.id] = 0;
+    const sl = document.getElementById('sps-' + c.id);
+    if (sl) sl.value = 0;
+  });
+  updateSpending(); update();
+}
+
+// Pie: one slice per category at its remaining size, plus a red
+// "Redirected to UBI" slice. The whole circle is always today's total,
+// so the slices always add to 100%. Angles tween for smooth movement.
+let spShown = null, spAnim = null;
+function spTargets() {
+  return [...SPENDING_DATA.map(c => c.b * (1 - spendCut[c.id] / 100)), spendingFreed()];
+}
+function animateSpendPie() {
+  const target = spTargets();
+  if (!spShown || matchMedia('(prefers-reduced-motion: reduce)').matches) { spShown = target; drawSpendPie(); return; }
+  const from = spShown.slice(), t0 = performance.now(), dur = 260;
+  cancelAnimationFrame(spAnim);
+  const step = now => {
+    const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+    spShown = from.map((v, i) => v + (target[i] - v) * e);
+    drawSpendPie();
+    if (t < 1) spAnim = requestAnimationFrame(step);
+  };
+  spAnim = requestAnimationFrame(step);
+}
+function drawSpendPie() {
+  const svg = document.getElementById('sp-pie');
+  const cx = 110, cy = 110, r = 104;
+  const slices = SPENDING_DATA.map((c, i) => ({ id: c.id, name: c.name, color: c.color, v: spShown[i] }));
+  slices.push({ id: 'ubi', name: 'Redirected to UBI', color: UBI_SLICE_COLOR, v: spShown[spShown.length - 1] });
+  const total = slices.reduce((s, x) => s + x.v, 0);
+  svg.innerHTML = '';
+  let a = -Math.PI / 2;
+  slices.forEach(sl => {
+    const span = sl.v / total * 2 * Math.PI;
+    if (span < 0.002) { a += span; return; }
+    const a2 = a + span, large = span > Math.PI ? 1 : 0;
+    const d = `M${cx},${cy} L${cx + r * Math.cos(a)},${cy + r * Math.sin(a)} A${r},${r} 0 ${large},1 ${cx + r * Math.cos(a2)},${cy + r * Math.sin(a2)}Z`;
+    const path = makeSVG('path', { d, fill: sl.color, stroke: '#fff', 'stroke-width': '1.5', 'data-id': sl.id });
+    const label = `${sl.name}: ${fmtSp(sl.v)} (${(sl.v / total * 100).toFixed(1)}%)`;
+    path.addEventListener('mouseenter', () => { highlightSlice(sl.id); showSpTip(label, (a + a2) / 2); });
+    path.addEventListener('mouseleave', () => { highlightSlice(null); hideSpTip(); });
+    svg.appendChild(path);
+    a = a2;
+  });
+}
+function highlightSlice(id) {
+  document.querySelectorAll('#sp-pie path').forEach(p => p.style.opacity = (!id || p.dataset.id === id) ? '1' : '0.35');
+}
+function showSpTip(text, midAngle) {
+  const tt = document.getElementById('sp-tt'), w = document.getElementById('sp-pie-wrap').clientWidth;
+  tt.textContent = text;
+  tt.style.left = (w / 2 + Math.cos(midAngle) * w * 0.3) + 'px';
+  tt.style.top  = (w / 2 + Math.sin(midAngle) * w * 0.3) + 'px';
+  tt.style.opacity = '1';
+}
+function hideSpTip() { document.getElementById('sp-tt').style.opacity = '0'; }
 
 /* ════ MAIN UPDATE ════ */
 function update() {
@@ -861,12 +992,11 @@ function update() {
     const badge = document.getElementById('rev-' + key);
     if (badge) badge.textContent = activeFS.has(key) ? fmt(rev) + '/yr' : '$0/yr';
   }
-  for (const key of Object.keys(WELFARE_AMT)) {
-    if (activeW.has(key)) {
-      const rev = WELFARE_AMT[key];
-      totalRev += rev;
-      breakdown.push({ key: 'w' + key, name: welfareName(key), color: PIE_COLORS[key], rev });
-    }
+  // Spending redirected from the federal budget (Spending tab)
+  const spendFreed = spendingFreed();
+  if (spendFreed > 0) {
+    totalRev += spendFreed;
+    breakdown.push({ key: 'spending', name: 'Spending redirected', color: '#e8a29a', rev: spendFreed });
   }
 
   // Inflation estimate for print
@@ -888,6 +1018,7 @@ function update() {
   }
 
   const gap = costB - totalRev;
+  document.getElementById('r-raised').textContent = fmt(totalRev) + '/yr';
   const pct = costB > 0 ? Math.min(100, Math.round(totalRev / costB * 100)) : 0;
   document.getElementById('r-pct').textContent  = pct + '%';
   document.getElementById('r-bar').style.width  = pct + '%';
@@ -1014,9 +1145,6 @@ function addCenter(svg, cx, cy, line1, line2) {
 function keyName(k) {
   return { wealth:'Wealth tax', vat:'VAT', lvt:'Land value tax', carbon:'Carbon dividend', ftt:'Fin. transaction tax', auto:'Automation levy', income:'Top income tax', print:'Deficit/printing' }[k] || k;
 }
-function welfareName(k) {
-  return { ssa:'SSA/SSI redirect', ssdi:'SSDI redirect', ui:'UI redirect', snap:'SNAP redirect', tanf:'TANF redirect' }[k] || k;
-}
 
 /* ════ HOUSEHOLD IMPACT ════ */
 const IG = [
@@ -1126,6 +1254,7 @@ if (printSl) {
 }
 
 /* ════ INIT ════ */
+buildSpending();
 update();
 </script>
 </body>

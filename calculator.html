@@ -329,7 +329,6 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
     <div class="ctrl-tabs">
       <button class="ctrl-tab active" onclick="switchSrcTab('revenue',this)">Revenue Sources</button>
       <button class="ctrl-tab" onclick="switchSrcTab('spending',this)">Spending</button>
-      <button class="ctrl-tab" onclick="switchSrcTab('savings',this)">Savings</button>
     </div>
 
     <!-- ── TAB: REVENUE SOURCES ── -->
@@ -475,6 +474,42 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
         </div>
       </div>
 
+      <!-- GROWTH EFFECTS (moved from the old Savings tab) -->
+      <div class="ctrl-section-head" style="margin-top:1rem;">Economic growth from UBI</div>
+      <p class="sp-intro">New tax revenue UBI may generate. Toggle the effects you find credible.</p>
+      <div class="savings-item" id="sv-gdp" onclick="toggleSav('gdp')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">GDP &amp; consumer spending growth</span>
+          <span class="savings-sub">UBI flows directly into local economies, boosting consumer spending and GDP. The Roosevelt Institute estimated a $1,000/mo UBI could grow the economy by $2.5T over 8 years, generating hundreds of billions in new tax revenue.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-gdp',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-gdp">A 2017 Roosevelt Institute macroeconomic model found a fully-funded UBI of $1,000/month would increase GDP by 12.56% — roughly $2.5T — over 8 years. Even conservative estimates project meaningful multiplier effects, as low-income recipients spend virtually all of a UBI on goods and services in their local communities. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Institute</a></div>
+        </div>
+        <span class="savings-amt" id="srev-gdp">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-work" onclick="toggleSav('work')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Increased workforce participation &amp; tax base</span>
+          <span class="savings-sub">UBI reduces the "welfare cliff" that discourages people from taking jobs. Pilots in Stockton and Finland showed employment either held steady or increased — broadening the income tax base.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-work',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-work">In Stockton, full-time employment among recipients doubled from 28% to 40%. Finland's pilot showed no reduction in employment. More workers earning income means more income tax and payroll tax revenue, partially offsetting the gross cost of the program. A 1% increase in labor force participation generates roughly $50–100B in additional tax revenues annually. <a href="https://www.stocktondemonstration.org/" target="_blank" rel="noopener" class="src">SEED</a></div>
+        </div>
+        <span class="savings-amt" id="srev-work">$0/yr</span>
+      </div>
+
+      <div class="savings-item" id="sv-poverty" onclick="toggleSav('poverty')">
+        <div class="fs-dot"></div>
+        <div class="savings-info">
+          <span class="savings-name">Poverty reduction multiplier</span>
+          <span class="savings-sub">Every dollar invested in reducing poverty generates returns in education outcomes, reduced social services use, and long-term tax contributions. Childhood poverty alone costs the US an estimated $1T/yr in lost productivity.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-poverty',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-poverty">A 2018 Child Trends analysis estimated the annual cost of childhood poverty at $1.03 trillion — through reduced adult earnings, increased crime, and higher health spending. Eliminating child poverty through a UBI floor would generate long-run fiscal savings that dwarf the short-run cost. <a href="https://www.childtrends.org/publications/reducing-child-poverty-in-the-us" target="_blank" rel="noopener" class="src">Child Trends</a></div>
+        </div>
+        <span class="savings-amt" id="srev-poverty">$0/yr</span>
+      </div>
+
       <!-- DEFICIT SPENDING (at bottom of Revenue tab) -->
       <div class="ctrl-section-head" style="margin-top:1rem;">Monetary financing</div>
       <div class="print-card" id="fc-print">
@@ -521,24 +556,9 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
 
       <div id="sp-list"></div>
 
-      <p class="sp-source">Source: <a href="https://www.cbo.gov/publication/61985" target="_blank" rel="noopener">Congressional Budget Office, Monthly Budget Review: September 2026</a> (preliminary FY 2026 outlays). Small line items are merged into larger categories. <strong>Illustrative only</strong> — these cuts are a thought experiment, not policy recommendations.</p>
-    </div><!-- /sp-spending -->
-
-    <!-- ── TAB: SAVINGS ── -->
-    <div class="ctrl-pane" id="sp-savings">
-      <p style="font-size:0.78rem;color:var(--g4);margin-bottom:0.85rem;line-height:1.6;">UBI generates economic returns that offset its gross cost. Toggle the savings and growth effects you consider credible. These reduce the net cost of the program.</p>
-
-      <div class="savings-item" id="sv-gdp" onclick="toggleSav('gdp')">
-        <div class="fs-dot"></div>
-        <div class="savings-info">
-          <span class="savings-name">GDP &amp; consumer spending growth</span>
-          <span class="savings-sub">UBI flows directly into local economies, boosting consumer spending and GDP. The Roosevelt Institute estimated a $1,000/mo UBI could grow the economy by $2.5T over 8 years, generating hundreds of billions in new tax revenue.</span>
-          <button class="savings-lm-btn" onclick="lmSav(event,'slm-gdp',this)">Learn more ↓</button>
-          <div class="savings-lm-content" id="slm-gdp">A 2017 Roosevelt Institute macroeconomic model found a fully-funded UBI of $1,000/month would increase GDP by 12.56% — roughly $2.5T — over 8 years. Even conservative estimates project meaningful multiplier effects, as low-income recipients spend virtually all of a UBI on goods and services in their local communities. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Institute</a></div>
-        </div>
-        <span class="savings-amt" id="srev-gdp">$0/yr</span>
-      </div>
-
+      <!-- COST SAVINGS (moved from the old Savings tab) -->
+      <div class="ctrl-section-head" style="margin-top:1rem;">Savings from UBI</div>
+      <p class="sp-intro">Government costs UBI may reduce. Toggle the effects you find credible.</p>
       <div class="savings-item" id="sv-health" onclick="toggleSav('health')">
         <div class="fs-dot"></div>
         <div class="savings-info">
@@ -572,29 +592,9 @@ input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; disp
         <span class="savings-amt" id="srev-admin">$0/yr</span>
       </div>
 
-      <div class="savings-item" id="sv-work" onclick="toggleSav('work')">
-        <div class="fs-dot"></div>
-        <div class="savings-info">
-          <span class="savings-name">Increased workforce participation &amp; tax base</span>
-          <span class="savings-sub">UBI reduces the "welfare cliff" that discourages people from taking jobs. Pilots in Stockton and Finland showed employment either held steady or increased — broadening the income tax base.</span>
-          <button class="savings-lm-btn" onclick="lmSav(event,'slm-work',this)">Learn more ↓</button>
-          <div class="savings-lm-content" id="slm-work">In Stockton, full-time employment among recipients doubled from 28% to 40%. Finland's pilot showed no reduction in employment. More workers earning income means more income tax and payroll tax revenue, partially offsetting the gross cost of the program. A 1% increase in labor force participation generates roughly $50–100B in additional tax revenues annually. <a href="https://www.stocktondemonstration.org/" target="_blank" rel="noopener" class="src">SEED</a></div>
-        </div>
-        <span class="savings-amt" id="srev-work">$0/yr</span>
-      </div>
+      <p class="sp-source">Source: <a href="https://www.cbo.gov/publication/61985" target="_blank" rel="noopener">Congressional Budget Office, Monthly Budget Review: September 2026</a> (preliminary FY 2026 outlays). Small line items are merged into larger categories. <strong>Illustrative only</strong> — these cuts are a thought experiment, not policy recommendations.</p>
+    </div><!-- /sp-spending -->
 
-      <div class="savings-item" id="sv-poverty" onclick="toggleSav('poverty')">
-        <div class="fs-dot"></div>
-        <div class="savings-info">
-          <span class="savings-name">Poverty reduction multiplier</span>
-          <span class="savings-sub">Every dollar invested in reducing poverty generates returns in education outcomes, reduced social services use, and long-term tax contributions. Childhood poverty alone costs the US an estimated $1T/yr in lost productivity.</span>
-          <button class="savings-lm-btn" onclick="lmSav(event,'slm-poverty',this)">Learn more ↓</button>
-          <div class="savings-lm-content" id="slm-poverty">A 2018 Child Trends analysis estimated the annual cost of childhood poverty at $1.03 trillion — through reduced adult earnings, increased crime, and higher health spending. Eliminating child poverty through a UBI floor would generate long-run fiscal savings that dwarf the short-run cost. <a href="https://www.childtrends.org/publications/reducing-child-poverty-in-the-us" target="_blank" rel="noopener" class="src">Child Trends</a></div>
-        </div>
-        <span class="savings-amt" id="srev-poverty">$0/yr</span>
-      </div>
-
-    </div><!-- /sp-savings -->
 
   </div><!-- /controls-col -->
 

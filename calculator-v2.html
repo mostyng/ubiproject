@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UBI Calculator (v2 preview) — UBI Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:#ffffff; --off-white:#f7f9fc; --blue-pale:#e8f0fb; --blue-light:#d0e3f8;
+  --blue:#1a4d8f; --blue-mid:#2563b0; --blue-dark:#0f2d5c; --navy:#0a1f3d;
+  --red:#c0392b; --red-hover:#a93226; --red-pale:#fdf1f0;
+  --g1:#f0f2f5; --g2:#dde2ea; --g3:#b0b8c4; --g4:#6b7685; --g5:#3d4755;
+  /* legacy aliases used by JS color refs in results panel */
+  --teal:#1a6b5a; --teal-p:#e8f4f1;
+  --rose:#b04a4a; --rose-p:#fdf1f0;
+  --fd:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --fb:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --r:8px; --rs:4px;
+  --sh:0 2px 10px rgba(10,31,61,0.07);
+  --shm:0 4px 24px rgba(10,31,61,0.12);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--fd); background:var(--white); color:var(--navy); font-size:15px; line-height:1.7; }
+
+/* ── NAV ── */
+nav { position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.97); backdrop-filter:blur(8px); border-bottom:2px solid var(--blue); padding:0 2rem; display:flex; align-items:center; }
+.nav-brand { font-size:1.05rem; font-weight:800; color:var(--blue-dark); text-decoration:none; padding:1rem 0; margin-right:auto; }
+.nav-brand span { color:var(--red); }
+.nav-links { display:flex; list-style:none; }
+.nav-links a { display:block; padding:1rem 0.9rem; font-size:0.78rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; color:var(--g4); text-decoration:none; transition:color 0.18s; position:relative; }
+.nav-links a::after { content:""; position:absolute; bottom:0; left:0.9rem; right:0.9rem; height:2px; background:var(--red); transform:scaleX(0); transition:transform 0.2s; }
+.nav-links a:hover { color:var(--blue-dark); }
+.nav-links a:hover::after, .nav-links a.active::after { transform:scaleX(1); }
+.nav-links a.active { color:var(--blue-dark); }
+.nav-hamburger { display:none; flex-direction:column; justify-content:center; align-items:center; gap:5px; width:40px; height:40px; background:none; border:none; cursor:pointer; border-radius:var(--rs); }
+.nav-hamburger span { display:block; width:22px; height:2px; background:var(--navy); border-radius:2px; transition:transform 0.3s ease, opacity 0.3s ease, width 0.3s ease; transform-origin:center; }
+nav.menu-open .nav-hamburger span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+nav.menu-open .nav-hamburger span:nth-child(2) { opacity:0; width:0; }
+nav.menu-open .nav-hamburger span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+.nav-overlay { display:none; position:fixed; inset:0; background:rgba(10,31,61,0.4); z-index:98; backdrop-filter:blur(2px); }
+nav.menu-open ~ .nav-overlay { display:block; }
+
+/* ── PAGE HERO ── */
+.page-hero { background:linear-gradient(160deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-mid) 100%); padding:3.5rem 2rem 2.5rem; }
+.page-hero-inner { max-width:1100px; margin:0 auto; }
+.back-link { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.75rem; font-weight:700; color:rgba(255,255,255,0.65); text-decoration:none; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:1.25rem; transition:color 0.18s; }
+.back-link:hover { color:#fff; }
+.page-hero h1 { font-size:clamp(1.9rem,4vw,2.7rem); font-weight:800; line-height:1.15; color:#fff; max-width:700px; margin-bottom:0.65rem; letter-spacing:-0.02em; }
+.page-hero h1 em { font-style:italic; color:var(--blue-light); border-bottom:3px solid var(--red); padding-bottom:1px; }
+.page-hero p { color:rgba(255,255,255,0.72); font-size:0.97rem; max-width:600px; line-height:1.75; }
+
+/* ── MAIN LAYOUT ── */
+.page-body { max-width:1100px; margin:0 auto; padding:2.5rem 2rem 5rem; display:grid; grid-template-columns:1fr 400px; gap:2.5rem; align-items:start; }
+
+/* ── TYPOGRAPHY UTILS ── */
+.kicker { font-size:0.7rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:var(--red); margin-bottom:0.3rem; display:block; }
+a.src { color:var(--blue-mid); text-decoration:none; font-size:0.74rem; font-weight:600; white-space:nowrap; transition:color 0.15s; }
+a.src:hover { color:var(--red); }
+a.src::before { content:'['; font-weight:400; color:var(--g3); }
+a.src::after  { content:']'; font-weight:400; color:var(--g3); }
+input[type="range"] { width:100%; accent-color:var(--blue); cursor:pointer; display:block; }
+.range-row { display:flex; justify-content:space-between; font-size:0.68rem; color:var(--g3); margin-top:0.15rem; }
+
+/* ── UBI AMOUNT PANEL ── */
+.ubi-panel { background:var(--blue-pale); border:1px solid var(--blue-light); border-radius:var(--r); padding:1.25rem 1.4rem; margin-bottom:1rem; }
+.ubi-panel-title { font-size:0.95rem; font-weight:700; color:var(--navy); margin-bottom:0.7rem; }
+.slider-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.35rem; }
+.slider-label { font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--g4); }
+.slider-current { font-size:1rem; font-weight:800; color:var(--blue); }
+.ubi-meta { font-size:0.73rem; color:var(--g4); margin-top:0.55rem; }
+
+/* ── SECTION HEADERS ── */
+.ctrl-section-head { font-size:0.67rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--g4); padding:0.3rem 0 0.45rem; margin-top:0.9rem; border-bottom:2px solid var(--blue); margin-bottom:0.65rem; }
+
+/* ── FUNDING SOURCE CARDS ── */
+.fs-card { border:1.5px solid var(--g2); border-radius:var(--r); margin-bottom:0.55rem; background:var(--white); transition:border-color 0.18s, box-shadow 0.18s; overflow:hidden; }
+.fs-card.active { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,77,143,0.08); }
+.fs-header { display:flex; align-items:center; gap:0.75rem; padding:0.8rem 1rem; cursor:pointer; user-select:none; transition:background 0.15s; }
+.fs-header:hover { background:var(--blue-pale); }
+.fs-dot { width:17px; height:17px; border-radius:50%; border:2px solid var(--g3); background:var(--white); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
+.fs-card.active .fs-dot { background:var(--blue); border-color:var(--blue); }
+.fs-dot::after { content:''; width:6px; height:6px; border-radius:50%; background:#fff; opacity:0; transition:opacity 0.15s; }
+.fs-card.active .fs-dot::after { opacity:1; }
+.fs-icon { font-size:1rem; flex-shrink:0; line-height:1; }
+.fs-name { font-size:0.86rem; font-weight:600; color:var(--navy); flex:1; }
+.fs-rev-badge { font-size:0.8rem; font-weight:700; color:var(--blue-mid); min-width:60px; text-align:right; flex-shrink:0; }
+.fs-body { display:none; padding:0 1rem 0.9rem; border-top:1px solid var(--g2); }
+.fs-card.active .fs-body { display:block; }
+.fs-short-desc { font-size:0.78rem; color:var(--g4); margin-top:0.5rem; margin-bottom:0.45rem; line-height:1.55; }
+.learn-more-btn { font-size:0.72rem; font-weight:700; color:var(--blue-mid); background:none; border:none; cursor:pointer; padding:0; text-decoration:underline; text-underline-offset:2px; transition:color 0.15s; }
+.learn-more-btn:hover { color:var(--red); }
+.learn-more-content { display:none; font-size:0.75rem; color:var(--g5); background:var(--blue-pale); border-radius:var(--rs); padding:0.65rem 0.8rem; margin:0.45rem 0 0.6rem; line-height:1.6; }
+.learn-more-content.open { display:block; }
+.fs-slider-section { margin-top:0.5rem; }
+.fs-slider-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.3rem; }
+.fs-slider-label { font-size:0.68rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--g4); }
+.fs-slider-val { font-size:0.88rem; font-weight:800; color:var(--blue); }
+
+/* ── SPENDING TAB (pie + sliders) ── */
+.sp-intro { font-size:0.78rem; color:var(--g4); margin-bottom:0.85rem; line-height:1.6; }
+.sp-top { display:flex; align-items:center; gap:1.25rem; margin-bottom:1rem; }
+.sp-summary { flex:1; min-width:0; }
+.sp-sum-lbl { display:block; font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--g4); }
+.sp-sum-val { display:block; font-size:2rem; font-weight:800; color:var(--red); line-height:1.15; font-variant-numeric:tabular-nums; }
+.sp-sum-sub { display:block; font-size:0.75rem; color:var(--g4); margin-bottom:0.6rem; }
+.sp-reset { font:inherit; font-size:0.7rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:0.4rem 0.8rem; border-radius:var(--rs); border:1.5px solid var(--g3); background:var(--white); color:var(--g5); cursor:pointer; }
+.sp-reset:hover { border-color:var(--blue); color:var(--blue); }
+.sp-row { border:1.5px solid var(--g2); border-radius:var(--r); padding:0.6rem 0.85rem 0.55rem; margin-bottom:0.45rem; background:var(--white); transition:border-color 0.18s, background 0.18s; }
+.sp-row.cut { border-color:var(--blue); background:var(--blue-pale); }
+.sp-row-head { display:flex; align-items:center; gap:0.55rem; }
+.sp-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.sp-name { font-size:0.84rem; font-weight:600; color:var(--navy); flex:1; min-width:0; }
+.sp-amt { font-size:0.82rem; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
+.sp-share { font-size:0.72rem; color:var(--g4); min-width:42px; text-align:right; font-variant-numeric:tabular-nums; }
+.sp-row input[type=range] { margin-top:0.35rem; }
+.sp-row-foot { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--g4); margin-top:0.1rem; font-variant-numeric:tabular-nums; }
+.sp-row-foot strong { color:var(--red); font-weight:700; }
+.sp-locked { font-size:0.7rem; color:var(--g4); margin-top:0.2rem; padding-left:calc(12px + 0.55rem); }
+.sp-source { font-size:0.7rem; color:var(--g4); line-height:1.55; margin-top:0.7rem; }
+.sp-source a { color:var(--blue-mid); }
+
+/* ── CTRL TABS (left column) ── */
+.ctrl-tabs { display:flex; gap:0; background:var(--g1); border-radius:var(--r); padding:3px; margin-bottom:1rem; }
+.ctrl-tab {
+  flex:1; text-align:center; padding:0.45rem 0.5rem;
+  font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+  border-radius:6px; cursor:pointer; color:var(--g4);
+  transition:all 0.18s; border:none; background:transparent; font-family:var(--fd);
+}
+.ctrl-tab.active { background:var(--white); color:var(--navy); box-shadow:var(--sh); }
+.ctrl-tab:hover:not(.active) { color:var(--navy); }
+.ctrl-pane { display:none; }
+.ctrl-pane.active { display:block; }
+
+/* ── SAVINGS ITEM ── */
+.savings-item {
+  display:flex; align-items:flex-start; gap:0.75rem;
+  padding:0.85rem 1rem; border:1.5px solid var(--g2);
+  border-radius:var(--r); margin-bottom:0.55rem;
+  background:var(--white); transition:border-color 0.18s, background 0.18s;
+  cursor:pointer; user-select:none;
+}
+.savings-item:hover { background:var(--blue-pale); }
+.savings-item.active { border-color:var(--blue); background:var(--blue-pale); }
+.savings-item.active .fs-dot { background:var(--blue); border-color:var(--blue); }
+.savings-item.active .fs-dot::after { opacity:1; }
+.savings-info { flex:1; min-width:0; }
+.savings-name { font-size:0.84rem; font-weight:600; color:var(--navy); display:block; }
+.savings-sub  { font-size:0.71rem; color:var(--g4); display:block; margin-top:0.05rem; line-height:1.45; }
+.savings-amt  { font-size:0.8rem; font-weight:700; color:var(--blue-mid); flex-shrink:0; min-width:60px; text-align:right; }
+.savings-lm-btn { font-size:0.7rem; font-weight:700; color:var(--blue-mid); background:none; border:none; cursor:pointer; padding:0.3rem 0 0; text-decoration:underline; text-underline-offset:2px; display:block; transition:color 0.15s; }
+.savings-lm-btn:hover { color:var(--red); }
+.savings-lm-content { display:none; font-size:0.74rem; color:var(--g5); background:var(--blue-pale); border-radius:var(--rs); padding:0.6rem 0.75rem; margin-top:0.45rem; line-height:1.6; }
+.savings-lm-content.open { display:block; }
+
+/* ── MONETARY FINANCING (moved inside Revenue tab) ── */
+.monetary-section { margin-top:1rem; }
+.print-card { border:1.5px solid rgba(192,57,43,0.3); border-radius:var(--r); margin-bottom:0.55rem; background:var(--white); overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; }
+.print-card.active { border-color:var(--red); box-shadow:0 0 0 3px rgba(192,57,43,0.08); background:var(--red-pale); }
+.print-card .fs-header:hover { background:rgba(192,57,43,0.05); }
+.print-card .fs-dot { border-color:rgba(192,57,43,0.4); }
+.print-card.active .fs-dot { background:var(--red); border-color:var(--red); }
+.print-card .fs-name { color:var(--red); }
+.print-card .fs-rev-badge { color:var(--red); }
+.infl-block { display:none; margin:0 1rem 0.9rem; padding:0.75rem 0.85rem; background:rgba(192,57,43,0.06); border-radius:var(--rs); }
+.print-card.active .infl-block { display:block; }
+.infl-pct { font-size:1.5rem; font-weight:800; color:var(--red); display:block; line-height:1; margin-bottom:0.2rem; }
+.infl-note { font-size:0.72rem; color:var(--red); opacity:0.8; line-height:1.5; display:block; margin-bottom:0.7rem; }
+.print-slider-header { display:flex; justify-content:space-between; margin-bottom:0.3rem; }
+.print-slider-label { font-size:0.67rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:rgba(192,57,43,0.7); }
+.print-slider-val { font-size:0.86rem; font-weight:800; color:var(--red); }
+.print-warning { font-size:0.7rem; color:rgba(192,57,43,0.65); margin-top:0.5rem; line-height:1.5; }
+
+/* ── RESULTS STICKY PANEL ── */
+#results-col { position:sticky; top:5.5rem; align-self:start; }
+.results-panel {
+  background:var(--navy); color:#fff; border-radius:var(--r);
+  padding:1.5rem 1.5rem 1.6rem; box-shadow:var(--shm);
+  max-height:calc(100vh - 7rem);
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,0.12) transparent;
+}
+.results-panel::-webkit-scrollbar { width:4px; }
+.results-panel::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:2px; }
+.results-panel::-webkit-scrollbar-track { background:transparent; }
+
+/* ── VIEW TABS ── */
+.view-tabs { display:flex; gap:2px; background:rgba(255,255,255,0.07); border-radius:var(--rs); padding:3px; margin-bottom:1.4rem; }
+.view-tab { flex:1; text-align:center; padding:0.4rem; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; border-radius:4px; cursor:pointer; color:rgba(255,255,255,0.4); transition:all 0.2s; border:none; background:transparent; font-family:var(--fd); }
+.view-tab.active { background:rgba(255,255,255,0.12); color:#fff; }
+
+/* ── COST & FUNDING VIEW ── */
+.view-pane { display:none; }
+.view-pane.active { display:block; }
+
+/* PIE CHART */
+
+/* RESULTS ROWS */
+.r-divider { height:1px; background:rgba(255,255,255,0.08); margin:0.75rem 0; }
+.r-row { display:flex; justify-content:space-between; align-items:baseline; padding:0.35rem 0; font-size:0.82rem; }
+.r-lbl { color:rgba(255,255,255,0.5); }
+.r-val { font-weight:700; font-size:0.92rem; }
+.c-pos { color:#7dd3c8; }
+.c-neg { color:#f4a7a7; }
+.c-neu { color:var(--blue-light); }
+
+.balance-box { margin-top:0.9rem; border-radius:var(--rs); padding:0.85rem 1rem; text-align:center; }
+.balance-lbl { font-size:0.67rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; opacity:0.6; margin-bottom:0.2rem; }
+.balance-val { font-size:1.8rem; font-weight:800; line-height:1; }
+.b-gap { background:rgba(244,167,167,0.12); border:1px solid rgba(244,167,167,0.25); }
+.b-gap .balance-val { color:#f4a7a7; }
+.b-ok  { background:rgba(125,211,200,0.12); border:1px solid rgba(125,211,200,0.25); }
+.b-ok  .balance-val { color:#7dd3c8; }
+
+
+.sb-list { margin-top:0.8rem; }
+.sb-row { display:flex; align-items:center; gap:0.45rem; padding:0.22rem 0; font-size:0.74rem; }
+.sb-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.sb-name { flex:1; color:rgba(255,255,255,0.55); }
+.sb-val { font-weight:700; color:rgba(255,255,255,0.88); }
+.sb-pct { font-size:0.65rem; color:rgba(255,255,255,0.35); min-width:28px; text-align:right; }
+
+.r-note { margin-top:1rem; font-size:0.67rem; color:rgba(255,255,255,0.28); line-height:1.55; border-top:1px solid rgba(255,255,255,0.07); padding-top:0.85rem; }
+.r-note a { color:rgba(255,255,255,0.4); }
+
+/* ── HOUSEHOLD IMPACT VIEW ── */
+.hi-select-group { margin-bottom:0.75rem; }
+.hi-select-group label { font-size:0.67rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.45); display:block; margin-bottom:0.3rem; }
+.hi-select { width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:var(--rs); padding:0.45rem 0.65rem; color:#fff; font-family:var(--fd); font-size:0.84rem; cursor:pointer; appearance:none; }
+.hi-select option { background:var(--navy); }
+
+.hi-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin:0.8rem 0; }
+.hi-stat { background:rgba(255,255,255,0.05); border-radius:var(--rs); padding:0.7rem 0.8rem; text-align:center; }
+.hi-stat-val { font-size:1.35rem; font-weight:800; display:block; line-height:1; margin-bottom:0.2rem; }
+.hi-stat-lbl { font-size:0.67rem; color:rgba(255,255,255,0.4); letter-spacing:0.02em; }
+
+.hi-net-box { background:rgba(255,255,255,0.05); border-radius:var(--rs); padding:0.9rem; text-align:center; margin-bottom:0.85rem; }
+.hi-net-val { font-size:2rem; font-weight:800; line-height:1; display:block; }
+.hi-net-lbl { font-size:0.69rem; color:rgba(255,255,255,0.4); margin-top:0.25rem; }
+
+.ig-section-lbl { font-size:0.66rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:0.5rem; }
+.ig-table { width:100%; border-collapse:collapse; font-size:0.71rem; }
+.ig-table th { font-weight:700; text-align:left; padding:0.25rem 0.3rem; color:rgba(255,255,255,0.35); border-bottom:1px solid rgba(255,255,255,0.08); font-size:0.64rem; letter-spacing:0.05em; text-transform:uppercase; }
+.ig-table td { padding:0.3rem 0.3rem; color:rgba(255,255,255,0.7); border-bottom:1px solid rgba(255,255,255,0.05); vertical-align:middle; }
+.ig-table tr:last-child td { border-bottom:none; }
+.ig-bar { height:4px; border-radius:2px; background:rgba(255,255,255,0.08); overflow:hidden; width:44px; }
+.ig-bar-fill { height:100%; border-radius:2px; }
+.hi-note { font-size:0.66rem; color:rgba(255,255,255,0.25); line-height:1.55; border-top:1px solid rgba(255,255,255,0.07); padding-top:0.8rem; margin-top:0.8rem; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px) {
+  nav { padding:0 1.25rem; }
+  .nav-hamburger { display:flex; }
+  .nav-links { display:flex; flex-direction:column; position:fixed; top:0; right:0; width:min(300px,88vw); height:100vh; background:var(--white); border-left:1px solid var(--g2); padding:5rem 0 2rem; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.4,0,0.2,1); overflow-y:auto; z-index:99; list-style:none; }
+  nav.menu-open .nav-links { transform:translateX(0); }
+  .nav-links li { border-bottom:1px solid var(--g2); }
+  .nav-links a { padding:0.9rem 1.5rem; font-size:0.9rem; display:flex; justify-content:space-between; }
+  .nav-links a::after { display:none; }
+  .nav-links a:hover { background:var(--blue-pale); }
+  .page-body { grid-template-columns:1fr; padding:1.75rem 1.25rem 4rem; gap:1.75rem; }
+  #results-col { position:static; top:auto; align-self:auto; order:-1; }
+  .results-panel { max-height:none; overflow-y:visible; }
+}
+
+/* ════════════════ V2 LAYOUT ════════════════ */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+:focus-visible { outline:3px solid var(--blue-mid); outline-offset:2px; }
+html { overflow-x:clip; }
+.page-hero { padding:2.5rem 2rem 2rem; }
+.page-hero-inner { max-width:1440px; }
+.v2-body { max-width:1440px; margin:0 auto; padding:2rem 2rem 4rem; display:grid; gap:1.75rem 2rem;
+  grid-template-columns:400px minmax(0,1fr) 330px;
+  grid-template-areas:"left center ubi" "left center results"; grid-template-rows:auto 1fr; align-items:start; }
+.float-panel { grid-area:left; }
+.center-col  { grid-area:center; }
+.ubi-area    { grid-area:ubi; }
+.results-area{ grid-area:results; }
+.ubi-area .ubi-panel { margin-bottom:0; }
+
+/* Floating tabbed card */
+.float-panel { position:sticky; top:76px; background:var(--white); border:1px solid var(--g2); border-radius:14px;
+  box-shadow:0 12px 40px rgba(10,31,61,0.14), 0 2px 6px rgba(10,31,61,0.06);
+  display:flex; flex-direction:column; max-height:calc(100vh - 96px); overflow:hidden; }
+.float-panel .ctrl-tabs { margin:0.75rem 0.75rem 0; flex-shrink:0; }
+.float-panel .ctrl-tab { font-size:0.74rem; padding:0.6rem 0.5rem; color:var(--g5); }
+.float-panel .ctrl-tab.active { background:var(--navy); color:#fff; box-shadow:none; }
+.float-scroll { overflow-y:auto; padding:0.9rem 0.85rem 1rem; overscroll-behavior:contain; }
+.float-scroll .ctrl-pane:focus-visible { outline-offset:-3px; }
+.float-scroll .sp-top { margin-bottom:0.75rem; }
+
+/* Centre donut */
+.center-col { position:sticky; top:76px; display:flex; flex-direction:column; align-items:center; }
+.donut-wrap { position:relative; width:min(100%, 520px); aspect-ratio:1; }
+.donut-wrap svg { width:100%; height:100%; display:block; overflow:visible; }
+.donut-wrap path { transition:opacity 0.15s; }
+.donut-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; text-align:center; }
+.donut-pct { font-size:clamp(3.2rem, 8vw, 6.5rem); font-weight:300; line-height:1; letter-spacing:-0.04em; color:var(--navy); font-variant-numeric:tabular-nums; }
+.donut-lbl { font-size:clamp(0.9rem, 1.6vw, 1.35rem); font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--navy); margin-top:0.4rem; }
+.donut-cost { font-size:clamp(0.8rem, 1.1vw, 0.95rem); letter-spacing:0.08em; color:var(--g5); margin-top:0.35rem; font-variant-numeric:tabular-nums; }
+.pie-tooltip { position:absolute; background:var(--navy); color:#fff; border-radius:var(--rs); padding:0.4rem 0.65rem; font-size:0.76rem; font-weight:700; pointer-events:none; white-space:nowrap; opacity:0; transition:opacity 0.12s; z-index:20; transform:translate(-50%,-115%); box-shadow:var(--shm); }
+.pie-empty-hint { text-align:center; font-size:0.85rem; color:var(--g5); margin:0.75rem 0 0; max-width:360px; }
+.center-legend { width:min(100%, 440px); margin-top:1.25rem; }
+.legend-title { font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--g5); border-bottom:2px solid var(--blue); padding-bottom:0.4rem; margin-bottom:0.35rem; }
+.center-legend .sb-list { margin-top:0; }
+.center-legend .sb-row { font-size:0.84rem; padding:0.35rem 0; border-bottom:1px solid var(--g1); gap:0.6rem; }
+.center-legend .sb-dot { width:11px; height:11px; }
+.center-legend .sb-name { color:var(--g5); }
+.center-legend .sb-val  { color:var(--navy); }
+.center-legend .sb-pct  { color:var(--g5); font-size:0.75rem; min-width:36px; }
+.center-legend .sb-list p { color:var(--g5) !important; font-size:0.8rem !important; }
+
+/* Results card: raise low-contrast text to WCAG AA on navy */
+.results-panel { max-height:none; overflow:visible; }
+.r-lbl, .hi-stat-lbl, .hi-net-lbl, .ig-table th, .ig-section-lbl, .hi-select-group label { color:rgba(255,255,255,0.78) !important; }
+.r-note, .hi-note { color:rgba(255,255,255,0.72); }
+.view-tab { color:rgba(255,255,255,0.72); }
+.ubi-meta, .range-row { color:var(--g5); }
+
+/* Mini funding bar (phones) */
+.mini-bar { display:none; }
+
+@media (max-width:1180px) {
+  .v2-body { grid-template-columns:380px minmax(0,1fr); grid-template-areas:"left ubi" "left center" "left results"; grid-template-rows:auto auto 1fr; }
+  .center-col { position:static; }
+}
+@media (max-width:820px) {
+  .v2-body { grid-template-columns:minmax(0,1fr); grid-template-areas:"ubi" "center" "left" "results"; padding:1.25rem 1rem 5rem; }
+  .float-panel { position:static; max-height:none; }
+  .float-scroll { overflow:visible; }
+  .donut-wrap { width:min(100%, 340px); }
+  .mini-bar { display:flex; position:fixed; left:0; right:0; bottom:0; z-index:90; background:var(--navy); color:#fff; justify-content:space-between; padding:0.65rem 1rem; font-size:0.85rem; box-shadow:0 -4px 16px rgba(10,31,61,0.2); }
+  .mini-bar strong { font-size:1.1rem; }
+}
+@media (prefers-reduced-motion:reduce) { .donut-wrap path, .pie-tooltip { transition:none; } }
+
+/* ── A11y fixes (audit P0/P1) ── */
+button.fs-header { width:100%; border:0; background:none; font:inherit; color:inherit; text-align:left; }
+.savings-item { display:block; cursor:default; padding:0; }
+.savings-toggle { display:flex; align-items:center; gap:0.75rem; width:100%; border:0; background:none; font:inherit; color:inherit; text-align:left; cursor:pointer; padding:0.85rem 1rem 0.35rem; border-radius:var(--r); }
+.savings-toggle .savings-name { flex:1; }
+.savings-item .savings-info { padding:0 1rem 0.85rem calc(1rem + 17px + 0.75rem); cursor:pointer; }
+.savings-item .savings-lm-content { cursor:auto; }
+.fs-header:focus-visible, .savings-toggle:focus-visible { outline:3px solid var(--blue-mid); outline-offset:-3px; }
+.slider-label { color:var(--g5); }
+.print-warning, .infl-note { color:#9b2c20; opacity:1; }
+.r-note a { color:rgba(255,255,255,0.9); text-decoration:underline; text-underline-offset:2px; }
+.results-panel .range-row { color:rgba(255,255,255,0.78) !important; }
+
+/* ── Audit P2 fixes ── */
+/* Readable text floor: 12px for labels, ~13px for descriptions */
+.range-row, .ubi-meta, .ctrl-section-head, .fs-slider-label, .print-slider-label, .slider-label,
+.sp-sum-lbl, .sp-share, .sp-row-foot, .sp-locked, .ctrl-tab, .view-tab, .pie-tooltip, .sp-tt,
+.balance-lbl, .sb-pct, .hi-select-group label, .hi-stat-lbl, .hi-net-lbl,
+.ig-section-lbl, .ig-table, .ig-table th, .legend-title, .learn-more-btn, .savings-lm-btn { font-size:0.75rem; }
+.savings-sub, .fs-short-desc, .learn-more-content, .savings-lm-content, .print-warning, .infl-note,
+.sp-source, .r-note, .hi-note, .sb-row { font-size:0.8rem; }
+.ig-table th, .ig-table td { padding:0.3rem 0.25rem; }
+/* Learn more: 24px minimum tap height */
+.learn-more-btn, .savings-lm-btn { display:inline-flex; align-items:center; min-height:24px; padding:0.15rem 0; }
+/* Headings keep their old look */
+h2.ubi-panel-title, h3.ctrl-section-head, h3.legend-title { display:block; }
+h3.ctrl-section-head { font-weight:700; }
+/* Footer */
+.site-footer { background:var(--navy); color:rgba(255,255,255,0.8); padding:2rem; text-align:center; font-size:0.8rem; }
+.site-footer a { color:#fff; text-decoration:underline; text-underline-offset:2px; }
+.site-footer a:hover { color:var(--blue-light); }
+
+/* ── Audit P3: one card (the floating panel), plain rows inside it ── */
+.float-scroll .fs-card, .float-scroll .print-card, .float-scroll .savings-item, .float-scroll .sp-row {
+  border:0; border-bottom:1px solid var(--g2); border-radius:0; box-shadow:none; margin:0; background:transparent; }
+.float-scroll .fs-card.active, .float-scroll .savings-item.active, .float-scroll .sp-row.cut { background:var(--blue-pale); box-shadow:none; }
+.float-scroll .print-card.active { background:var(--red-pale); box-shadow:none; }
+.float-scroll .sp-row { padding:0.7rem 0.6rem 0.6rem; }
+.float-scroll .fs-header { padding:0.8rem 0.6rem; }
+.float-scroll .fs-body { padding:0 0.6rem 0.9rem; border-top:0; }
+.float-scroll .savings-toggle { padding:0.8rem 0.6rem 0.3rem; border-radius:0; }
+.float-scroll .savings-item .savings-info { padding:0 0.6rem 0.85rem calc(0.6rem + 17px + 0.75rem); }
+.float-scroll .infl-block { margin:0 0.6rem 0.9rem; }
+.float-scroll .ctrl-pane > :is(.fs-card, .print-card, .savings-item, #sp-list):first-of-type,
+.float-scroll .ctrl-section-head + .sp-intro + * { border-top:1px solid var(--g2); }
+.float-scroll .ctrl-section-head { margin-top:1.5rem !important; }
+
+/* Funding gap: a divided row inside the results card, not a box in a box */
+.results-panel .balance-box { background:none; border:0; border-top:1px solid rgba(255,255,255,0.15); border-bottom:1px solid rgba(255,255,255,0.15); border-radius:0; padding:0.9rem 0; }
+.print-slider-label { color:#9b2c20; }
+.sp-intro, .savings-sub, .fs-short-desc, .r-note, .hi-note, .sp-source { text-wrap:pretty; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a class="nav-brand" href="index.html">UBI<span>Project</span></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="history.html" onclick="closeMenu()">History</a></li>
+    <li><a href="why-ubi.html" onclick="closeMenu()">Why UBI</a></li>
+    <li><a href="examples.html" onclick="closeMenu()">Examples</a></li>
+    <li><a href="calculator.html" class="active" onclick="closeMenu()">Calculator</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMenu()"></div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <a class="back-link" href="index.html">← Back to home</a>
+    <h1>But how do you <em>pay</em> for it?</h1>
+    <p>Mix and match funding sources, set the rates, and see whether your plan covers the full cost. Switch to Household Impact to see who gains and who pays.</p>
+  </div>
+</div>
+
+<!-- MAIN — v2 layout: floating tabbed controls · central funding donut · amount + results -->
+<main class="v2-body" id="main">
+
+  <!-- ═══ LEFT: FLOATING TABBED CONTROLS ═══ -->
+  <section class="float-panel" id="controls-col" aria-label="Ways to fund UBI">
+    <h2 class="sr-only">Ways to fund UBI</h2>
+    <div class="ctrl-tabs" role="tablist" aria-label="Ways to fund UBI">
+      <button class="ctrl-tab active" role="tab" id="tab-revenue" aria-selected="true" aria-controls="sp-revenue" onclick="switchSrcTab('revenue',this)">Revenue sources</button>
+      <button class="ctrl-tab" role="tab" id="tab-spending" aria-selected="false" aria-controls="sp-spending" tabindex="-1" onclick="switchSrcTab('spending',this)">Spending</button>
+    </div>
+    <div class="float-scroll">
+    <!-- ── TAB: REVENUE SOURCES ── -->
+    <div class="ctrl-pane active" id="sp-revenue" role="tabpanel" aria-labelledby="tab-revenue" tabindex="0">
+
+      <!-- WEALTH TAX -->
+      <div class="fs-card" id="fc-wealth">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="wealth" onclick="toggleFS('wealth')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">🏦</span>
+          <span class="fs-name">Wealth tax</span>
+          <span class="fs-rev-badge" id="rev-wealth">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Annual tax on net assets above $50M.</p>
+          <button class="learn-more-btn" onclick="lm('lm-wealth',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-wealth">Elizabeth Warren's proposed 2% on wealth above $50M / 3% above $1B was estimated to raise ~$200B/yr. Critics cite capital flight risk and valuation difficulty for illiquid assets. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Inst.</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-wealth">Rate on assets &gt;$50M</label><span class="fs-slider-val" id="sv-wealth">2%</span></div>
+            <input type="range" id="sr-wealth" min="0.5" max="5" step="0.5" value="2">
+            <div class="range-row"><span>0.5%</span><span>5%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VAT -->
+      <div class="fs-card" id="fc-vat">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="vat" onclick="toggleFS('vat')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">🛒</span>
+          <span class="fs-name">Value-added tax (VAT)</span>
+          <span class="fs-rev-badge" id="rev-vat">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Consumption tax applied at each production stage. Used by most developed nations.</p>
+          <button class="learn-more-btn" onclick="lm('lm-vat',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-vat">A 10% VAT on the ~$18T US consumption base raises ~$950B/yr after exemptions. Regressive on its own — but UBI fully offsets this for anyone below median income. <a href="https://2020.yang2020.com/policies/the-freedom-dividend/" target="_blank" rel="noopener" class="src">Yang2020</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-vat">VAT rate</label><span class="fs-slider-val" id="sv-vat">10%</span></div>
+            <input type="range" id="sr-vat" min="1" max="20" step="1" value="10">
+            <div class="range-row"><span>1%</span><span>20%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAND VALUE TAX -->
+      <div class="fs-card" id="fc-lvt">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="lvt" onclick="toggleFS('lvt')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">🌾</span>
+          <span class="fs-name">Land value tax (LVT)</span>
+          <span class="fs-rev-badge" id="rev-lvt">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Tax on the unimproved value of land — not buildings. Championed by Thomas Paine and Henry George.</p>
+          <button class="learn-more-btn" onclick="lm('lm-lvt',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-lvt">Total US land value is ~$23 trillion. An LVT taxes location value created by society and infrastructure, not the owner's effort. One of the most efficient taxes known to economics. <a href="https://www.ssa.gov/history/paine4.html" target="_blank" rel="noopener" class="src">Paine, SSA archive</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-lvt">Annual rate on land value</label><span class="fs-slider-val" id="sv-lvt">1%</span></div>
+            <input type="range" id="sr-lvt" min="0.5" max="5" step="0.5" value="1">
+            <div class="range-row"><span>0.5%</span><span>5%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARBON DIVIDEND -->
+      <div class="fs-card" id="fc-carbon">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="carbon" onclick="toggleFS('carbon')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">☁️</span>
+          <span class="fs-name">Carbon dividend</span>
+          <span class="fs-rev-badge" id="rev-carbon">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Fee on fossil fuel emissions returned as equal cash dividends to all citizens.</p>
+          <button class="learn-more-btn" onclick="lm('lm-carbon',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-carbon">The Climate Leadership Council proposes $40–$100/ton, returning all proceeds as citizen dividends. Alaska's oil fund is the working model. Revenue declines as emissions fall. <a href="https://www.clcouncil.org/our-plan/" target="_blank" rel="noopener" class="src">CLC</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-carbon">Price per ton CO₂</label><span class="fs-slider-val" id="sv-carbon">$50/ton</span></div>
+            <input type="range" id="sr-carbon" min="20" max="150" step="10" value="50">
+            <div class="range-row"><span>$20</span><span>$150</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANCIAL TRANSACTION TAX -->
+      <div class="fs-card" id="fc-ftt">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="ftt" onclick="toggleFS('ftt')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">📈</span>
+          <span class="fs-name">Financial transaction tax</span>
+          <span class="fs-rev-badge" id="rev-ftt">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Small tax on stock, bond, and derivative trades. Primarily paid by high-frequency traders.</p>
+          <button class="learn-more-btn" onclick="lm('lm-ftt',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-ftt">The CBO estimates a 0.1% rate raises ~$78B/yr on ~$100T in annual US financial transactions. <a href="https://www.cbo.gov/publication/56182" target="_blank" rel="noopener" class="src">CBO</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-ftt">Rate on transactions</label><span class="fs-slider-val" id="sv-ftt">0.1%</span></div>
+            <input type="range" id="sr-ftt" min="0.05" max="0.5" step="0.05" value="0.1">
+            <div class="range-row"><span>0.05%</span><span>0.5%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTOMATION LEVY -->
+      <div class="fs-card" id="fc-auto">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="auto" onclick="toggleFS('auto')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">🤖</span>
+          <span class="fs-name">Automation levy</span>
+          <span class="fs-rev-badge" id="rev-auto">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Tax on companies replacing workers with automation. Proposed by Bill Gates.</p>
+          <button class="learn-more-btn" onclick="lm('lm-auto',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-auto">Companies profiting from displacement pay for the safety net beneath displaced workers. Estimated ~$1.5T in automated labor substitution value annually. Key challenge is defining "automated displacement." <a href="https://www.quartz.com/911968/bill-gates-the-robot-that-takes-your-job-should-pay-taxes/" target="_blank" rel="noopener" class="src">Quartz/Gates</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-auto">Levy rate</label><span class="fs-slider-val" id="sv-auto">10%</span></div>
+            <input type="range" id="sr-auto" min="5" max="30" step="5" value="10">
+            <div class="range-row"><span>5%</span><span>30%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP INCOME TAX -->
+      <div class="fs-card" id="fc-income">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="income" onclick="toggleFS('income')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">💼</span>
+          <span class="fs-name">Higher top income tax rates</span>
+          <span class="fs-rev-badge" id="rev-income">$0/yr</span>
+        </button>
+        <div class="fs-body">
+          <p class="fs-short-desc">Raise marginal rates on incomes above $400K. The US top rate was 91% in the 1950s.</p>
+          <button class="learn-more-btn" onclick="lm('lm-income',this)">Learn more ↓</button>
+          <div class="learn-more-content" id="lm-income">Each point above the current 37% top rate raises ~$15–20B/yr. The top rate was 91% through 1963, 70% through 1980. <a href="https://www.taxpolicycenter.org/" target="_blank" rel="noopener" class="src">Tax Policy Center</a></div>
+          <div class="fs-slider-section">
+            <div class="fs-slider-header"><label class="fs-slider-label" for="sr-income">Top marginal rate (income &gt;$400K)</label><span class="fs-slider-val" id="sv-income">45%</span></div>
+            <input type="range" id="sr-income" min="37" max="99" step="1" value="45">
+            <div class="range-row"><span>37% (current)</span><span>99%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GROWTH EFFECTS (moved from the old Savings tab) -->
+      <h3 class="ctrl-section-head" style="margin-top:1rem;">Economic growth from UBI</h3>
+      <p class="sp-intro">New tax revenue UBI may generate. Toggle the effects you find credible.</p>
+      <div class="savings-item" id="sv-gdp">
+        <button type="button" class="savings-toggle" aria-pressed="false" aria-describedby="sd-gdp" data-sav="gdp" onclick="toggleSav('gdp')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="savings-name">GDP &amp; consumer spending growth</span>
+          <span class="savings-amt" id="srev-gdp">$0/yr</span>
+        </button>
+        <div class="savings-info">
+          <span class="savings-sub" id="sd-gdp">UBI flows directly into local economies, boosting consumer spending and GDP. The Roosevelt Institute estimated a $1,000/mo UBI could grow the economy by $2.5T over 8 years, generating hundreds of billions in new tax revenue.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-gdp',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-gdp">A 2017 Roosevelt Institute macroeconomic model found a fully-funded UBI of $1,000/month would increase GDP by 12.56% — roughly $2.5T — over 8 years. Even conservative estimates project meaningful multiplier effects, as low-income recipients spend virtually all of a UBI on goods and services in their local communities. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener" class="src">Roosevelt Institute</a></div>
+        </div>
+      </div>
+
+      <div class="savings-item" id="sv-work">
+        <button type="button" class="savings-toggle" aria-pressed="false" aria-describedby="sd-work" data-sav="work" onclick="toggleSav('work')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="savings-name">Increased workforce participation &amp; tax base</span>
+          <span class="savings-amt" id="srev-work">$0/yr</span>
+        </button>
+        <div class="savings-info">
+          <span class="savings-sub" id="sd-work">UBI reduces the "welfare cliff" that discourages people from taking jobs. Pilots in Stockton and Finland showed employment either held steady or increased — broadening the income tax base.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-work',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-work">In Stockton, full-time employment among recipients doubled from 28% to 40%. Finland's pilot showed no reduction in employment. More workers earning income means more income tax and payroll tax revenue, partially offsetting the gross cost of the program. A 1% increase in labor force participation generates roughly $50–100B in additional tax revenues annually. <a href="https://www.stocktondemonstration.org/" target="_blank" rel="noopener" class="src">SEED</a></div>
+        </div>
+      </div>
+
+      <div class="savings-item" id="sv-poverty">
+        <button type="button" class="savings-toggle" aria-pressed="false" aria-describedby="sd-poverty" data-sav="poverty" onclick="toggleSav('poverty')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="savings-name">Poverty reduction multiplier</span>
+          <span class="savings-amt" id="srev-poverty">$0/yr</span>
+        </button>
+        <div class="savings-info">
+          <span class="savings-sub" id="sd-poverty">Every dollar invested in reducing poverty generates returns in education outcomes, reduced social services use, and long-term tax contributions. Childhood poverty alone costs the US an estimated $1T/yr in lost productivity.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-poverty',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-poverty">A 2018 Child Trends analysis estimated the annual cost of childhood poverty at $1.03 trillion — through reduced adult earnings, increased crime, and higher health spending. Eliminating child poverty through a UBI floor would generate long-run fiscal savings that dwarf the short-run cost. <a href="https://www.childtrends.org/publications/reducing-child-poverty-in-the-us" target="_blank" rel="noopener" class="src">Child Trends</a></div>
+        </div>
+      </div>
+
+      <!-- DEFICIT SPENDING (at bottom of Revenue tab) -->
+      <h3 class="ctrl-section-head" style="margin-top:1rem;">Monetary financing</h3>
+      <div class="print-card" id="fc-print">
+        <button type="button" class="fs-header" aria-pressed="false" data-fs="print" onclick="toggleFS('print')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="fs-icon" aria-hidden="true">🖨️</span>
+          <span class="fs-name">Money printing / deficit spending</span>
+          <span class="fs-rev-badge" id="rev-print">$0/yr</span>
+        </button>
+        <div class="infl-block" id="infl-block">
+          <span class="infl-pct" id="infl-pct">~1.1% additional inflation</span>
+          <span class="infl-note">Estimated additional annual inflation from unfunded monetary expansion at this scale.</span>
+          <div class="print-slider-header">
+            <label class="print-slider-label" for="sr-print">Amount financed</label>
+            <span class="print-slider-val" id="sv-print">$500B/yr</span>
+          </div>
+          <input type="range" id="sr-print" min="100" max="3000" step="100" value="500">
+          <div class="range-row"><span>$100B</span><span>$3T</span></div>
+          <p class="print-warning"><span aria-hidden="true">⚠️ </span>Most serious UBI proposals do not rely on monetary expansion. Shown here for completeness — redistributive UBI funded by taxes does not cause inflation; money creation does.</p>
+        </div>
+      </div>
+
+    </div><!-- /sp-revenue -->
+
+    <!-- ── TAB: SPENDING ──
+         One pie = all federal spending. Each slider redirects part of a
+         category to UBI; the red slice shows the total redirected.
+         Data lives in SPENDING_DATA in the script below. -->
+    <div class="ctrl-pane" id="sp-spending" role="tabpanel" aria-labelledby="tab-spending" tabindex="0" hidden>
+      <p class="sp-intro">The federal government spent <strong id="sp-total-txt">$7.4T</strong> in <span id="sp-fy-txt">FY 2026</span>. Slide to redirect part of any category to UBI. It shows up as the red slice in the funding circle.</p>
+
+      <div class="sp-top">
+        <div class="sp-summary">
+          <span class="sp-sum-lbl">Redirected to UBI</span>
+          <span class="sp-sum-val" id="sp-freed" aria-live="polite">$0</span>
+          <span class="sp-sum-sub" id="sp-freed-sub">0% of federal spending</span>
+          <button type="button" class="sp-reset" onclick="resetSpending()">Reset sliders</button>
+        </div>
+      </div>
+
+      <div id="sp-list"></div>
+
+      <!-- COST SAVINGS (moved from the old Savings tab) -->
+      <h3 class="ctrl-section-head" style="margin-top:1rem;">Savings from UBI</h3>
+      <p class="sp-intro">Government costs UBI may reduce. Toggle the effects you find credible.</p>
+      <div class="savings-item" id="sv-health">
+        <button type="button" class="savings-toggle" aria-pressed="false" aria-describedby="sd-health" data-sav="health" onclick="toggleSav('health')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="savings-name">Reduced healthcare costs</span>
+          <span class="savings-amt" id="srev-health">$0/yr</span>
+        </button>
+        <div class="savings-info">
+          <span class="savings-sub" id="sd-health">Financial stress is a leading driver of poor health outcomes. UBI pilots consistently show reduced hospitalizations, fewer ER visits, and lower rates of chronic illness — generating measurable government healthcare savings.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-health',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-health">Manitoba's Mincome experiment found hospitalization rates fell 8.5% during the pilot. The Stockton SEED study showed significant improvements in mental health. If UBI reduces US healthcare utilization by even 2–3%, the savings to Medicare, Medicaid, and employer-sponsored insurance would be substantial. Estimated at ~$100–200B/yr under conservative assumptions. <a href="https://utppublishing.com/doi/10.3138/cpp.37.3.283" target="_blank" rel="noopener" class="src">Forget (2011)</a></div>
+        </div>
+      </div>
+
+      <div class="savings-item" id="sv-crime">
+        <button type="button" class="savings-toggle" aria-pressed="false" aria-describedby="sd-crime" data-sav="crime" onclick="toggleSav('crime')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="savings-name">Reduced crime &amp; incarceration costs</span>
+          <span class="savings-amt" id="srev-crime">$0/yr</span>
+        </button>
+        <div class="savings-info">
+          <span class="savings-sub" id="sd-crime">Poverty is a primary driver of crime. The US spends ~$80B/yr incarcerating 2.3 million people. UBI addresses the economic desperation at the root of most property crime and drug offenses.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-crime',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-crime">The US spends approximately $35,000–$60,000 per prisoner per year. Studies on cash transfer programs consistently show reductions in property crime. A conservative 5% reduction in incarceration costs would save ~$4B/yr directly, plus additional costs in police, courts, and social services. <a href="https://www.vera.org/publications/price-of-prisons-2015-state-spending-trends" target="_blank" rel="noopener" class="src">Vera Institute</a></div>
+        </div>
+      </div>
+
+      <div class="savings-item" id="sv-admin">
+        <button type="button" class="savings-toggle" aria-pressed="false" aria-describedby="sd-admin" data-sav="admin" onclick="toggleSav('admin')">
+          <span class="fs-dot" aria-hidden="true"></span>
+          <span class="savings-name">Welfare administration savings</span>
+          <span class="savings-amt" id="srev-admin">$0/yr</span>
+        </button>
+        <div class="savings-info">
+          <span class="savings-sub" id="sd-admin">The US operates dozens of means-tested programs with overlapping bureaucracies. Consolidating them into a single universal payment eliminates enormous administrative overhead.</span>
+          <button class="savings-lm-btn" onclick="lmSav(event,'slm-admin',this)">Learn more ↓</button>
+          <div class="savings-lm-content" id="slm-admin">Administrative costs for means-tested programs average 10–20% of total spending. SNAP alone costs ~$6B/yr to administer. A universal cash transfer requires only identity verification and payment processing — a far leaner system. Consolidating major programs could save $30–60B/yr in administrative costs alone. <a href="https://www.cbpp.org/research/income-security/universal-basic-income" target="_blank" rel="noopener" class="src">CBPP</a></div>
+        </div>
+      </div>
+
+      <p class="sp-source">Source: <a href="https://www.cbo.gov/publication/61985" target="_blank" rel="noopener">Congressional Budget Office, Monthly Budget Review: September 2026</a> (preliminary FY 2026 outlays). Small line items are merged into larger categories. <strong>Illustrative only</strong> — these cuts are a thought experiment, not policy recommendations.</p>
+    </div><!-- /sp-spending -->
+    </div>
+  </section>
+
+  <!-- ═══ CENTER: FUNDING DONUT ═══ -->
+  <section class="center-col" aria-label="How much of the UBI is funded">
+    <h2 class="sr-only">How much of the UBI is funded</h2>
+    <div class="donut-wrap" id="pie-wrap">
+      <svg id="pie-svg" viewBox="0 0 400 400" role="img" aria-labelledby="donut-desc"></svg>
+      <div class="donut-center" aria-hidden="true">
+        <span class="donut-pct" id="d-pct">0%</span>
+        <span class="donut-lbl">Funded</span>
+        <span class="donut-cost" id="d-cost">of $3.1T / yr</span>
+      </div>
+      <div class="pie-tooltip" id="pie-tt" role="status"></div>
+    </div>
+    <p class="sr-only" id="donut-desc"></p>
+    <p class="sr-only" id="fund-status" role="status" aria-live="polite"></p>
+    <p class="pie-empty-hint" id="pie-hint">Choose revenue sources or redirect spending to start filling the circle.</p>
+    <div class="center-legend">
+      <h3 class="legend-title">What's paying for it</h3>
+      <div class="sb-list" id="sb-list"></div>
+    </div>
+  </section>
+
+  <!-- ═══ RIGHT: AMOUNT + RESULTS ═══ -->
+  <div class="ubi-area">
+    <!-- UBI AMOUNT -->
+    <div class="ubi-panel">
+      <h2 class="ubi-panel-title">Monthly UBI per adult</h2>
+      <div class="slider-header">
+        <span class="slider-label">Amount</span>
+        <span class="slider-current" id="ubi-display">$1,000 / mo</span>
+      </div>
+      <input type="range" id="ubi-slider" aria-label="Monthly UBI per adult" min="200" max="2000" step="50" value="1000">
+      <div class="range-row"><span>$200</span><span>$2,000</span></div>
+      <div class="ubi-meta">~258M eligible adults · Total annual cost: <strong id="ubi-total-cost">$3.1T</strong></div>
+    </div>
+  </div>
+
+  <aside class="results-area" aria-label="Plan results">
+    <h2 class="sr-only">Plan results</h2>
+    <div class="results-panel">
+
+      <!-- VIEW TABS -->
+      <div class="view-tabs">
+        <button class="view-tab active" onclick="switchView('cost',this)">Cost &amp; Funding</button>
+        <button class="view-tab" onclick="switchView('household',this)">Household Impact</button>
+      </div>
+
+      <!-- ────── COST & FUNDING ────── -->
+      <div class="view-pane active" id="vp-cost">
+        
+
+
+        <div class="r-row"><span class="r-lbl">Monthly per adult</span><span class="r-val c-neu" id="r-monthly">$1,000</span></div>
+        <div class="r-row"><span class="r-lbl">Program cost / yr</span><span class="r-val c-neg" id="r-cost">$3.1T</span></div>
+        <div class="r-row"><span class="r-lbl">Funding + savings / yr</span><span class="r-val c-pos" id="r-raised">$0</span></div>
+
+        <div class="balance-box b-gap" id="balance-box">
+          <div class="balance-lbl" id="bal-lbl">Funding gap</div>
+          <div class="balance-val" id="bal-val">–$3.1T</div>
+        </div>
+
+
+        <div class="r-note">Revenue estimates are illustrative, based on published policy analyses. Real figures depend on legislation, enforcement, and behavioral responses. <a href="https://rooseveltinstitute.org/publications/modeling-the-macroeconomic-effects-of-a-universal-basic-income/" target="_blank" rel="noopener">Roosevelt Institute</a></div>
+      </div><!-- /vp-cost -->
+
+      <!-- ────── HOUSEHOLD IMPACT ────── -->
+      <div class="view-pane" id="vp-household">
+        
+
+        <div class="hi-select-group" style="margin-top:0.5rem;">
+          <label for="hi-type">Household type</label>
+          <select class="hi-select" id="hi-type" onchange="updateHH()">
+            <option value="1">Single adult</option>
+            <option value="2" selected>Two adults</option>
+            <option value="3">Single parent + 1 child</option>
+            <option value="4">Two adults + 2 children</option>
+          </select>
+        </div>
+
+        <div class="hi-select-group">
+          <label>Annual household income</label>
+          <div class="slider-header" style="color:rgba(255,255,255,0.5);">
+            <span style="font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Income</span>
+            <span style="font-size:0.9rem;font-weight:800;color:var(--blue-light);" id="hi-income-disp">$45,000/yr</span>
+          </div>
+          <input type="range" id="hi-income" aria-label="Annual household income" min="0" max="250000" step="1000" value="45000" oninput="updateHH()" style="accent-color:var(--blue)">
+          <div class="range-row" style="color:rgba(255,255,255,0.3);"><span>$0</span><span>$250k+</span></div>
+        </div>
+
+        <div class="hi-stats-grid">
+          <div class="hi-stat">
+            <span class="hi-stat-val c-pos" id="hi-ubi-recv">$24,000</span>
+            <span class="hi-stat-lbl">UBI received / yr</span>
+          </div>
+          <div class="hi-stat">
+            <span class="hi-stat-val c-neg" id="hi-tax-cost">$4,500</span>
+            <span class="hi-stat-lbl">Added tax burden / yr</span>
+          </div>
+        </div>
+
+        <div class="hi-net-box">
+          <span class="hi-net-val c-pos" id="hi-net">+$19,500</span>
+          <div class="hi-net-lbl">Net annual impact</div>
+        </div>
+
+        <div class="ig-section-lbl">Tax incidence by income group</div>
+        <table class="ig-table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>UBI/yr</th>
+              <th>Tax/yr</th>
+              <th>Net</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ig-tbody"></tbody>
+        </table>
+
+        <div class="hi-note">Household estimates use approximate tax incidence by income bracket. Illustrative only — not financial advice. Real tax burden depends on specific legislation.</div>
+      </div><!-- /vp-household -->
+
+    </div><!-- /results-panel -->
+  </aside>
+
+</main><!-- /v2-body -->
+
+<!-- Phone-only bar so the funding status stays visible while scrolling controls -->
+<div class="mini-bar" aria-hidden="true"><span><strong id="mb-pct">0%</strong> funded</span><span id="mb-gap"></span></div>
+
+
+<footer class="site-footer">
+  <p>UBI Project · <a href="index.html">Home</a> · <a href="history.html">History</a> · <a href="why-ubi.html">Why UBI</a> · <a href="examples.html">Examples</a> · <a href="calculator.html">Calculator</a></p>
+</footer>
+
+<script>
+/* ════ SOURCE TAB SWITCHING ════ */
+function switchSrcTab(id, tab) {
+  document.querySelectorAll('.ctrl-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ctrl-pane').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('sp-' + id).classList.add('active');
+}
+
+/* ════ SAVINGS LEARN MORE ════ */
+function lmSav(e, id, btn) {
+  e.stopPropagation();
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? 'Show less ↑' : 'Learn more ↓';
+}
+
+/* ════ SAVINGS DATA ($B/yr) ════ */
+const SAVINGS_DATA = {
+  gdp:     { name:'GDP growth',         color:'#68c5bc', amount: 312 }, // ~$2.5T over 8yr ÷ 8
+  health:  { name:'Healthcare savings', color:'#7bb8a0', amount: 150 },
+  crime:   { name:'Crime & incarceration', color:'#9fd18a', amount: 30 },
+  admin:   { name:'Admin savings',      color:'#a8d4d2', amount: 45 },
+  work:    { name:'Workforce/tax base', color:'#68b5d6', amount: 75 },
+  poverty: { name:'Poverty multiplier', color:'#9db8e0', amount: 100 },
+};
+const activeSav = new Set();
+
+function toggleSav(key) {
+  const el = document.getElementById('sv-' + key);
+  if (activeSav.has(key)) { activeSav.delete(key); el.classList.remove('active'); }
+  else                     { activeSav.add(key);    el.classList.add('active');    }
+  update();
+}
+
+/* ════ NAV ════ */
+const _nav = document.getElementById('main-nav');
+const _hbg = document.getElementById('nav-hamburger');
+function toggleMenu() { const o = _nav.classList.toggle('menu-open'); _hbg.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden' : ''; }
+function closeMenu()  { _nav.classList.remove('menu-open'); _hbg.setAttribute('aria-expanded','false'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+/* ════ LEARN MORE TOGGLE ════ */
+function lm(id, btn) {
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? 'Show less ↑' : 'Learn more ↓';
+}
+
+/* ════ VIEW TABS ════ */
+function switchView(id, tab) {
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('vp-' + id).classList.add('active');
+  if (id === 'household') updateHH();
+}
+
+/* ════ DATA MODEL ════ */
+const ADULTS_M = 258; // millions
+const PIE_COLORS = {
+  wealth: '#68c5bc', vat: '#e8b86e', lvt: '#9fd18a', carbon: '#7bb8a0',
+  ftt: '#a89dd6', auto: '#f0b86e', income: '#e89090', print: '#c06060'
+};
+
+// Revenue calculators (returns $B)
+const REV = {
+  wealth: r => Math.round(200 * r / 2),         // ~$200B at 2% on $20T
+  vat:    r => Math.round(950 * r / 10),         // ~$950B at 10%
+  lvt:    r => Math.round(230 * r / 1),          // ~$230B at 1% on $23T
+  carbon: r => Math.round(5000 * r / 1000),      // 5Gt × $/ton ÷ 1000
+  ftt:    r => Math.round(100000 * r / 100),     // $100T × rate
+  auto:   r => Math.round(1500 * r / 100),       // $1.5T × rate
+  income: r => Math.round(Math.max(0, r - 37) * 17), // each point above 37% ≈ $17B
+  print:  r => r,                                // direct dollar input
+};
+
+/* ════ SPENDING DATA — EDIT HERE ════
+   Source: CBO "Monthly Budget Review: September 2026" (Oct 8, 2026), Table 3,
+   preliminary FY 2026 outlays in $ billions. https://www.cbo.gov/publication/61985
+   To update: copy the newest September review's Table 3 into `b`, then update
+   SPENDING_META. Categories should add up to SPENDING_META.total (a console
+   warning fires if not). To add a category, add a row here — order sets the
+   slice order around the pie, so keep related categories next to each other.
+   `locked: true` hides the slider (used for interest, which is legally owed). */
+const SPENDING_META = { fy: 'FY 2026', total: 7396 };
+const SPENDING_DATA = [
+  { id:'ss',       name:'Social Security',         b:1654, color:'#2563b0' },
+  { id:'medicare', name:'Medicare',                b:1069, color:'#4f86cc' }, // net of premiums
+  { id:'medicaid', name:'Medicaid',                b:723,  color:'#86afe0' },
+  { id:'snap',     name:'Food & Nutrition (SNAP)', b:137,  color:'#00897b' },
+  { id:'eduhud',   name:'Education & Housing',     b:143,  color:'#5cbcae' }, // Education 75 + HUD 68
+  { id:'defense',  name:'Defense',                 b:916,  color:'#c27c0e' },
+  { id:'va',       name:'Veterans Affairs',        b:416,  color:'#e0aa55' },
+  { id:'interest', name:'Net interest on debt',    b:1143, color:'#8e4fa8', locked:true,
+    note:'Can’t be cut — it’s owed to bondholders.' },
+  { id:'other',    name:'All other programs',      b:1195, color:'#8a94a3' }, // CBO Other 1,146 + EPA, Commerce, SBA, COVID credits
+];
+const spendCut = {};             // id → % cut (0–100)
+SPENDING_DATA.forEach(c => spendCut[c.id] = 0);
+
+const activeFS = new Set();
+
+/* ════ HELPERS ════ */
+function fmt(b) {
+  if (b >= 1000) return '$' + (b / 1000).toFixed(b % 1000 === 0 ? 0 : 1) + 'T';
+  if (b >= 1)    return '$' + Math.round(b) + 'B';
+  return '$' + Math.round(b * 1000) + 'M';
+}
+function getRate(key) {
+  const el = document.getElementById('sr-' + key);
+  return el ? parseFloat(el.value) : 0;
+}
+function getMonthly() { return parseInt(document.getElementById('ubi-slider').value); }
+function totalCostB() { return Math.round(ADULTS_M * getMonthly() * 12 / 1000); }
+
+/* ════ TOGGLE FUNCTIONS ════ */
+function toggleFS(key) {
+  const card = document.getElementById('fc-' + key);
+  if (activeFS.has(key)) {
+    activeFS.delete(key);
+    card.classList.remove('active');
+    if (key === 'print') document.getElementById('infl-block').style.display = 'none';
+  } else {
+    activeFS.add(key);
+    card.classList.add('active');
+    if (key === 'print') document.getElementById('infl-block').style.display = 'block';
+  }
+  update();
+}
+
+/* ════ SPENDING TAB ════ */
+// Net dollars ($B) redirected from federal spending to UBI.
+function spendingFreed() {
+  return SPENDING_DATA.reduce((sum, c) => sum + c.b * spendCut[c.id] / 100, 0);
+}
+function fmtSp(b) {            // two decimals for trillions so small moves still show
+  return b >= 999.5 ? '$' + (b / 1000).toFixed(2) + 'T' : '$' + Math.round(b) + 'B';
+}
+
+// Build one row (name, amount, share, slider) per category.
+function buildSpending() {
+  const total = SPENDING_DATA.reduce((s, c) => s + c.b, 0);
+  if (Math.abs(total - SPENDING_META.total) > 2)
+    console.warn(`[spending] categories sum to ${total}B, expected ${SPENDING_META.total}B`);
+  document.getElementById('sp-total-txt').textContent = '$' + (SPENDING_META.total / 1000).toFixed(1) + 'T';
+  document.getElementById('sp-fy-txt').textContent = SPENDING_META.fy;
+
+  document.getElementById('sp-list').innerHTML = SPENDING_DATA.map(c => `
+    <div class="sp-row" id="spr-${c.id}" data-id="${c.id}">
+      <div class="sp-row-head">
+        <span class="sp-dot" style="background:${c.color}"></span>
+        <label class="sp-name" for="sps-${c.id}">${c.name}</label>
+        <span class="sp-amt" id="spa-${c.id}"></span>
+        <span class="sp-share" id="sph-${c.id}"></span>
+      </div>
+      ${c.locked
+        ? `<div class="sp-locked">${c.note}</div>`
+        : `<input type="range" id="sps-${c.id}" min="0" max="100" step="1" value="0">
+           <div class="sp-row-foot"><span id="spc-${c.id}">No cut</span><span id="spu-${c.id}"></span></div>`}
+    </div>`).join('');
+
+  SPENDING_DATA.forEach(c => {
+    const sl = document.getElementById('sps-' + c.id);
+    if (sl) sl.addEventListener('input', () => { spendCut[c.id] = +sl.value; updateSpending(); update(); });
+  });
+  updateSpending();
+}
+
+function updateSpending() {
+  const total = SPENDING_DATA.reduce((s, c) => s + c.b, 0);
+  const freed = spendingFreed();
+  SPENDING_DATA.forEach(c => {
+    const cut = spendCut[c.id], cur = c.b * (1 - cut / 100), moved = c.b - cur;
+    document.getElementById('spa-' + c.id).textContent = fmtSp(cur);
+    document.getElementById('sph-' + c.id).textContent = (cur / total * 100).toFixed(1) + '%';
+    document.getElementById('spr-' + c.id).classList.toggle('cut', cut > 0);
+    const sl = document.getElementById('sps-' + c.id);
+    if (sl) {
+      document.getElementById('spc-' + c.id).textContent = cut ? `Cut ${cut}%` : 'No cut';
+      document.getElementById('spu-' + c.id).innerHTML = cut ? `<strong>${fmtSp(moved)}</strong> to UBI` : '';
+      sl.setAttribute('aria-valuetext', cut
+        ? `${cut} percent cut, ${fmtSp(moved)} redirected to UBI, ${fmtSp(cur)} remaining`
+        : 'no cut');
+    }
+  });
+  document.getElementById('sp-freed').textContent = fmtSp(freed);
+  document.getElementById('sp-freed-sub').textContent = (freed / total * 100).toFixed(1) + '% of federal spending';
+}
+
+function resetSpending() {
+  SPENDING_DATA.forEach(c => {
+    spendCut[c.id] = 0;
+    const sl = document.getElementById('sps-' + c.id);
+    if (sl) sl.value = 0;
+  });
+  updateSpending(); update();
+}
+
+/* ════ MAIN UPDATE ════ */
+function update() {
+  const monthly  = getMonthly();
+  const costB    = totalCostB();
+
+  // Sliders & displays
+  document.getElementById('ubi-display').textContent    = '$' + monthly.toLocaleString() + ' / mo';
+  document.getElementById('ubi-total-cost').textContent = fmt(costB);
+  document.getElementById('r-monthly').textContent      = '$' + monthly.toLocaleString();
+  document.getElementById('r-cost').textContent         = fmt(costB) + '/yr';
+
+  // Collect revenues
+  let totalRev = 0;
+  const breakdown = [];
+
+  for (const key of Object.keys(REV)) {
+    const rev = activeFS.has(key) ? REV[key](getRate(key)) : 0;
+    if (activeFS.has(key)) {
+      totalRev += rev;
+      if (rev > 0) breakdown.push({ key, name: keyName(key), color: PIE_COLORS[key], rev });
+    }
+    // update badge
+    const badge = document.getElementById('rev-' + key);
+    if (badge) badge.textContent = activeFS.has(key) ? fmt(rev) + '/yr' : '$0/yr';
+  }
+  // Spending redirected from the federal budget (Spending tab)
+  const spendFreed = spendingFreed();
+  if (spendFreed > 0) {
+    totalRev += spendFreed;
+    breakdown.push({ key: 'spending', name: 'Spending redirected', color: '#c0392b', rev: spendFreed });
+  }
+
+  // Inflation estimate for print
+  if (activeFS.has('print')) {
+    const printAmt = getRate('print');
+    const inflEst = (printAmt / 28000 * 100 * 0.55).toFixed(1);
+    document.getElementById('infl-pct').textContent = '~' + inflEst + '% additional inflation';
+    document.getElementById('sv-print').textContent  = fmt(printAmt) + '/yr';
+    document.getElementById('rev-print').textContent = fmt(printAmt) + '/yr';
+  }
+
+  // Savings offsets
+  for (const key of Object.keys(SAVINGS_DATA)) {
+    const sav = activeSav.has(key) ? SAVINGS_DATA[key].amount : 0;
+    totalRev += sav;
+    const badge = document.getElementById('srev-' + key);
+    if (badge) badge.textContent = activeSav.has(key) ? fmt(SAVINGS_DATA[key].amount) + '/yr' : '$0/yr';
+    if (sav > 0) breakdown.push({ key: 's' + key, name: SAVINGS_DATA[key].name, color: SAVINGS_DATA[key].color, rev: sav });
+  }
+
+  const gap = costB - totalRev;
+  document.getElementById('r-raised').textContent = fmt(totalRev) + '/yr';
+  const pct = costB > 0 ? Math.min(100, Math.round(totalRev / costB * 100)) : 0;
+
+  const bbox = document.getElementById('balance-box');
+  if (gap <= 0) {
+    bbox.className = 'balance-box b-ok';
+    document.getElementById('bal-lbl').textContent = gap === 0 ? 'Fully funded' : 'Surplus';
+    document.getElementById('bal-val').textContent = gap === 0 ? '✓ Balanced' : '+' + fmt(-gap);
+  } else {
+    bbox.className = 'balance-box b-gap';
+    document.getElementById('bal-lbl').textContent = 'Funding gap';
+    document.getElementById('bal-val').textContent = '–' + fmt(gap);
+  }
+
+  // Source breakdown list
+  const sbl = document.getElementById('sb-list');
+  if (breakdown.length === 0) {
+    sbl.innerHTML = '<p style="font-size:0.72rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:0.6rem;">No sources selected yet</p>';
+  } else {
+    const sorted = [...breakdown].sort((a, b) => b.rev - a.rev);
+    sbl.innerHTML = sorted.map(b => {
+      const pct = totalRev > 0 ? Math.round(b.rev / totalRev * 100) : 0;
+      return `<div class="sb-row">
+        <div class="sb-dot" style="background:${b.color}"></div>
+        <span class="sb-name">${b.name}</span>
+        <span class="sb-val">${fmt(b.rev)}</span>
+        <span class="sb-pct">${pct}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  drawPie(breakdown, totalRev, costB);
+  updateHH();
+}
+
+function makeSVG(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+/* ════ KEY NAME HELPERS ════ */
+function keyName(k) {
+  return { wealth:'Wealth tax', vat:'VAT', lvt:'Land value tax', carbon:'Carbon dividend', ftt:'Fin. transaction tax', auto:'Automation levy', income:'Top income tax', print:'Deficit/printing' }[k] || k;
+}
+
+/* ════ HOUSEHOLD IMPACT ════ */
+const IG = [
+  { label:'<$30k',      rep:20000,  adults:1 },
+  { label:'$30–60k',    rep:45000,  adults:1.5 },
+  { label:'$60–100k',   rep:80000,  adults:1.8 },
+  { label:'$100–200k',  rep:150000, adults:2 },
+  { label:'>$200k',     rep:280000, adults:2 },
+];
+
+function taxBurden(income, monthly) {
+  let b = 0;
+  if (activeFS.has('vat')) {
+    const consRate = Math.max(0.45, 0.88 - income * 0.0000008);
+    b += income * consRate * (getRate('vat') / 100);
+  }
+  if (activeFS.has('income')) {
+    const over400 = Math.max(0, income - 400000);
+    b += over400 * Math.max(0, getRate('income') / 100 - 0.37);
+  }
+  if (activeFS.has('wealth') && income > 500000) {
+    b += income * 0.015 * (getRate('wealth') / 2);
+  }
+  if (activeFS.has('ftt')) {
+    const assetProxy = Math.max(0, (income - 40000) * 1.5);
+    b += assetProxy * (getRate('ftt') / 100) * 0.4;
+  }
+  if (activeFS.has('carbon')) {
+    const tonsPerHh = Math.max(2.5, 4.5 + income * 0.000008);
+    b += tonsPerHh * getRate('carbon');
+  }
+  if (activeFS.has('lvt')) {
+    const landProxy = income > 80000 ? income * 0.4 * (getRate('lvt') / 100) : income * 0.15 * (getRate('lvt') / 100);
+    b += landProxy;
+  }
+  if (activeFS.has('auto') && income > 150000) {
+    b += income * 0.002 * (getRate('auto') / 10);
+  }
+  return Math.round(Math.max(0, b));
+}
+
+function updateHH() {
+  const monthly = getMonthly();
+  const income  = parseInt(document.getElementById('hi-income').value);
+  const type    = parseInt(document.getElementById('hi-type').value);
+  document.getElementById('hi-income-disp').textContent = income >= 250000 ? '$250,000+/yr' : '$' + income.toLocaleString() + '/yr';
+
+  // Adults who receive UBI
+  const ubiAdults = [0, 1, 2, 1, 2][type];
+  const ubiRecv   = ubiAdults * monthly * 12;
+  const burden    = taxBurden(income, monthly);
+  const net       = ubiRecv - burden;
+
+  document.getElementById('hi-ubi-recv').textContent = '$' + ubiRecv.toLocaleString() + '/yr';
+  document.getElementById('hi-tax-cost').textContent = '$' + burden.toLocaleString() + '/yr';
+  const netEl = document.getElementById('hi-net');
+  netEl.textContent = (net >= 0 ? '+$' : '-$') + Math.abs(net).toLocaleString();
+  netEl.className   = 'hi-net-val ' + (net >= 0 ? 'c-pos' : 'c-neg');
+
+  // Income group table
+  const ubiPerAdult = monthly * 12;
+  const rows = IG.map(g => {
+    const ubiG   = Math.round(g.adults * ubiPerAdult);
+    const taxG   = taxBurden(g.rep, monthly);
+    const netG   = ubiG - taxG;
+    const netStr = (netG >= 0 ? '+$' : '-$') + (Math.abs(netG) / 1000).toFixed(1) + 'k';
+    const cls    = netG >= 0 ? 'c-pos' : 'c-neg';
+    const maxAbs = 30000;
+    const barW   = Math.round(Math.min(100, Math.abs(netG) / maxAbs * 100));
+    const barClr = netG >= 0 ? '#7dd3c8' : '#f4a7a7';
+    return `<tr>
+      <td>${g.label}</td>
+      <td>$${(ubiG/1000).toFixed(0)}k</td>
+      <td>$${(taxG/1000).toFixed(1)}k</td>
+      <td class="${cls}">${netStr}</td>
+      <td><div class="ig-bar"><div class="ig-bar-fill" style="width:${barW}%;background:${barClr}"></div></div></td>
+    </tr>`;
+  });
+  document.getElementById('ig-tbody').innerHTML = rows.join('');
+}
+
+/* ════ WIRE UP SLIDERS ════ */
+document.getElementById('ubi-slider').addEventListener('input', update);
+document.getElementById('hi-income').addEventListener('input', updateHH);
+
+// Revenue sliders
+const sliderFmt = { wealth:'%', vat:'%', lvt:'%', carbon:'$/ton', ftt:'%', auto:'%', income:'%' };
+Object.keys(sliderFmt).forEach(key => {
+  const el = document.getElementById('sr-' + key);
+  if (!el) return;
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value);
+    const sv = document.getElementById('sv-' + key);
+    if (sv) sv.textContent = sliderFmt[key] === '$/ton' ? '$' + v + '/ton' : v + '%';
+    update();
+  });
+});
+
+// Print slider
+const printSl = document.getElementById('sr-print');
+if (printSl) {
+  printSl.addEventListener('input', () => {
+    const v = parseInt(printSl.value);
+    document.getElementById('sv-print').textContent = fmt(v) + '/yr';
+    update();
+  });
+}
+
+/* ════ INIT ════ */
+buildSpending();   // first update() runs in the v2 script below
+</script>
+
+<script>
+/* ════════════════ V2 OVERRIDES ════════════════
+   Loaded after the main script: same data and maths, new chart + tabs. */
+
+// Slice colours for a white background (each ≥ 3:1 against white).
+// Grouped by kind so related sources sit together: taxes = blues,
+// spending = brand red, growth & savings = greens, money creation = amber.
+Object.assign(PIE_COLORS, {
+  wealth:'#1f4e96', vat:'#2f6fc4', lvt:'#4a7fc9', carbon:'#3b5fa8',
+  ftt:'#5a6fc0', auto:'#2c5aa0', income:'#26407a', print:'#a35f00'
+});
+const SAV_COLORS = { gdp:'#00796b', work:'#1e7f5c', poverty:'#2e7d32', health:'#00897b', crime:'#3d8b6a', admin:'#4a7f4f' };
+for (const k in SAV_COLORS) if (SAVINGS_DATA[k]) SAVINGS_DATA[k].color = SAV_COLORS[k];
+
+// Accessible tabs: roving tabindex, aria-selected, hidden panels, arrow keys.
+function switchSrcTab(id, tab) {
+  document.querySelectorAll('.ctrl-tab').forEach(t => {
+    const on = t === tab;
+    t.classList.toggle('active', on);
+    t.setAttribute('aria-selected', on);
+    t.tabIndex = on ? 0 : -1;
+  });
+  document.querySelectorAll('.ctrl-pane').forEach(p => {
+    const on = p.id === 'sp-' + id;
+    p.classList.toggle('active', on);
+    p.hidden = !on;
+  });
+  document.querySelector('.float-scroll').scrollTop = 0;
+}
+document.querySelector('.ctrl-tabs').addEventListener('keydown', e => {
+  if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+  const tabs = [...document.querySelectorAll('.ctrl-tab')];
+  let i = tabs.indexOf(document.activeElement);
+  i = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+  tabs[i].focus(); tabs[i].click(); e.preventDefault();
+});
+
+// Big centre donut: funded slices + a light-grey "still unfunded" slice.
+function drawPie(breakdown, totalRev, costB) {
+  const svg = document.getElementById('pie-svg'), tt = document.getElementById('pie-tt'), wrap = document.getElementById('pie-wrap');
+  const cx = 200, cy = 200, ro = 192, ri = 132;
+  svg.innerHTML = '';
+  const pct = costB > 0 ? Math.round(totalRev / costB * 100) : 0;
+  const gap = Math.max(0, costB - totalRev);
+
+  document.getElementById('d-pct').textContent = pct + '%';
+  document.getElementById('d-cost').textContent = 'of ' + fmt(costB) + ' / yr';
+  document.getElementById('mb-pct').textContent = pct + '%';
+  document.getElementById('mb-gap').textContent = gap > 0 ? fmt(gap) + ' gap' : 'Fully funded';
+  document.getElementById('pie-hint').style.display = breakdown.length ? 'none' : 'block';
+  document.getElementById('donut-desc').textContent =
+    `${pct}% of the ${fmt(costB)} yearly cost is funded. ` +
+    (breakdown.length ? 'Sources: ' + breakdown.map(b => `${b.name} ${fmt(b.rev)}`).join(', ') + '. ' : 'No sources chosen yet. ') +
+    (gap > 0 ? `Remaining gap ${fmt(gap)}.` : 'No gap remaining.');
+
+  const slices = [...breakdown];
+  if (gap > 0) slices.push({ name:'Not yet funded', color:'#e4e8ee', rev:gap, isGap:true });
+  const grand = slices.reduce((s, b) => s + b.rev, 0);
+  if (!grand) return;
+
+  let a = -Math.PI / 2;
+  slices.forEach(sl => {
+    const span = sl.rev / grand * 2 * Math.PI;
+    if (span < 0.004) { a += span; return; }
+    const a2 = a + span - (span >= 2 * Math.PI - 1e-6 ? 1e-4 : 0), large = span > Math.PI ? 1 : 0;
+    const p = (r, ang) => `${cx + r * Math.cos(ang)},${cy + r * Math.sin(ang)}`;
+    const d = `M${p(ri,a)} L${p(ro,a)} A${ro},${ro} 0 ${large},1 ${p(ro,a2)} L${p(ri,a2)} A${ri},${ri} 0 ${large},0 ${p(ri,a)}Z`;
+    const path = makeSVG('path', { d, fill: sl.color, stroke:'#fff', 'stroke-width':'2' });
+    const share = Math.round(sl.rev / costB * 100);
+    const label = sl.isGap ? `Not yet funded: ${fmt(sl.rev)} (${share}%)` : `${sl.name}: ${fmt(sl.rev)} (${share}% of cost)`;
+    const mid = (a + a2) / 2;
+    path.addEventListener('mouseenter', () => {
+      svg.querySelectorAll('path').forEach(q => q.style.opacity = q === path ? '1' : '0.45');
+      const w = wrap.clientWidth, r = (ro + ri) / 2 / 400 * w;
+      tt.textContent = label;
+      tt.style.left = (w / 2 + r * Math.cos(mid)) + 'px';
+      tt.style.top  = (w / 2 + r * Math.sin(mid)) + 'px';
+      tt.style.opacity = '1';
+    });
+    path.addEventListener('mouseleave', () => { svg.querySelectorAll('path').forEach(q => q.style.opacity = '1'); tt.style.opacity = '0'; });
+    svg.appendChild(path);
+    a = a2;
+  });
+}
+
+
+/* ── A11y fixes (audit P0/P1) ── */
+// Keep each toggle's pressed state in step with what's selected.
+function syncPressed() {
+  document.querySelectorAll('[data-fs]').forEach(b => b.setAttribute('aria-pressed', activeFS.has(b.dataset.fs)));
+  document.querySelectorAll('[data-sav]').forEach(b => b.setAttribute('aria-pressed', activeSav.has(b.dataset.sav)));
+}
+// Sliders read their value with units, taken from the visible readout next to them.
+const VALUE_TEXT = { 'ubi-slider':'ubi-display', 'hi-income':'hi-income-disp' };
+function syncValueText() {
+  document.querySelectorAll('input[type=range]').forEach(r => {
+    const out = document.getElementById(VALUE_TEXT[r.id] || r.id.replace(/^sr-/, 'sv-'));
+    if (out && out.textContent) r.setAttribute('aria-valuetext', out.textContent.trim());
+  });
+}
+// Mouse users can still click anywhere on a savings card's description to toggle it.
+document.querySelectorAll('.savings-item .savings-info').forEach(info => info.addEventListener('click', e => {
+  if (e.target.closest('button, a, .savings-lm-content')) return;
+  info.parentElement.querySelector('.savings-toggle').click();
+}));
+// Announce the funding result after changes settle (not on every slider step).
+let statusTimer, lastStatus = '';
+function announceFunding(pct, gap) {
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => {
+    const msg = `${pct}% funded. ` + (gap > 0 ? `Gap ${fmt(gap)} a year.` : 'Fully funded.');
+    if (msg !== lastStatus) document.getElementById('fund-status').textContent = lastStatus = msg;
+  }, 700);
+}
+const _drawPie = drawPie;
+drawPie = function (breakdown, totalRev, costB) {
+  _drawPie(breakdown, totalRev, costB);
+  syncPressed(); syncValueText();
+  announceFunding(costB > 0 ? Math.round(totalRev / costB * 100) : 0, Math.max(0, costB - totalRev));
+};
+document.addEventListener('input', e => { if (e.target.type === 'range') syncValueText(); });
+lastStatus = '';   // first announcement only after the user changes something
+
+/* ── Audit P2: Learn more buttons announce open/closed; arrows not read aloud ── */
+function setLmButton(btn, open) {
+  btn.setAttribute('aria-expanded', open);
+  btn.innerHTML = (open ? 'Show less' : 'Learn more') + ' <span aria-hidden="true">' + (open ? '↑' : '↓') + '</span>';
+}
+function lm(id, btn) { setLmButton(btn, document.getElementById(id).classList.toggle('open')); }
+function lmSav(e, id, btn) { e.stopPropagation(); setLmButton(btn, document.getElementById(id).classList.toggle('open')); }
+document.querySelectorAll('.learn-more-btn, .savings-lm-btn').forEach(b => {
+  const m = (b.getAttribute('onclick') || '').match(/'([\w-]+)'/);
+  if (m) b.setAttribute('aria-controls', m[1]);
+  b.type = 'button';
+  setLmButton(b, false);
+});
+
+update();
+lastStatus = document.getElementById("fund-status").textContent; clearTimeout(statusTimer);
+</script>
+</body>
+</html>

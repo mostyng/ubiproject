@@ -1,0 +1,102 @@
+/* Plans bar, design switch, Explore tab and presentation stage for calculator.html */
+
+/* ── Plan bar (in the hero) ── */
+.plan-bar { display:flex; flex-wrap:wrap; align-items:center; gap:0.6rem 0.75rem; margin-top:1.4rem; }
+.plan-bar-lbl { font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.8); }
+.plan-chips { display:flex; flex-wrap:wrap; gap:0.4rem; }
+.plan-chip, .plan-act { font:inherit; font-size:0.85rem; font-weight:700; padding:0.5rem 0.9rem; border-radius:999px; cursor:pointer; min-height:36px;
+  border:1.5px solid rgba(255,255,255,0.45); background:transparent; color:#fff; transition:background 0.15s, color 0.15s, border-color 0.15s; }
+.plan-chip:hover, .plan-act:hover { background:rgba(255,255,255,0.14); border-color:#fff; }
+.plan-chip.active { background:#fff; color:var(--blue-dark); border-color:#fff; }
+.plan-chip:focus-visible, .plan-act:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.plan-actions { display:flex; gap:0.4rem; margin-left:auto; }
+.plan-act { border-radius:var(--rs); border-color:rgba(255,255,255,0.3); font-size:0.78rem; letter-spacing:0.04em; text-transform:uppercase; }
+#btn-present { background:var(--red); border-color:var(--red); }
+#btn-present:hover { background:var(--red-hover); }
+.plan-note { margin-top:1rem; max-width:920px; background:rgba(255,255,255,0.1); border-left:3px solid var(--red); border-radius:0 var(--rs) var(--rs) 0;
+  padding:0.8rem 1rem; font-size:0.9rem; line-height:1.6; color:rgba(255,255,255,0.92); text-wrap:pretty; }
+.plan-note strong { color:#fff; }
+.plan-who { color:rgba(255,255,255,0.75); }
+.plan-caveat { display:block; margin-top:0.35rem; font-size:0.82rem; color:rgba(255,255,255,0.78); }
+.plan-note a { color:#fff; font-weight:700; text-underline-offset:2px; white-space:nowrap; }
+
+/* ── Who receives it ── */
+.design-switch { display:flex; background:var(--white); border:1px solid var(--blue-light); border-radius:var(--rs); padding:3px; margin-bottom:0.8rem; }
+.design-opt { flex:1; font:inherit; font-size:0.75rem; font-weight:700; padding:0.45rem 0.4rem; border:0; border-radius:3px; background:transparent; color:var(--g5); cursor:pointer; min-height:32px; }
+.design-opt.active { background:var(--navy); color:#fff; }
+.design-note { font-size:0.78rem; line-height:1.55; color:var(--g5); margin-top:0.6rem; text-wrap:pretty; }
+.design-note a { color:var(--blue-mid); }
+#ubi-slider:disabled { opacity:0.35; cursor:not-allowed; }
+
+/* ── Explore tab ── */
+.ex-filters { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.9rem; }
+.ex-chip { font:inherit; font-size:0.75rem; font-weight:700; padding:0.35rem 0.7rem; min-height:30px; border-radius:999px; border:1.5px solid var(--g3); background:var(--white); color:var(--g5); cursor:pointer; }
+.ex-chip:hover { border-color:var(--blue); color:var(--blue); }
+.ex-chip.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+.ex-row { padding:0.75rem 0.6rem; border-bottom:1px solid var(--g2); }
+.ex-row:first-child { border-top:1px solid var(--g2); }
+.ex-row.on { background:var(--blue-pale); }
+.ex-head { display:flex; align-items:center; gap:0.6rem; }
+.ex-name { flex:1; font-size:0.86rem; font-weight:700; color:var(--navy); }
+.ex-add { font:inherit; font-size:0.75rem; font-weight:700; padding:0.3rem 0.7rem; min-height:28px; border-radius:var(--rs); border:1.5px solid var(--blue); background:var(--white); color:var(--blue); cursor:pointer; white-space:nowrap; }
+.ex-row.on .ex-add { background:var(--blue); color:#fff; }
+.ex-bar { position:relative; height:10px; margin:0.5rem 0 0.35rem; background:var(--g1); border-radius:5px; overflow:hidden; }
+.ex-bar-max { position:absolute; inset:0 auto 0 0; border-right:2px solid var(--g4); background:repeating-linear-gradient(135deg, transparent 0 4px, rgba(107,118,133,0.22) 4px 6px); }
+.ex-bar-now { position:absolute; inset:0 auto 0 0; border-radius:5px 0 0 5px; min-width:2px; }
+.ex-meta { font-size:0.8rem; color:var(--g5); font-variant-numeric:tabular-nums; }
+.ex-meta strong { color:var(--navy); }
+.ex-tags { display:flex; flex-wrap:wrap; gap:0.4rem; align-items:baseline; margin-top:0.3rem; font-size:0.75rem; }
+.ex-who { font-weight:700; color:var(--red); }
+.ex-by { color:var(--g4); }
+.ex-by::before { content:"Proposed by: "; }
+.float-panel .ctrl-tab { letter-spacing:0.02em; }
+
+/* ── Presentation stage: a 16:9 frame, sized in em so 1em = 1% of its width ── */
+#stage[hidden], #stage-plans[hidden] { display:none; }
+body.present { overflow:hidden; background:var(--navy); }
+body.present > nav, body.present > .nav-overlay, body.present > .page-hero, body.present > .site-footer, body.present > .mini-bar { display:none !important; }
+body.present .v2-body { display:block; padding:0; margin:0; max-width:none; }
+body.present .v2-body > * { display:none; }
+body.present.show-controls .v2-body > .float-panel { display:flex; position:fixed; left:12px; top:12px; bottom:12px; width:380px; max-width:calc(100vw - 24px); max-height:none; z-index:300; }
+
+#stage { position:fixed; inset:0; margin:auto; z-index:200; background:#fff; color:var(--navy);
+  width:min(100vw, calc(100vh * 16 / 9)); aspect-ratio:16 / 9;
+  font-size:calc(min(100vw, 100vh * 16 / 9) / 100);
+  display:grid; grid-template-columns:31em 38em 31em; align-items:center; overflow:hidden; }
+.stage-left { padding:15.5em 1em 0 4em; align-self:start; }
+.stage-right { padding:10.5em 4em 0 2.5em; align-self:start; }
+.stage-mid { display:flex; align-items:center; justify-content:center; }
+.stage-kicker { font-size:1em; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--red); margin-bottom:0.9em; }
+.stage-title { font-size:3.1em; font-weight:800; line-height:1.08; letter-spacing:-0.02em; margin-bottom:0.55em; text-wrap:balance; }
+.stage-say { font-size:1.65em; line-height:1.4; color:var(--g5); min-height:7.2em; text-wrap:pretty; }
+.stage-dots { display:flex; gap:0.5em; margin-top:1.4em; }
+.stage-dots span { width:2.2em; height:0.35em; border-radius:1em; background:var(--g2); }
+.stage-dots span.done { background:var(--blue-light); }
+.stage-dots span.on { background:var(--red); }
+#stage .donut-wrap { width:36em; }
+#stage .donut-pct { font-size:7.4em; }
+#stage .donut-lbl { font-size:1.4em; }
+#stage .donut-cost { font-size:1.15em; }
+#stage .pie-tooltip { font-size:1em; }
+.stage-stat { padding:0.85em 0; border-bottom:1px solid var(--g2); }
+.stage-stat:first-child { border-top:2px solid var(--blue); }
+.stage-stat-lbl { display:block; font-size:0.9em; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--g4); }
+.stage-stat-val { display:block; font-size:3.3em; font-weight:800; line-height:1.1; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; }
+#stage-gap { color:var(--red); }
+#stage-gap.ok { color:var(--teal); }
+.stage-legend { margin-top:1.1em; min-height:11em; }
+.stage-leg-row { display:flex; align-items:center; gap:0.6em; font-size:1.15em; padding:0.22em 0; }
+.stage-leg-dot { width:0.8em; height:0.8em; border-radius:50%; flex-shrink:0; }
+.stage-leg-name { flex:1; color:var(--g5); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stage-leg-val { font-weight:800; font-variant-numeric:tabular-nums; }
+.stage-hint { position:absolute; left:0; right:0; bottom:1.1em; text-align:center; font-size:0.85em; letter-spacing:0.04em; color:var(--g4); }
+body.hide-hint .stage-hint { display:none; }
+.stage-plans { position:absolute; left:4em; bottom:4em; display:flex; flex-direction:column; gap:0.3em; background:var(--navy); padding:1em; border-radius:0.6em; box-shadow:var(--shm); }
+.stage-plans button { font:inherit; font-size:1.1em; font-weight:600; text-align:left; background:transparent; border:0; color:#fff; padding:0.35em 0.6em; border-radius:0.3em; cursor:pointer; }
+.stage-plans button:hover { background:rgba(255,255,255,0.14); }
+.stage-plans kbd { display:inline-block; min-width:1.5em; text-align:center; margin-right:0.5em; padding:0 0.3em; border:1px solid rgba(255,255,255,0.5); border-radius:0.25em; font:inherit; font-size:0.85em; }
+
+@media (max-width:820px) {
+  .plan-actions { margin-left:0; }
+  #btn-present { display:none; }   /* the stage is a desktop recording tool */
+}

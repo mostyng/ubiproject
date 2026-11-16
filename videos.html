@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Videos: five plans for a basic income | UBI Project</title>
+<meta name="description" content="Six video essays on universal basic income: an introduction, then the plans of Friedman, King, Yang, Altman and Amodei, each with its best case and strongest objection.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;--off-white:#f7f9fc;--blue-pale:#e8f0fb;--blue-light:#d0e3f8;
+  --blue:#1a4d8f;--blue-mid:#2563b0;--blue-dark:#0f2d5c;--navy:#0a1f3d;
+  --red:#c0392b;--red-hover:#a93226;--red-pale:#fdf1f0;
+  --g1:#f0f2f5;--g2:#dde2ea;--g3:#b0b8c4;--g4:#6b7685;--g5:#3d4755;
+  --fd:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --fb:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --r:8px;--rs:4px;
+  --sh:0 2px 10px rgba(10,31,61,0.07);--shm:0 4px 24px rgba(10,31,61,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fd);background:var(--white);color:var(--navy);font-size:16px;line-height:1.75;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);border-bottom:2px solid var(--blue);padding:0 2rem;display:flex;align-items:center;}
+.nav-brand{font-size:1.05rem;font-weight:800;color:var(--blue-dark);text-decoration:none;padding:1rem 0;margin-right:auto;}
+.nav-brand span{color:var(--red);}
+.nav-links{display:flex;list-style:none;}
+.nav-links a{display:block;padding:1rem 0.9rem;font-size:0.78rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--g4);text-decoration:none;transition:color 0.18s;position:relative;}
+.nav-links a::after{content:"";position:absolute;bottom:0;left:0.9rem;right:0.9rem;height:2px;background:var(--red);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--blue-dark);}
+.nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--blue-dark);}
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:pointer;border-radius:var(--rs);}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--navy);border-radius:2px;transition:transform 0.3s ease,opacity 0.3s ease,width 0.3s ease;transform-origin:center;}
+nav.menu-open .nav-hamburger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+nav.menu-open .nav-hamburger span:nth-child(2){opacity:0;width:0;}
+nav.menu-open .nav-hamburger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-overlay{display:none;position:fixed;inset:0;background:rgba(10,31,61,0.4);z-index:98;backdrop-filter:blur(2px);}
+nav.menu-open ~ .nav-overlay{display:block;}
+
+.page-hero{background:linear-gradient(160deg,var(--blue-dark) 0%,var(--blue) 60%,var(--blue-mid) 100%);padding:4rem 2rem 3rem;}
+.back-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.65);text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1.25rem;transition:color 0.18s;}
+.back-link:hover{color:#fff;}
+.page-hero h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;line-height:1.15;color:#fff;max-width:680px;margin-bottom:0.85rem;letter-spacing:-0.02em;}
+.page-hero p{font-size:1rem;color:rgba(255,255,255,0.72);max-width:600px;line-height:1.78;}
+
+section{padding:5rem 2rem;}
+.inner{max-width:780px;margin:0 auto;}
+.wide{max-width:1060px;margin:0 auto;}
+.sect-alt{background:var(--off-white);}
+
+.kicker{font-size:0.7rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;display:block;}
+h2{font-size:clamp(1.6rem,3vw,2.1rem);font-weight:800;line-height:1.18;color:var(--navy);margin-bottom:1.1rem;letter-spacing:-0.02em;}
+h3{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:0.35rem;}
+p{color:var(--g5);margin-bottom:1rem;}
+p:last-child{margin-bottom:0;}
+strong{color:var(--navy);font-weight:700;}
+.divider{width:40px;height:3px;background:var(--red);border-radius:2px;margin-bottom:1.5rem;}
+a.src{color:var(--blue-mid);text-decoration:none;font-size:0.75rem;font-weight:600;white-space:nowrap;transition:color 0.15s;}
+a.src:hover{color:var(--red);}
+a.src::before{content:"[";font-weight:400;color:var(--g3);}
+a.src::after{content:"]";font-weight:400;color:var(--g3);}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin:2rem 0;}
+.stat-box{background:var(--blue-pale);border:1px solid var(--blue-light);border-radius:var(--r);padding:1.3rem;text-align:center;}
+.sect-alt .stat-box{background:var(--white);border-color:var(--g2);}
+.stat-num{font-size:2rem;font-weight:800;color:var(--blue);line-height:1;display:block;margin-bottom:0.3rem;}
+.stat-label{font-size:0.78rem;color:var(--g4);line-height:1.4;}
+
+/* ALERT BOX */
+.alert-box{background:var(--blue-pale);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:1rem 1.25rem;font-size:0.9rem;color:var(--blue-dark);margin:1.5rem 0;font-weight:500;}
+
+/* ISSUE GRID */
+.issue-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.75rem;}
+.issue-card{border-radius:var(--r);padding:1.6rem;border:1px solid var(--g2);background:var(--white);}
+.sect-alt .issue-card{background:var(--off-white);}
+.issue-icon{font-size:1.75rem;margin-bottom:0.65rem;}
+.issue-card h3{font-size:0.97rem;margin-bottom:0.45rem;}
+.issue-card p{font-size:0.86rem;color:var(--g4);}
+
+/* PAGE LINK */
+.page-link{display:inline-flex;align-items:center;gap:0.45rem;margin-top:1.5rem;padding:0.65rem 1.4rem;border:2px solid var(--blue);border-radius:var(--rs);font-size:0.82rem;font-weight:700;color:var(--blue);text-decoration:none;transition:background 0.15s,color 0.15s;}
+.page-link:hover{background:var(--blue);color:#fff;}
+.page-link-red{border-color:var(--red);color:var(--red);}
+.page-link-red:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+footer{background:var(--navy);color:rgba(255,255,255,0.45);padding:2rem;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+footer p{font-size:0.78rem;}
+footer a{color:var(--blue-light);text-decoration:none;}
+footer a:hover{color:#fff;}
+
+@media(max-width:860px){
+  nav{padding:0 1.25rem;}
+  .nav-hamburger{display:flex;}
+  .nav-links{display:flex;flex-direction:column;gap:0;position:fixed;top:0;right:0;width:min(300px,88vw);height:100vh;background:var(--white);border-left:1px solid var(--g2);padding:5rem 0 2rem;transform:translateX(100%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;z-index:99;}
+  nav.menu-open .nav-links{transform:translateX(0);}
+  .nav-links li{border-bottom:1px solid var(--g2);}
+  .nav-links a{padding:0.9rem 1.5rem;font-size:0.9rem;display:flex;align-items:center;justify-content:space-between;}
+  .nav-links a::after{display:none;}
+  .nav-links a:hover{background:var(--blue-pale);}
+  section{padding:3.5rem 1.25rem;}
+  .issue-grid{grid-template-columns:1fr;}
+  .stat-row{grid-template-columns:1fr;}
+}
+
+
+/* ── VIDEOS PAGE ── */
+:focus-visible{outline:3px solid var(--blue-mid);outline-offset:2px;}
+.ep-nav{position:sticky;top:57px;z-index:50;background:var(--white);border-bottom:1px solid var(--g2);padding:0 2rem;overflow-x:auto;}
+.ep-nav ol{display:flex;gap:0.25rem;list-style:none;max-width:1060px;margin:0 auto;}
+.ep-nav a{display:block;white-space:nowrap;padding:0.8rem 0.85rem;font-size:0.8rem;font-weight:700;color:var(--g5);text-decoration:none;border-bottom:3px solid transparent;}
+.ep-nav a:hover{color:var(--blue);border-bottom-color:var(--blue-light);}
+.ep-nav a span{color:var(--red);margin-right:0.35rem;font-variant-numeric:tabular-nums;}
+.video-sec{scroll-margin-top:110px;}
+.ep-head{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:2.5rem;align-items:start;}
+.ep-meta{font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:0.5rem;}
+.ep-one{font-size:1.12rem;line-height:1.6;color:var(--navy);font-weight:500;text-wrap:pretty;}
+.video-slot{position:relative;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:linear-gradient(150deg,var(--blue-dark),var(--blue));color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:1.4rem 1.5rem;box-shadow:var(--shm);}
+.video-slot iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.video-slot .vs-badge{position:absolute;top:1.1rem;left:1.5rem;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--red);padding:0.25rem 0.6rem;border-radius:3px;}
+.video-slot .vs-title{font-size:clamp(1.25rem,2.4vw,1.75rem);font-weight:800;line-height:1.15;letter-spacing:-0.01em;text-wrap:balance;}
+.video-slot .vs-sub{font-size:0.82rem;color:rgba(255,255,255,0.75);margin-top:0.4rem;}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:2.25rem 0 0;border-top:2px solid var(--blue);border-bottom:1px solid var(--g2);}
+.fact{padding:1rem 1.1rem 1.1rem 0;}
+.fact + .fact{padding-left:1.1rem;border-left:1px solid var(--g2);}
+.fact dt{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--g4);margin-bottom:0.3rem;}
+.fact dd{font-size:0.95rem;line-height:1.45;color:var(--navy);font-weight:600;}
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;margin-top:2rem;}
+.sides h3{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+.side-for h3{color:var(--blue);}
+.side-against h3{color:var(--red);}
+.sides p{font-size:0.95rem;}
+.ep-foot{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:2.5rem;margin-top:2rem;padding-top:1.75rem;border-top:1px solid var(--g2);}
+.chapters{list-style:none;counter-reset:ch;}
+.chapters li{counter-increment:ch;display:grid;grid-template-columns:3.6rem 1fr;gap:0.6rem;padding:0.4rem 0;font-size:0.92rem;color:var(--g5);border-bottom:1px solid var(--g1);}
+.chapters time{font-weight:700;color:var(--g3);font-variant-numeric:tabular-nums;}
+.ep-foot h3{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--g4);margin-bottom:0.6rem;}
+.ep-actions{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.25rem;}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0.65rem 1.2rem;border-radius:var(--rs);font-size:0.85rem;font-weight:700;text-decoration:none;border:2px solid var(--blue);color:var(--blue);}
+.btn:hover{background:var(--blue);color:#fff;}
+.btn-solid{background:var(--red);border-color:var(--red);color:#fff;}
+.btn-solid:hover{background:var(--red-hover);border-color:var(--red-hover);}
+.ep-sources{font-size:0.82rem;color:var(--g4);line-height:2;}
+.cmp{width:100%;border-collapse:collapse;margin-top:2rem;font-size:0.9rem;}
+.cmp th{text-align:left;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--g4);padding:0.6rem 0.75rem 0.6rem 0;border-bottom:2px solid var(--blue);}
+.cmp td{padding:0.8rem 0.75rem 0.8rem 0;border-bottom:1px solid var(--g2);vertical-align:top;color:var(--g5);}
+.cmp td:first-child{font-weight:700;color:var(--navy);white-space:nowrap;}
+.cmp td:first-child a{color:inherit;text-underline-offset:3px;}
+.cmp td.num{font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.cmp-wrap{overflow-x:auto;}
+.cmp-note{font-size:0.8rem;color:var(--g4);margin-top:0.75rem;}
+@media(max-width:860px){
+  .ep-nav{padding:0 1.25rem;top:56px;}
+  .ep-head,.sides,.ep-foot{grid-template-columns:1fr;gap:1.5rem;}
+  .facts{grid-template-columns:1fr 1fr;}
+  .fact:nth-child(3){padding-left:0;border-left:0;}
+  .fact:nth-child(n+3){border-top:1px solid var(--g2);}
+}
+</style>
+</head>
+<body>
+<nav id="main-nav" aria-label="Site navigation">
+  <a class="nav-brand" href="index.html">UBI<span>Project</span></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html" onclick="closeMenu()">Home</a></li>
+    <li><a href="videos.html" class="active" onclick="closeMenu()">Videos</a></li>
+    <li><a href="why-ubi.html" onclick="closeMenu()">Arguments</a></li>
+    <li><a href="history.html" onclick="closeMenu()">History</a></li>
+    <li><a href="examples.html" onclick="closeMenu()">Examples</a></li>
+    <li><a href="calculator.html" onclick="closeMenu()">Calculator</a></li>
+  </ul>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="nav-overlay" id="nav-overlay" onclick="closeMenu()"></div>
+
+<div class="page-hero">
+  <div class="wide">
+    <a class="back-link" href="index.html">← Back to home</a>
+    <h1>Five plans to give you money</h1>
+    <p>One video per plan. Each makes the strongest case its author would, then the strongest objection, and leaves the verdict to you. Every claim about cost can be checked in the calculator.</p>
+  </div>
+</div>
+
+<nav class="ep-nav" aria-label="Episodes"><ol><li><a href="#intro"><span>0</span>Intro</a></li><li><a href="#friedman"><span>1</span>Friedman</a></li><li><a href="#mlk"><span>2</span>MLK</a></li><li><a href="#yang"><span>3</span>Yang</a></li><li><a href="#altman"><span>4</span>Altman</a></li><li><a href="#amodei"><span>5</span>Amodei</a></li></ol></nav>
+
+<!-- ═══ EPISODE 0: INTRO ═══
+     To publish: put the YouTube video id in data-youtube="" and replace each 0:00 with its timestamp. -->
+<section class="video-sec" id="intro">
+  <div class="wide">
+    <div class="ep-head">
+      <div class="video-slot" data-youtube="" data-title="These five people want to give you money">
+        <span class="vs-badge">In production</span>
+        <span class="vs-title">These five people want to give you money</span>
+        <span class="vs-sub">Working title · Episode 0</span>
+      </div>
+      <div>
+        <p class="ep-meta">Episode 0 · Start here</p>
+        <h2>These five people want to give you money</h2>
+        <div class="divider"></div>
+        <p class="ep-one">A civil rights leader, a free-market economist, a presidential candidate and two AI executives all landed on the same idea: guarantee every American some income. They disagree on almost everything else.</p>
+      </div>
+    </div>
+    <dl class="facts"><div class="fact"><dt>The idea</dt><dd>A regular cash payment with no work requirement</dd></div><div class="fact"><dt>Who backs it</dt><dd>Left, right, libertarian and tech</dd></div><div class="fact"><dt>The real fight</dt><dd>Who gets it, how much, and who pays</dd></div><div class="fact"><dt>This series</dt><dd>One episode per plan, each making its best case</dd></div></dl>
+    <div class="sides">
+      <div class="side-for"><h3>The case for it</h3><p>Poverty, stagnant pay and automation are three different problems, and a cash floor is one of the few answers that has been proposed for all three. That is why people who agree on nothing else keep arriving at it. <a href="history.html" class="src" style="white-space:nowrap">History</a></p></div>
+      <div class="side-against"><h3>The strongest objection</h3><p>"Basic income" hides plans that differ by a factor of ten in cost and by who ends up paying. Some of its best-known backers have hedged or moved on. And the largest US trial found modest results, not a transformation. <a href="https://www.nber.org/papers/w32719" target="_blank" rel="noopener" class="src">NBER</a></p></div>
+    </div>
+    <div class="ep-foot">
+      <div><h3>In this video</h3><ol class="chapters"><li><time>0:00</time><span>Five faces, one idea</span></li><li><time>0:00</time><span>What a basic income is and is not</span></li><li><time>0:00</time><span>Three questions that separate the plans</span></li><li><time>0:00</time><span>A quick tour: Friedman, King, Yang, Altman, Amodei</span></li><li><time>0:00</time><span>How to use the calculator to check each one</span></li></ol></div>
+      <div><h3>Check it yourself</h3><div class="ep-actions"><a class="btn btn-solid" href="calculator.html">Open the calculator →</a><a class="btn" href="why-ubi.html">Read the arguments</a></div><h3>Sources</h3><p class="ep-sources"><a href="https://kinginstitute.stanford.edu/where-do-we-go-here" target="_blank" rel="noopener" class="src">King Institute</a> <a href="https://miltonfriedman.hoover.org/objects/57816/capitalism-and-freedom" target="_blank" rel="noopener" class="src">Friedman, Capitalism and Freedom</a> <a href="https://taxfoundation.org/andrew-yang-value-added-tax-universal-basic-income/" target="_blank" rel="noopener" class="src">Tax Foundation on Yang</a> <a href="https://moores.samaltman.com/" target="_blank" rel="noopener" class="src">Altman, 2021</a> <a href="https://news.bloombergtax.com/daily-tax-report/anthropic-ceo-floats-tax-on-ai-firms-to-fund-universal-income" target="_blank" rel="noopener" class="src">Bloomberg Tax on Amodei</a></p></div>
+    </div>
+  </div>
+</section>
+<section class="sect-alt" id="compare" style="padding-top:0;">
+  <div class="wide">
+    <p class="kicker">At a glance</p>
+    <h2>The same three questions, five different answers</h2>
+    <div class="divider"></div>
+    <div class="cmp-wrap"><table class="cmp">
+      <thead><tr><th>Plan</th><th>Who gets it</th><th>How much</th><th>Who pays</th><th>Funded in our calculator</th></tr></thead>
+      <tbody><tr><td><a href="#friedman">Friedman</a></td><td>Below an income line</td><td>Poverty-line floor</td><td>Taxpayers, minus ended programs</td><td class="num">94%</td></tr><tr><td><a href="#mlk">King</a></td><td>Everyone</td><td>Tied to median income</td><td>Unspecified</td><td class="num">16%</td></tr><tr><td><a href="#yang">Yang</a></td><td>Every adult citizen</td><td>$1,000 a month</td><td>Shoppers, via a VAT</td><td class="num">49%</td></tr><tr><td><a href="#altman">Altman</a></td><td>Every adult, as owner</td><td>$13,500 a year</td><td>Companies and landowners</td><td class="num">52%</td></tr><tr><td><a href="#amodei">Amodei</a></td><td>Unspecified</td><td>Unspecified</td><td>AI companies</td><td class="num">Under 1%</td></tr></tbody>
+    </table></div>
+    <p class="cmp-note">"Funded" is the share of yearly cost covered when each plan is entered into the <a href="calculator.html">calculator</a> as its author described it, at today's values. Where a plan names no amount, the calculator uses $1,000 a month as a placeholder. Illustrative, not a forecast.</p>
+  </div>
+</section>
+
+<!-- ═══ EPISODE 1: FRIEDMAN ═══
+     To publish: put the YouTube video id in data-youtube="" and replace each 0:00 with its timestamp. -->
+<section class="video-sec" id="friedman">
+  <div class="wide">
+    <div class="ep-head">
+      <div class="video-slot" data-youtube="" data-title="The conservative plan to give poor people cash">
+        <span class="vs-badge">In production</span>
+        <span class="vs-title">The conservative plan to give poor people cash</span>
+        <span class="vs-sub">Working title · Episode 1</span>
+      </div>
+      <div>
+        <p class="ep-meta">Episode 1 · Milton Friedman · 1962</p>
+        <h2>The conservative plan to give poor people cash</h2>
+        <div class="divider"></div>
+        <p class="ep-one">Friedman wanted to replace the welfare system with one payment through the tax code: if you earn below a set line, the IRS pays you, and the payment shrinks as your income rises.</p>
+      </div>
+    </div>
+    <dl class="facts"><div class="fact"><dt>Who gets it</dt><dd>Households below an income line</dd></div><div class="fact"><dt>How much</dt><dd>A floor near the poverty line, fading out at 50 cents per dollar earned</dd></div><div class="fact"><dt>Who pays</dt><dd>General taxes, offset by ending existing aid programs</dd></div><div class="fact"><dt>Price tag</dt><dd>About $219B a year (2015 estimate)</dd></div></dl>
+    <div class="sides">
+      <div class="side-for"><h3>The case for it</h3><p>It costs a fraction of a universal payment because money only goes where income is low. It never punishes work with a benefit cliff: every extra dollar earned leaves you better off. And it swaps dozens of agencies for a line on a tax return. <a href="https://mitsloan.mit.edu/ideas-made-to-matter/negative-income-tax-explained" target="_blank" rel="noopener" class="src">MIT Sloan</a></p></div>
+      <div class="side-against"><h3>The strongest objection</h3><p>The phase-out works like a 50% tax on the earnings of the poorest workers, and the 1970s experiments found people did work somewhat less. It depends on tax filing, which misses many of the people it is meant for. Replacing food and housing aid with cash leaves some households worse off. <a href="https://www.nber.org/papers/w9751" target="_blank" rel="noopener" class="src">Moffitt, NBER</a> <a href="https://www.cbpp.org/research/income-security/universal-basic-income" target="_blank" rel="noopener" class="src">CBPP</a></p></div>
+    </div>
+    <div class="ep-foot">
+      <div><h3>In this video</h3><ol class="chapters"><li><time>0:00</time><span>Why a free-market economist wanted to hand out cash</span></li><li><time>0:00</time><span>How the negative income tax works, with one example</span></li><li><time>0:00</time><span>The price: $3.1 trillion universal, about $219 billion targeted</span></li><li><time>0:00</time><span>What it replaces</span></li><li><time>0:00</time><span>The trade: cheaper and targeted, but a tax on the first dollars earned</span></li></ol></div>
+      <div><h3>Check it yourself</h3><div class="ep-actions"><a class="btn btn-solid" href="calculator.html?plan=friedman">Load this plan in the calculator →</a><a class="btn" href="calculator.html?plan=friedman&amp;present=1">Step through it</a></div><h3>Sources</h3><p class="ep-sources"><a href="https://miltonfriedman.hoover.org/objects/57816/capitalism-and-freedom" target="_blank" rel="noopener" class="src">Capitalism and Freedom (1962)</a> <a href="https://fordschool.umich.edu/news/2017/shaefer-s-must-read-research-negative-income-tax-cited-vox" target="_blank" rel="noopener" class="src">Wiederspan, Rhodes &amp; Shaefer cost estimate</a> <a href="https://www.nber.org/papers/w9751" target="_blank" rel="noopener" class="src">Moffitt on the NIT experiments</a></p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ EPISODE 2: MLK ═══
+     To publish: put the YouTube video id in data-youtube="" and replace each 0:00 with its timestamp. -->
+<section class="video-sec sect-alt" id="mlk">
+  <div class="wide">
+    <div class="ep-head">
+      <div class="video-slot" data-youtube="" data-title="MLK&#x27;s last big idea: a guaranteed income">
+        <span class="vs-badge">In production</span>
+        <span class="vs-title">MLK's last big idea: a guaranteed income</span>
+        <span class="vs-sub">Working title · Episode 2</span>
+      </div>
+      <div>
+        <p class="ep-meta">Episode 2 · Martin Luther King Jr. · 1967</p>
+        <h2>MLK's last big idea: a guaranteed income</h2>
+        <div class="divider"></div>
+        <p class="ep-one">In his final book King argued that the way to end poverty was to end it directly, with a guaranteed income tied to the median American income and rising as the country grew richer.</p>
+      </div>
+    </div>
+    <dl class="facts"><div class="fact"><dt>Who gets it</dt><dd>Everyone, alongside a push for full employment</dd></div><div class="fact"><dt>How much</dt><dd>Pegged to median income, not the poverty line</dd></div><div class="fact"><dt>Who pays</dt><dd>Not specified. He pointed to war and space spending</dd></div><div class="fact"><dt>Price tag</dt><dd>$6.2T a year at $2,000 a month, the most this calculator shows</dd></div></dl>
+    <div class="sides">
+      <div class="side-for"><h3>The case for it</h3><p>King saw housing, schooling and jobs programs each attacking one symptom of poverty while leaving people poor. Income attacks the cause. Pegging it to the median was the point: a floor set at the bottom, he warned, would freeze people there. <a href="https://projects.seattletimes.com/mlk/words-going.html" target="_blank" rel="noopener" class="src">King, 1967</a></p></div>
+      <div class="side-against"><h3>The strongest objection</h3><p>It is by far the most expensive version, and King left the funding to others. The estimate he cited, $20 billion a year, was for a far smaller program than a median-level income. At that level, economists expect large effects on work and prices that no pilot has tested.</p></div>
+    </div>
+    <div class="ep-foot">
+      <div><h3>In this video</h3><ol class="chapters"><li><time>0:00</time><span>The King most people were not taught</span></li><li><time>0:00</time><span>Why he gave up on fixing poverty one program at a time</span></li><li><time>0:00</time><span>Median, not minimum</span></li><li><time>0:00</time><span>"We can afford it": the comparison to war spending</span></li><li><time>0:00</time><span>What it would cost today, and what he left unanswered</span></li></ol></div>
+      <div><h3>Check it yourself</h3><div class="ep-actions"><a class="btn btn-solid" href="calculator.html?plan=mlk">Load this plan in the calculator →</a><a class="btn" href="calculator.html?plan=mlk&amp;present=1">Step through it</a></div><h3>Sources</h3><p class="ep-sources"><a href="https://kinginstitute.stanford.edu/where-do-we-go-here" target="_blank" rel="noopener" class="src">King Institute, Stanford</a> <a href="https://projects.seattletimes.com/mlk/words-going.html" target="_blank" rel="noopener" class="src">Excerpt: Where Do We Go From Here</a> <a href="https://www.thenation.com/article/archive/dr-martin-luther-kings-economics-through-jobs-freedom/" target="_blank" rel="noopener" class="src">The Nation on King's economics</a></p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ EPISODE 3: YANG ═══
+     To publish: put the YouTube video id in data-youtube="" and replace each 0:00 with its timestamp. -->
+<section class="video-sec" id="yang">
+  <div class="wide">
+    <div class="ep-head">
+      <div class="video-slot" data-youtube="" data-title="$1,000 a month, paid for by a sales tax">
+        <span class="vs-badge">In production</span>
+        <span class="vs-title">$1,000 a month, paid for by a sales tax</span>
+        <span class="vs-sub">Working title · Episode 3</span>
+      </div>
+      <div>
+        <p class="ep-meta">Episode 3 · Andrew Yang · 2019</p>
+        <h2>$1,000 a month, paid for by a sales tax</h2>
+        <div class="divider"></div>
+        <p class="ep-one">Yang ran for president on a Freedom Dividend: $1,000 a month to every adult citizen, funded mostly by a 10% value-added tax of the kind most rich countries already have.</p>
+      </div>
+    </div>
+    <dl class="facts"><div class="fact"><dt>Who gets it</dt><dd>Every adult citizen. People on benefits choose one or the other</dd></div><div class="fact"><dt>How much</dt><dd>$1,000 a month</dd></div><div class="fact"><dt>Who pays</dt><dd>Everyone who spends, plus traders, polluters and high earners</dd></div><div class="fact"><dt>Price tag</dt><dd>$2.8T a year (Tax Foundation); $3.1T for all adults here</dd></div></dl>
+    <div class="sides">
+      <div class="side-for"><h3>The case for it</h3><p>A value-added tax is hard to dodge and reaches companies that pay little income tax. On its own it hits the poor hardest, but pair it with a flat $1,000 and roughly anyone spending under $120,000 a year comes out ahead. It is the most fully specified plan of the five. <a href="https://2020.yang2020.com/policies/the-freedom-dividend/" target="_blank" rel="noopener" class="src">Yang 2020</a></p></div>
+      <div class="side-against"><h3>The strongest objection</h3><p>The numbers did not close. The Tax Foundation found the taxes would raise about $1.3 trillion, under half the cost, and that the economy would shrink slightly instead of delivering the $800 billion in growth Yang counted on. Making it balance would take a 22% VAT and a $750 payment. <a href="https://taxfoundation.org/andrew-yang-value-added-tax-universal-basic-income/" target="_blank" rel="noopener" class="src">Tax Foundation</a></p></div>
+    </div>
+    <div class="ep-foot">
+      <div><h3>In this video</h3><ol class="chapters"><li><time>0:00</time><span>The pitch: a dividend, not welfare</span></li><li><time>0:00</time><span>How a value-added tax works</span></li><li><time>0:00</time><span>Building it in the calculator, one tax at a time</span></li><li><time>0:00</time><span>Where the math stops: about half funded</span></li><li><time>0:00</time><span>What it would take to close the gap</span></li></ol></div>
+      <div><h3>Check it yourself</h3><div class="ep-actions"><a class="btn btn-solid" href="calculator.html?plan=yang">Load this plan in the calculator →</a><a class="btn" href="calculator.html?plan=yang&amp;present=1">Step through it</a></div><h3>Sources</h3><p class="ep-sources"><a href="https://2020.yang2020.com/policies/the-freedom-dividend/" target="_blank" rel="noopener" class="src">Yang 2020 campaign page</a> <a href="https://taxfoundation.org/andrew-yang-value-added-tax-universal-basic-income/" target="_blank" rel="noopener" class="src">Tax Foundation analysis</a> <a href="https://www.crfb.org/blogs/would-10-vat-pay-1000-month-ubi" target="_blank" rel="noopener" class="src">Committee for a Responsible Federal Budget</a></p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ EPISODE 4: ALTMAN ═══
+     To publish: put the YouTube video id in data-youtube="" and replace each 0:00 with its timestamp. -->
+<section class="video-sec sect-alt" id="altman">
+  <div class="wide">
+    <div class="ep-head">
+      <div class="video-slot" data-youtube="" data-title="What if you owned a piece of AI?">
+        <span class="vs-badge">In production</span>
+        <span class="vs-title">What if you owned a piece of AI?</span>
+        <span class="vs-sub">Working title · Episode 4</span>
+      </div>
+      <div>
+        <p class="ep-meta">Episode 4 · Sam Altman · 2021 and 2026</p>
+        <h2>What if you owned a piece of AI?</h2>
+        <div class="divider"></div>
+        <p class="ep-one">Altman's answer to AI taking jobs is ownership instead of a check: a national fund that holds a slice of every large company and of all private land, with every adult as a shareholder.</p>
+      </div>
+    </div>
+    <dl class="facts"><div class="fact"><dt>Who gets it</dt><dd>Every adult, as an owner of the fund</dd></div><div class="fact"><dt>How much</dt><dd>$13,500 a year by his 2021 estimate, a decade out</dd></div><div class="fact"><dt>Who pays</dt><dd>Large companies (2.5% of value a year, in shares) and landowners (2.5%)</dd></div><div class="fact"><dt>Status</dt><dd>In 2026 he said he believes in cash UBI less than he did</dd></div></dl>
+    <div class="sides">
+      <div class="side-for"><h3>The case for it</h3><p>If AI pushes the value of work down and the value of capital up, taxing wages funds less every year. Owning capital does the opposite: the payout grows as AI does. And shareholders, unlike welfare recipients, have a stake in the system doing well. <a href="https://moores.samaltman.com/" target="_blank" rel="noopener" class="src">Altman, 2021</a></p></div>
+      <div class="side-against"><h3>The strongest objection</h3><p>At today's values the two levies cover about half of his own figure; the rest depends on growth that has not happened yet. A share can lose value exactly when people need it. Altman funded the largest US cash trial, then said in 2026 that a fixed payment is not what is needed, which leaves the plan without a firm version. <a href="https://www.businessinsider.com/sam-altman-ubi-universal-basic-income-view-changes-2026-4" target="_blank" rel="noopener" class="src">Business Insider</a></p></div>
+    </div>
+    <div class="ep-foot">
+      <div><h3>In this video</h3><ol class="chapters"><li><time>0:00</time><span>From cash trial to "collective ownership"</span></li><li><time>0:00</time><span>The American Equity Fund: 2.5% of companies, 2.5% of land</span></li><li><time>0:00</time><span>Building it in the calculator</span></li><li><time>0:00</time><span>The bet on growth</span></li><li><time>0:00</time><span>A check versus a share: what changes for the person receiving it</span></li></ol></div>
+      <div><h3>Check it yourself</h3><div class="ep-actions"><a class="btn btn-solid" href="calculator.html?plan=altman">Load this plan in the calculator →</a><a class="btn" href="calculator.html?plan=altman&amp;present=1">Step through it</a></div><h3>Sources</h3><p class="ep-sources"><a href="https://moores.samaltman.com/" target="_blank" rel="noopener" class="src">Moore's Law for Everything (2021)</a> <a href="https://www.nber.org/papers/w32719" target="_blank" rel="noopener" class="src">OpenResearch study, employment results</a> <a href="https://www.businessinsider.com/sam-altman-ubi-universal-basic-income-view-changes-2026-4" target="_blank" rel="noopener" class="src">Business Insider, April 2026</a></p></div>
+    </div>
+  </div>
+</section>
+<!-- ═══ EPISODE 5: AMODEI ═══
+     To publish: put the YouTube video id in data-youtube="" and replace each 0:00 with its timestamp. -->
+<section class="video-sec" id="amodei">
+  <div class="wide">
+    <div class="ep-head">
+      <div class="video-slot" data-youtube="" data-title="The AI CEO who wants his company taxed">
+        <span class="vs-badge">In production</span>
+        <span class="vs-title">The AI CEO who wants his company taxed</span>
+        <span class="vs-sub">Working title · Episode 5</span>
+      </div>
+      <div>
+        <p class="ep-meta">Episode 5 · Dario Amodei · 2025 and 2026</p>
+        <h2>The AI CEO who wants his company taxed</h2>
+        <div class="divider"></div>
+        <p class="ep-one">The head of Anthropic has warned that AI could wipe out a large share of entry-level office jobs, and says that if the loss is permanent, the companies building AI should be taxed to support the people displaced.</p>
+      </div>
+    </div>
+    <dl class="facts"><div class="fact"><dt>Who gets it</dt><dd>Not specified. Framed as support if job loss is large and lasting</dd></div><div class="fact"><dt>How much</dt><dd>No amount named</dd></div><div class="fact"><dt>Who pays</dt><dd>AI companies, or investors through higher capital gains taxes</dd></div><div class="fact"><dt>Status</dt><dd>A contingency, after wage insurance and incentives to keep staff</dd></div></dl>
+    <div class="sides">
+      <div class="side-for"><h3>The case for it</h3><p>It ties the bill to the cause. If AI replaces work, AI revenue is where the money will be, and a tax on it grows automatically with the problem. It also comes from someone arguing against his own company's interest. <a href="https://news.bloombergtax.com/daily-tax-report/anthropic-ceo-floats-tax-on-ai-firms-to-fund-universal-income" target="_blank" rel="noopener" class="src">Bloomberg Tax</a></p></div>
+      <div class="side-against"><h3>The strongest objection</h3><p>At the reported 3% rate, today's AI revenue would raise a few billion dollars against a cost in the trillions. The plan only works if AI revenue grows more than tenfold, and it names no amount, no rate and no trigger. Forecasts of mass job loss have been wrong before, and US unemployment was 4.3% when he published. <a href="https://www.techtimes.com/articles/318217/20260611/ai-regulation-push-amodei-demands-power-blocking-unsafe-models-anthropic-pledges-350-million.htm" target="_blank" rel="noopener" class="src">Tech Times</a></p></div>
+    </div>
+    <div class="ep-foot">
+      <div><h3>In this video</h3><ol class="chapters"><li><time>0:00</time><span>The warning: half of entry-level office jobs</span></li><li><time>0:00</time><span>"Tax us": the token tax</span></li><li><time>0:00</time><span>Running 3% through the calculator</span></li><li><time>0:00</time><span>Sliding AI revenue up: what growth would have to look like</span></li><li><time>0:00</time><span>A plan, or an IOU?</span></li></ol></div>
+      <div><h3>Check it yourself</h3><div class="ep-actions"><a class="btn btn-solid" href="calculator.html?plan=amodei">Load this plan in the calculator →</a><a class="btn" href="calculator.html?plan=amodei&amp;present=1">Step through it</a></div><h3>Sources</h3><p class="ep-sources"><a href="https://www.axios.com/2025/09/18/ai-jobs-anthropic-axios-summit-debate" target="_blank" rel="noopener" class="src">Axios, September 2025</a> <a href="https://news.bloombergtax.com/daily-tax-report/anthropic-ceo-floats-tax-on-ai-firms-to-fund-universal-income" target="_blank" rel="noopener" class="src">Bloomberg Tax, June 2026</a> <a href="https://blog.andrewyang.com/p/tax-the-bots" target="_blank" rel="noopener" class="src">Yang on the 3% token tax</a></p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>UBI Project · An independent educational resource · <a href="index.html">Home</a> · <a href="videos.html">Videos</a> · <a href="why-ubi.html">Arguments</a> · <a href="history.html">History</a> · <a href="examples.html">Examples</a> · <a href="calculator.html">Calculator</a></p>
+</footer>
+
+<script>
+const mainNav=document.getElementById("main-nav"),hamburger=document.getElementById("nav-hamburger");
+function toggleMenu(){const o=mainNav.classList.toggle("menu-open");hamburger.setAttribute("aria-expanded",o);document.body.style.overflow=o?"hidden":"";}
+function closeMenu(){mainNav.classList.remove("menu-open");hamburger.setAttribute("aria-expanded","false");document.body.style.overflow="";}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu();});
+/* Video slots: set data-youtube="VIDEO_ID" on a .video-slot to swap the placeholder for the player. */
+document.querySelectorAll('.video-slot').forEach(slot => {
+  const id = slot.dataset.youtube;
+  if (!id) return;
+  slot.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '" title="' + slot.dataset.title.replace(/"/g, '&quot;') + '" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+});
+/* Hide chapter timestamps until they are filled in. */
+document.querySelectorAll('.chapters').forEach(ol => {
+  if ([...ol.querySelectorAll('time')].every(t => t.textContent === '0:00')) ol.querySelectorAll('time').forEach((t, i) => t.textContent = String(i + 1).padStart(2, '0'));
+});
+</script>
+</body>
+</html>
